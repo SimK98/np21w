@@ -1,61 +1,61 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
-  <TITLE>�ȒP�ȓ������@ - CD�h���C�u</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <TITLE>簡単な導入方法 - CDドライブ</TITLE>
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
 <BR><BR>
 
-<H3><B>�ȒP�ȓ������@ / CD�h���C�u</B></H3>
+<H3><B>簡単な導入方法 / CDドライブ</B></H3>
 
 <P>
-�˂��[�v���W�F�N�g21/W�ł́AIDE�ڑ���CD-ROM/DVD-ROM�h���C�u���T�|�[�g���Ă��܂��B
-�f�B�X�N�C���[�W�܂��͎��h���C�u���g�p���邱�Ƃ��o���܂��B<a href="harddisk.html">�ڍ�</a>
+ねこープロジェクト21/Wでは、IDE接続のCD-ROM/DVD-ROMドライブをサポートしています。
+ディスクイメージまたは実ドライブを使用することが出来ます。<a href="harddisk.html">詳細</a>
 </P>
 
 <DL>
-<DT><B>�f�B�X�N�C���[�W�̎g�p</B></DT>
-<DD><P>�˂��[�v���W�F�N�g21/W��IDE CD-ROM�ł� ISO-9660�`��(.ISO)�ACue Sheet�`��(.CUE)�ACloneCD�`��(.CCD)�ACD Manipulator�`��(.CDM)�AMedia Descriptor�`��(.MDS)�ANero Image�`��(.NRG)�����p�ł��܂��B
-�������A�v���e�N�g�t����CD�͈����܂���BOS���T�|�[�g���Ă����DVD���������Ƃ��o���܂��B</P>
+<DT><B>ディスクイメージの使用</B></DT>
+<DD><P>ねこープロジェクト21/WのIDE CD-ROMでは ISO-9660形式(.ISO)、Cue Sheet形式(.CUE)、CloneCD形式(.CCD)、CD Manipulator形式(.CDM)、Media Descriptor形式(.MDS)、Nero Image形式(.NRG)が利用できます。
+ただし、プロテクト付きのCDは扱えません。OSがサポートしていればDVDも扱うことが出来ます。</P>
 <OL>
-<LI>CD�h���C�u���g�p�ł���悤��OS�ɓK�؂Ȑݒ���s���Ă��������i�y�[�W�����Q�Ɓj</LI>
-<LI>�p�ӂ���CD�C���[�W�� [<A HREF="harddisk.html">HardDisk</A> - IDE #2 - Open] �őI�����܂��BCD�C���[�W��I���ł��Ȃ��ꍇ��<a href="ideopt.html">IDE option</a>���m�F���Ă��������B</LI>
-<LI>�G�~�����[�^�Ń}�E���g����CD�̓��e���ǂ߂�悤�ɂȂ�܂��B�i�f�B�X�N�������ɂ͕����I�Ȍ������Ԃ��G�~�����[�V�������邽�߂�6�b�قǒx�����܂��j</LI>
+<LI>CDドライブが使用できるようにOSに適切な設定を行ってください（ページ下部参照）</LI>
+<LI>用意したCDイメージを [<A HREF="harddisk.html">HardDisk</A> - IDE #2 - Open] で選択します。CDイメージを選択できない場合は<a href="ideopt.html">IDE option</a>を確認してください。</LI>
+<LI>エミュレータでマウントしたCDの内容が読めるようになります。（ディスク交換時には物理的な交換時間をエミュレーションするために6秒ほど遅延します）</LI>
 </OL>
 </DD>
 </DL>
 
 <DL>
-<DT><B>���h���C�u�̎g�p</B></DT>
-<DD><P>�˂��[�v���W�F�N�g21/W��IDE CD-ROM�ł̓z�X�g�ɐڑ�����Ă�����h���C�u���������Ƃ��o���܂��B</P>
+<DT><B>実ドライブの使用</B></DT>
+<DD><P>ねこープロジェクト21/WのIDE CD-ROMではホストに接続されている実ドライブを扱うことが出来ます。</P>
 <OL>
-<LI>CD�h���C�u���g�p�ł���悤��OS�ɓK�؂Ȑݒ���s���Ă��������i�y�[�W�����Q�Ɓj</LI>
-<LI>�z�X�g��x�h���C�u���}�E���g����ꍇ [<A HREF="harddisk.html">HardDisk</A> - IDE #2 - Host Drive x:] ��I�����܂��BCD�h���C�u��I���ł��Ȃ��ꍇ��<a href="ideopt.html">IDE option</a>���m�F���Ă��������B</LI>
-<LI>�z�X�g�̃h���C�u��CD-ROM������ƃG�~�����[�^�Ń}�E���g����CD�̓��e���ǂ߂�悤�ɂȂ�܂��B</LI>
+<LI>CDドライブが使用できるようにOSに適切な設定を行ってください（ページ下部参照）</LI>
+<LI>ホストのxドライブをマウントする場合 [<A HREF="harddisk.html">HardDisk</A> - IDE #2 - Host Drive x:] を選択します。CDドライブを選択できない場合は<a href="ideopt.html">IDE option</a>を確認してください。</LI>
+<LI>ホストのドライブにCD-ROMを入れるとエミュレータでマウントしたCDの内容が読めるようになります。</LI>
 </OL>
 </DD>
 </DL>
 
 <DL>
-<DT><B>OS�̐ݒ� - Windows9x�n, WindowsNT�n�̏ꍇ</B></DT>
-<DD><P>NEC CD-ROM DRIVE:98�Ƃ��Ď����F������܂��̂œ��ɒǉ��̐ݒ�͕K�v����܂���B</P>
+<DT><B>OSの設定 - Windows9x系, WindowsNT系の場合</B></DT>
+<DD><P>NEC CD-ROM DRIVE:98として自動認識されますので特に追加の設定は必要ありません。</P>
 </DD>
 </DL>
 
 <DL>
-<DT><B>OS�̐ݒ� - MS-DOS, Windows3.1�ȑO�̏ꍇ</B></DT>
-<DD><P>MSCDEX.EXE��NECCDD.SYS���K�v�ł��B
-�����̃t�@�C����MS-DOS6.2��Windows9x�n�̋N���f�B�X�N�������\�ł��B
-�iNECCDD.SYS�̑����NECCDM.SYS���g�p���邱�Ƃ��o���܂����኱�s����ł��j</P>
+<DT><B>OSの設定 - MS-DOS, Windows3.1以前の場合</B></DT>
+<DD><P>MSCDEX.EXEとNECCDD.SYSが必要です。
+これらのファイルはMS-DOS6.2やWindows9x系の起動ディスクから入手可能です。
+（NECCDD.SYSの代わりにNECCDM.SYSを使用することも出来ますが若干不安定です）</P>
 <OL>
-<LI>MSCDEX.EXE��NECCDD.SYS���f�B�X�N�C���[�W���ɃR�s�[���Ă��������B</LI>
-<LI>MS-DOS�N���f�B�X�N��CONFIG.SYS��"LASTDRIVE=Z"��"DEVICE=NECCDD.SYS /D:CD_101"�𑫂��Ă��������B</LI>
-<LI>MS-DOS�N���f�B�X�N��AUTOEXEC.BAT��"MSCDEX.EXE /D:CD_101 /L:Q"�𑫂��Ă��������iCD�h���C�u��Q�h���C�u�ɂ���ꍇ�j�B</LI>
-<LI>[<A HREF="emulate.html">Emulate</A> - Reset]��I�����āA���Z�b�g�������܂��B</LI>
-<LI>����ɐݒ�ł��Ă����Q�h���C�u�Ƃ���CD�h���C�u�ɃA�N�Z�X�o����悤�ɂȂ�܂��B</LI>
+<LI>MSCDEX.EXEとNECCDD.SYSをディスクイメージ内にコピーしてください。</LI>
+<LI>MS-DOS起動ディスクのCONFIG.SYSに"LASTDRIVE=Z"と"DEVICE=NECCDD.SYS /D:CD_101"を足してください。</LI>
+<LI>MS-DOS起動ディスクのAUTOEXEC.BATに"MSCDEX.EXE /D:CD_101 /L:Q"を足してください（CDドライブをQドライブにする場合）。</LI>
+<LI>[<A HREF="emulate.html">Emulate</A> - Reset]を選択して、リセットをかけます。</LI>
+<LI>正常に設定できていればQドライブとしてCDドライブにアクセス出来るようになります。</LI>
 </OL>
 </DD>
 </DL>

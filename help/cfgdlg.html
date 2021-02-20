@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <TITLE>Configure</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
@@ -16,20 +16,20 @@
 <A NAME="BASECLOCK"></A>
 <DL>
 <DT><B>Base Clock</B></DT>
-<DD><P>CPU�X�s�[�h�̃x�[�X�N���b�N���w�肵�܂��B<BR>1.9968�� 4/8MHz�n�A 2.4576�� 5/10MHz�n�ɂȂ�܂��B<BR>CPU�X�s�[�h�� ���̒l�ɔ{�����|�������ɂȂ�܂��B</P>
-<P>���ݒ�ύX�̓��Z�b�g��ɗL���ɂȂ�܂��B</P></DD>
+<DD><P>CPUスピードのベースクロックを指定します。<BR>1.9968で 4/8MHz系、 2.4576で 5/10MHz系になります。<BR>CPUスピードは この値に倍率を掛けた物になります。</P>
+<P>※設定変更はリセット後に有効になります。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Multiple</B></DT>
-<DD><P>CPU�X�s�[�h�̔{�������߂܂��B<BR>CPU�X�s�[�h�� ���̒l�Ƀx�[�X�N���b�N���|�������ɂȂ�܂��B</B></P>
-<P><B>�N���b�N�{�����傫���ꍇ�A�V�X�e���Z�b�g�A�b�v���j���[�ɓ���Ȃ��A�Œ�f�B�X�N�N�����j���[��TAB�L�[�ɂ�鎩���N���������o���Ȃ��AWindows98�ŋN�����j���[�ɓ���Ȃ����̖�肪��������ꍇ������܂��B���̏ꍇ�͈ꎞ�I�ɃN���b�N�{���������Ă��������B</B></P>
-<P>���ݒ�ύX�̓��Z�b�g��ɗL���ɂȂ�܂��B</P></DD>
+<DD><P>CPUスピードの倍率を決めます。<BR>CPUスピードは この値にベースクロックを掛けた物になります。</B></P>
+<P><B>クロック倍率が大きい場合、システムセットアップメニューに入れない、固定ディスク起動メニューのTABキーによる自動起動解除が出来ない、Windows98で起動メニューに入れない等の問題が発生する場合があります。その場合は一時的にクロック倍率を下げてください。</B></P>
+<P>※設定変更はリセット後に有効になります。</P></DD>
 </DL>
 
 <DL>
 <DT><B>CPU Type</B></DT>
-<DD><P>CPU�̎�ނ�ݒ肵�܂��B<BR>��ނɂ����CPUID�̏��⋓�����ς��܂��B<BR>custom�ƕ\������Ă���ꍇ�͔���J�@�\�Ȃǂɂ���ă��X�g�ɂȂ��l���ݒ肳��Ă��邱�Ƃ�\���܂��B</B></P>
+<DD><P>CPUの種類を設定します。<BR>種類によってCPUIDの情報や挙動が変わります。<BR>customと表示されている場合は非公開機能などによってリストにない値が設定されていることを表します。</B></P>
 <table border=1>
 <thead>
 <tr>
@@ -37,11 +37,11 @@
 <th>Family</th>
 <th>Model</th>
 <th>Stepping</th>
-<th>�g�����ߓ�</th>
+<th>拡張命令等</th>
 </tr>
 </thead>
 <tbody>
-<tr><td>Intel i486SX</td><td>4</td><td>2</td><td>3</td><td>�Ȃ�</td></tr>
+<tr><td>Intel i486SX</td><td>4</td><td>2</td><td>3</td><td>なし</td></tr>
 <tr><td>Intel i486DX</td><td>4</td><td>1</td><td>3</td><td>FPU</td></tr>
 <tr><td>Intel Pentium</td><td>5</td><td>2</td><td>5</td><td>FPU, RDTSC</td></tr>
 <tr><td>Intel MMX Pentium</td><td>5</td><td>4</td><td>4</td><td>FPU, RDTSC, MMX</td></tr>
@@ -54,62 +54,62 @@
 <tr><td>AMD K6-III</td><td>5</td><td>9</td><td>1</td><td>FPU, RDTSC, FCOMI/FUCOMI/FCOMIP/FUCOMIP, MMX, 3DNow!</td></tr>
 <tr><td>AMD K7 Athlon</td><td>6</td><td>1</td><td>2</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, MMX, 3DNow!, Enhanced 3DNow!</td></tr>
 <tr><td>AMD K7 Athlon XP</td><td>6</td><td>6</td><td>2</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, MMX, 3DNow!, Enhanced 3DNow!, SSE</td></tr>
-<tr><td>Neko Processor II</td><td>x</td><td>x</td><td>x</td><td>�˂��[�v���W�F�N�g�ŃT�|�[�g����Ă���S�@�\</td></tr>
+<tr><td>Neko Processor II</td><td>x</td><td>x</td><td>x</td><td>ねこープロジェクトでサポートされている全機能</td></tr>
 </tbody>
 </table>
-<P>���ݒ�ύX�̓��Z�b�g��ɗL���ɂȂ�܂��B</P>
-<P>���t�@�~���E���f���E�X�e�b�s���O�͔���J�@�\�Ŏ��R�ɕς�����̂Łi�������͕ʖ��Ƃ��āj�o�[�W�����`�F�b�N����Ȃǂ��\�ł��B</P>
-<P>��Neko Processor II�̓x���_����Intel�ł�AMD�ł��Ȃ��̂�CPU�`�F�b�N�Ɉ��������邩������܂���B</P>
-<P>�������_�ł�Intel Pentium III�ȑO��CPU�����肵�Ă��܂�</P></DD>
+<P>※設定変更はリセット後に有効になります。</P>
+<P>※ファミリ・モデル・ステッピングは非公開機能で自由に変えられるので（動くかは別問題として）バージョンチェック回避なども可能です。</P>
+<P>※Neko Processor IIはベンダ名がIntelでもAMDでもないのでCPUチェックに引っかかるかもしれません。</P>
+<P>※現時点ではIntel Pentium III以前のCPUが安定しています</P></DD>
 </DL>
 
 <DL>
 <DT><B>Base Architecture</B></DT>
-<DD><P>�G�~�����[�V�������f�����w�肵�܂��B</P>
+<DD><P>エミュレーションモデルを指定します。</P>
 <ul>
-<li>PC-9801VM �c i286���ڑO��PC-9801VM�ȑO�̋@����G�~�����[�V�������܂��B</li>
-<li>PC-9801VX �c i286�ȍ~��CPU�𓋍ڂ���PC-9801VX�ȍ~�̋@����G�~�����[�V�������܂��B�V�X�e���N������FM���������Z�b�g����܂��B</li>
-<li>PC-286 �c EPSON�݊��@�d�l�ƂȂ�܂��BEPSON BIOS�Ŏg�p�����RAM(�A�h���X: D4000�`DFFFF)���J������܂��B</li>
+<li>PC-9801VM … i286搭載前のPC-9801VM以前の機種をエミュレーションします。</li>
+<li>PC-9801VX … i286以降のCPUを搭載したPC-9801VX以降の機種をエミュレーションします。システム起動時にFM音源がリセットされます。</li>
+<li>PC-286 … EPSON互換機仕様となります。EPSON BIOSで使用されるRAM(アドレス: D4000〜DFFFF)が開放されます。</li>
 </ul>
 <P>
-Always use 16bit I/O port addressing (PC-9821) �Ƀ`�F�b�N�������PC-9821�����ȍ~������I/O�|�[�g�G�~�����[�V�����ɂȂ�܂��BI/O�|�[�g�A�h���X��16bit�t���f�R�[�h��O��Ƃ��Ă���ꍇ�iWindows2000���j�͕K�{�ł��B
-�������A�ꕔ�̌Â�DOS�A�v���P�[�V�����ł͕s����N������������܂���B
+Always use 16bit I/O port addressing (PC-9821) にチェックを入れるとPC-9821中期以降相当のI/Oポートエミュレーションになります。I/Oポートアドレスの16bitフルデコードを前提としている場合（Windows2000等）は必須です。
+ただし、一部の古いDOSアプリケーションでは不具合を起こすかもしれません。
 </P>
 </DL>
 
 <A NAME="SAMPLERATE"></A>
 <DL>
 <DT><B>Sampling Rate</B></DT>
-<DD><P>�T�E���h�G�~�����[�g�̏o�̓T���v�����O���g�����w�肵�܂��B<BR>��ʂɐݒ�l�����قǍČ����������Ȃ�܂����ACPU�p���[���K�v�ɂȂ�܂��B</P>
-<P>���ݒ�ύX�̓��Z�b�g��ɗL���ɂȂ�܂��B</P></DD>
+<DD><P>サウンドエミュレートの出力サンプリング周波数を指定します。<BR>一般に設定値高いほど再現率が高くなりますが、CPUパワーが必要になります。</P>
+<P>※設定変更はリセット後に有効になります。</P></DD>
 </DL>
 
 <A NAME="BUFFER"></A>
 <DL>
 <DT><B>Buffer</B></DT>
-<DD><P>�T�E���h�G�~�����[�g�̏o�̓o�b�t�@�T�C�Y���~���b�Ŏw�肵�܂��B<BR>100�`1000ms�̊Ԃ��w�肵�Ă��������B</P>
-<P>�l�����Ȃ��قǃT�E���h�̉��؂��Z���Ȃ�܂����ACPU�p���[���K�v�ɂȂ�܂��B<BR>�ʏ��100ms�`500ms���w�肵�܂��B</P>
-<P>���ݒ�ύX�̓��Z�b�g��ɗL���ɂȂ�܂��B</P></DD>
+<DD><P>サウンドエミュレートの出力バッファサイズをミリ秒で指定します。<BR>100〜1000msの間を指定してください。</P>
+<P>値が少ないほどサウンドの延滞が短くなりますが、CPUパワーが必要になります。<BR>通常は100ms〜500msを指定します。</P>
+<P>※設定変更はリセット後に有効になります。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Disable MMX</B></DT>
-<DD><P>�`�F�b�N����� �G�~�����[�V�����̍ۂ�MMX���߂��g�p���܂���B</P></DD>
+<DD><P>チェックすると エミュレーションの際にMMX命令を使用しません。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Comfirm Dialog (on Reset / Exit)</B></DT>
-<DD><P>�`�F�b�N����� ���Z�b�g�E�I�����Ɋm�F�_�C�A���O��\�����܂��B</P></DD>
+<DD><P>チェックすると リセット・終了時に確認ダイアログを表示します。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Resume</B></DT>
-<DD><P>�`�F�b�N����� ���W���[���@�\���L���ɂȂ�܂��B</P></DD>
+<DD><P>チェックすると レジューム機能が有効になります。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Save window size</B></DT>
-<DD><P>�`�F�b�N����� �I�����̃E�B���h�E�T�C�Y���L�^���܂��B</P></DD>
+<DD><P>チェックすると 終了時のウィンドウサイズを記録します。</P></DD>
 </DL>
 
 </BODY>

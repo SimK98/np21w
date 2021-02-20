@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <TITLE>Newdisk - Create New HD image</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
@@ -15,47 +15,47 @@
 
 <DL>
 <DT><B>HDD size</B></DT>
-<DD><P>�쐬����n�[�h�f�B�X�N�C���[�W�̃T�C�Y���w�肵�܂��B</P></DD>
+<DD><P>作成するハードディスクイメージのサイズを指定します。</P></DD>
 </DL>
 
 <H4><B>Advanced Option</B></H4>
 
 <P><IMG SRC="images/newhddadvanced.gif" BORDER="0" ALT="Create New HD image - Advanced"></P>
 
-<P>NHD�`���܂���VHD�`����I�������ꍇ�͊g���I�v�V�������g�p�\�ł��B</P>
+<P>NHD形式またはVHD形式を選択した場合は拡張オプションが使用可能です。</P>
 
 <DL>
 <DT><B>HDD size</B></DT>
-<DD><P>�쐬����n�[�h�f�B�X�N�C���[�W�̃T�C�Y���w�肵�܂��BCHS�p�����[�^�͎����ݒ肳��܂��B</P></DD>
+<DD><P>作成するハードディスクイメージのサイズを指定します。CHSパラメータは自動設定されます。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Cylinder</B></DT>
-<DD><P>�쐬����n�[�h�f�B�X�N�C���[�W�̃V�����_�����w�肵�܂��B</P></DD>
+<DD><P>作成するハードディスクイメージのシリンダ数を指定します。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Head</B></DT>
-<DD><P>�쐬����n�[�h�f�B�X�N�C���[�W�̃w�b�h�����w�肵�܂��B</P></DD>
+<DD><P>作成するハードディスクイメージのヘッド数を指定します。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Sector</B></DT>
-<DD><P>�쐬����n�[�h�f�B�X�N�C���[�W�̃Z�N�^�����w�肵�܂��B</P></DD>
+<DD><P>作成するハードディスクイメージのセクタ数を指定します。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Sector Size</B></DT>
-<DD><P>�쐬����n�[�h�f�B�X�N�C���[�W�̃Z�N�^�T�C�Y���w�肵�܂��B</P></DD>
+<DD><P>作成するハードディスクイメージのセクタサイズを指定します。</P></DD>
 </DL>
 
 <DL>
-<DT><B>Fixed/Dynamic</B>�iVHD�`���̂݃T�|�[�g�j</DT>
+<DT><B>Fixed/Dynamic</B>（VHD形式のみサポート）</DT>
 <DD>
 <P>
-�e�ʌŒ�C���[�W(Fixed)�܂��͗e�ʉσC���[�W(Dynamic)�̂ǂ�����쐬���邩���w�肵�܂��B
-�e�ʉσC���[�W�ɂ���ƍő�e�ʂ͈͓̔��Ńf�B�X�N�g�p�ʂɉ����ăf�B�X�N�C���[�W�̃T�C�Y���ω����܂��B<br>
-���ӁF�e�ʉσC���[�W���g�p����ɂ�NVL.DLL���K�v�ł��B
+容量固定イメージ(Fixed)または容量可変イメージ(Dynamic)のどちらを作成するかを指定します。
+容量可変イメージにすると最大容量の範囲内でディスク使用量に応じてディスクイメージのサイズが変化します。<br>
+注意：容量可変イメージを使用するにはNVL.DLLが必要です。
 </P>
 </DD>
 </DL>
@@ -64,9 +64,9 @@
 <DT><B>Blank</B></DT>
 <DD>
 <P>
-�f�B�X�N�C���[�W�����S�ɖ��t�H�[�}�b�g�̏�Ԃō쐬���܂��B
-�����Ƀ`�F�b�N�����č쐬�����C���[�W�͏���g�p����DISKINIT�����K�v�ɂȂ�ꍇ������܂��B
-Windows2000���Z�b�g�A�b�v�N���f�B�X�N����Z�b�g�A�b�v����ꍇ�͂����Ƀ`�F�b�N�����č쐬���Ă��������B
+ディスクイメージを完全に未フォーマットの状態で作成します。
+ここにチェックを入れて作成したイメージは初回使用時にDISKINIT等が必要になる場合があります。
+Windows2000をセットアップ起動ディスクからセットアップする場合はここにチェックを入れて作成してください。
 </P>
 </DD>
 </DL>

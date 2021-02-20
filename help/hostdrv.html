@@ -1,51 +1,51 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
-  <TITLE>���L�t�H���_(hostdrv)</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <TITLE>共有フォルダ(hostdrv)</TITLE>
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
 <BR><BR>
 
-<H3><B>���L�t�H���_(hostdrv)</B></H3>
+<H3><B>共有フォルダ(hostdrv)</B></H3>
 
 <DL>
 <DD>
-<P>���L�t�H���_(hostdrv)�@�\�ɂ��A�z�X�gOS�����z�h���C�u�Ƃ��ĎQ�Ƃł��܂��B</P>
-<P>�������ANeko Project 21/W�̃o�O��Q�X�gOS�̖\�������������ꍇ�A���̉e�����z�X�g�̃t�@�C���ɂ��y�Ԃ��ƂɂȂ�܂��̂ŁA���L�͈͂ƃA�N�Z�X�����͕K�v�ŏ����ɂƂǂ߂鎖���������߂��܂��B</P>
-<P>�ݒ��GUI�ōs�����Anp21w.ini�� [NekoProject21]�֒��ڒǉ����Ă��������B</P>
+<P>共有フォルダ(hostdrv)機能により、ホストOSを仮想ドライブとして参照できます。</P>
+<P>ただし、Neko Project 21/WのバグやゲストOSの暴走が発生した場合、その影響がホストのファイルにも及ぶことになりますので、共有範囲とアクセス権限は必要最小限にとどめる事をおすすめします。</P>
+<P>設定はGUIで行うか、np21w.iniの [NekoProject21]へ直接追加してください。</P>
 <P>&nbsp;</P>
-<P><B>���L�t�H���_(hostdrv) �ݒ�</B></P>
+<P><B>共有フォルダ(hostdrv) 設定</B></P>
 <TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
-<TR><TH>�L�[��</TH><TH>�@�\</TH></TR>
-<TR><TD>hdrvroot</TD><TD>���z�h���C�u���[�g���w�肵�܂��B�����̃f�B���N�g����؂蕶���͕s�v�ł�<br>(��) c:\data\np2share</TD></TR>
+<TR><TH>キー名</TH><TH>機能</TH></TR>
+<TR><TD>hdrvroot</TD><TD>仮想ドライブルートを指定します。末尾のディレクトリ区切り文字は不要です<br>(例) c:\data\np2share</TD></TR>
 <TR><TD>hdrv_acc</TD>
 <TD>
-  �A�N�Z�X�����w�肵�܂��B�����Ɏw�肷��l�̊e�r�b�g�̈Ӗ��͈ȉ��̒ʂ�ł��B
+  アクセス権を指定します。ここに指定する値の各ビットの意味は以下の通りです。
   <TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
   <TR><TH>bit2</TH><TH>bit1</TH><TH>bit0</TH></TR>
-  <TR><TD>�폜�\</TD><TD>�����\</TD><TD>�ǎ�\</TD></TR>
+  <TR><TD>削除可能</TD><TD>書込可能</TD><TD>読取可能</TD></TR>
   </TABLE>
-	(��)<br>
-	�@�@hdrv_acc=1 �c �ǂݍ��݂̂݉\<br>
-	�@�@hdrv_acc=3 �c �ǂݏ����\<br>
-	�@�@hdrv_acc=7 �c �ǂݏ����y�э폜�\
+	(例)<br>
+	　　hdrv_acc=1 … 読み込みのみ可能<br>
+	　　hdrv_acc=3 … 読み書き可能<br>
+	　　hdrv_acc=7 … 読み書き及び削除可能
 </TD></TR>
 </TABLE>
 
 <DL>
-<DT><B>�Q�X�gOS�ł̐ݒ�</B></DT>
+<DT><B>ゲストOSでの設定</B></DT>
 <DD>
-<P>���L�t�H���_(hostdrv)�@�\���g�p����ɂ͏�L�ݒ���s������A�Q�X�gOS��ŏ풓�v���O���������s����K�v������܂��B</P>
-<P>�����_�ł�MS-DOS�p�v���O�����݂̂��񋟂���Ă��܂��B</P>
+<P>共有フォルダ(hostdrv)機能を使用するには上記設定を行った後、ゲストOS上で常駐プログラムを実行する必要があります。</P>
+<P>現時点ではMS-DOS用プログラムのみが提供されています。</P>
 </DD>
-<DT><B>�Q�X�gOS�ł̐ݒ� - MS-DOS</B></DT>
+<DT><B>ゲストOSでの設定 - MS-DOS</B></DT>
 <DD>
-<P>Neko Project II ���[�e�B���e�B�f�B�X�N�inp2tool.d88�j�ɓ����Ă���HOSTDRV.COM��K���ȏꏊ�ɔz�u���A</P>
-<P>�@�@<b>hostdrv �h���C�u�ԍ�(A�`Z)</b></P>
-<P>�ɂ��풓�����Ă��������B�w�肵���h���C�u�ԍ��Ƀz�X�g�̃f�B���N�g�����}�b�s���O����܂��B</P>
+<P>Neko Project II ユーティリティディスク（np2tool.d88）に入っているHOSTDRV.COMを適当な場所に配置し、</P>
+<P>　　<b>hostdrv ドライブ番号(A〜Z)</b></P>
+<P>により常駐させてください。指定したドライブ番号にホストのディレクトリがマッピングされます。</P>
 </DD>
 </DL>
 

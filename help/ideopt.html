@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <TITLE>IDE option</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
@@ -19,56 +19,56 @@
 
 <DL>
 <DD>
-<P>�v���C�}���E�Z�J���_���̃}�X�^�E�X���[�u�ɐڑ�����f�o�C�X��I�����܂��B�ݒ�̓��Z�b�g��ɗL���ɂȂ�܂��B</P>
-<P>���j���[��ł̓v���C�}���}�X�^��IDE #0, �v���C�}���X���[�u��IDE #1, �Z�J���_���}�X�^��IDE #2, �Z�J���_���X���[�u��IDE #3�ƂȂ�܂��B</P>
+<P>プライマリ・セカンダリのマスタ・スレーブに接続するデバイスを選択します。設定はリセット後に有効になります。</P>
+<P>メニュー上ではプライマリマスタがIDE #0, プライマリスレーブがIDE #1, セカンダリマスタがIDE #2, セカンダリスレーブがIDE #3となります。</P>
 </DD>
 </DL>
 
 <DL>
-<DT><B>�f�o�C�X�I��</B></DT>
-<DD><P>�ڑ��������f�o�C�X��I�����܂��B�������AOS�ɂ���Ă̓Z�J���_����X���[�u�̃n�[�h�f�B�X�N��F�����܂���̂ł����ӂ��������B</P>
+<DT><B>デバイス選択</B></DT>
+<DD><P>接続したいデバイスを選択します。ただし、OSによってはセカンダリやスレーブのハードディスクを認識しませんのでご注意ください。</P>
 <TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
-<TR><TH>���ږ�</TH><TH>����</TH></TR>
-<TR><TD>None</TD><TD>�����ڑ����܂���BHarddisk���j���[�ŃC���[�W�t�@�C����I�����Ă��ڑ����Ă��Ȃ����̂Ƃ��Ĉ����܂��B</TD></TR>
-<TR><TD>HDD</TD><TD>�n�[�h�f�B�X�N��ڑ����܂��B���̏ꍇ�ł�Harddisk���j���[�ŃC���[�W�t�@�C����I�����Ă��Ȃ��ꍇ�͖��ڑ��Ƃ��Ĉ����܂��B</TD></TR>
-<TR><TD>CD-ROM</TD><TD>CD-ROM�h���C�u��ڑ����܂��BHarddisk���j���[�ŃC���[�W�t�@�C����I�����Ă��Ȃ��ꍇ�̓f�B�X�N�������Ă��Ȃ���ԂƂ��Ĉ����܂��B</TD></TR>
+<TR><TH>項目名</TH><TH>説明</TH></TR>
+<TR><TD>None</TD><TD>何も接続しません。Harddiskメニューでイメージファイルを選択しても接続していないものとして扱われます。</TD></TR>
+<TR><TD>HDD</TD><TD>ハードディスクを接続します。この場合でもHarddiskメニューでイメージファイルを選択していない場合は未接続として扱われます。</TD></TR>
+<TR><TD>CD-ROM</TD><TD>CD-ROMドライブを接続します。Harddiskメニューでイメージファイルを選択していない場合はディスクが入っていない状態として扱われます。</TD></TR>
 </TABLE>
 </DD>
 </DL>
 
 <DL>
 <DT><B>Interrupt Delay</B></DT>
-<DD><P>�ǂݎ��E�������ݎ��̊��荞�݃E�F�C�g��ݒ肵�܂��BI/O�|�[�g�o�R�̓ǂݏ����ł̂݌��ʂ�����܂��B�ǂݎ��⏑�����݂��������ĕs����N�����ꍇ�͒l��ݒ肵�Ă݂Ă��������B</P>
+<DD><P>読み取り・書き込み時の割り込みウェイトを設定します。I/Oポート経由の読み書きでのみ効果があります。読み取りや書き込みが早すぎて不具合を起こす場合は値を設定してみてください。</P>
 </DD>
 </DL>
 
 <DL>
 <DT><B>Use Async CD-ROM Access</B></DT>
-<DD><P>�`�F�b�N�������CD�h���C�u�ւ̔񓯊��A�N�Z�X���L���ɂȂ�܂��BCD�ǂݍ��݂ŃG�~�����[�V�������x���Ȃ�̂�����ł��܂��B��CD/DVD�h���C�u���g�p����ꍇ�͓��Ɍ��ʂ�����܂��B�C���[�W�t�@�C�����g���ꍇ�͋t���ʂ�������܂���B</P>
+<DD><P>チェックを入れるとCDドライブへの非同期アクセスが有効になります。CD読み込みでエミュレーションが遅くなるのを回避できます。実CD/DVDドライブを使用する場合は特に効果があります。イメージファイルを使う場合は逆効果かもしれません。</P>
 </DD>
 </DL>
 
 <DL>
 <DT><B>Use CD-ROM EDC/ECC Emulation</B></DT>
-<DD><P>�`�F�b�N�������CD�C���[�W�t�@�C����EDC/ECC�̃`�F�b�N���L���ɂȂ�܂��B������s�ǃZ�N�^���o�n��CD�`�F�b�N�i������SafeDisc���j���������@�\����悤�ɂȂ�܂��B</P>
+<DD><P>チェックを入れるとCDイメージファイルのEDC/ECCのチェックが有効になります。いわゆる不良セクタ検出系のCDチェック（初期のSafeDisc等）が正しく機能するようになります。</P>
 </DD>
 </DL>
 
 <DL>
 <DT><B>Allow CD Tray Open/Close Command</B></DT>
-<DD><P>�`�F�b�N������Ǝ�CD/DVD�h���C�u�̃g���C�J�R�}���h�̎��s�������܂��B�G�~�����[�^����CD�g���C�̊J���s����悤�ɂȂ�܂��B</P>
+<DD><P>チェックを入れると実CD/DVDドライブのトレイ開閉コマンドの実行を許可します。エミュレータ内でCDトレイの開閉が行えるようになります。</P>
 </DD>
 </DL>
 
 <DL>
 <DT><B>Use IDE BIOS</B></DT>
-<DD><P>�`�F�b�N������Ǝ��@IDE BIOS���g�p���܂��B�g�p�ł���BIOS�t�@�C������ide.rom, d8000.rom, bank3.bin, bios9821.rom�ł��BBIOS�t�@�C���̏ڍׂ�<a href="how2use4.html">�O���t�@�C��</a>���Q�Ƃ��Ă��������B</P>
+<DD><P>チェックを入れると実機IDE BIOSを使用します。使用できるBIOSファイル名はide.rom, d8000.rom, bank3.bin, bios9821.romです。BIOSファイルの詳細は<a href="how2use4.html">外部ファイル</a>を参照してください。</P>
 </DD>
 </DL>
 
 <DL>
 <DT><B>Auto IDE BIOS</B></DT>
-<DD><P>�`�F�b�N������Ǝ��@IDE BIOS�̗L���^�������������肵�܂��BUse IDE BIOS�Ƀ`�F�b�N�������Ă���ꍇ�̂ݗL���ł��B</P>
+<DD><P>チェックを入れると実機IDE BIOSの有効／無効を自動決定します。Use IDE BIOSにチェックが入っている場合のみ有効です。</P>
 </DD>
 </DL>
 
