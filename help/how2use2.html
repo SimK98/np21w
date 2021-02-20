@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <TITLE>簡単な導入方法 - ディスクイメージ</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<BR><BR>
+
+<H3><B>簡単な導入方法 / ディスクイメージ</B></H3>
+
+<DL>
+<DT><B>ディスクイメージ</B></DT>
+<DD><P>ねこープロジェクト21/Wでは、直接FDDからデータの読み書きは行なわず、ディスクイメージ(仮想ディスクファイル)よりデータの読み書きを行います。<BR>ねこープロジェクト21/Wは、ベタ形式やD88形式以外に、DCP/DCU形式、NFD（T98-NEXT）形式、FDI（Anex86）形式などのフォーマットをサポートしています。</P>
+<P>PC-9800シリーズの場合は<A HREF="tools.html#make_hd">make_hd</A>、PC-ATマシンでは<A HREF="tools.html#ditt">DITT</A>で D88形式でディスクイメージを作成化して下さい。特殊フォーマットの場合はT98-Nextの<A HREF="tools.html#nfdmake">NFDMAKE.EXE</A>を用いると上手くいくかもしれません。</P>
+<P>Windows上では ベタ形式のみですが <A HREF="tools.html#vifc">VFIC</A>、<A HREF="tools.html#diskimg">ディスク イマージュ</A>をご利用下さい。</P>
+<P>空のディスクイメージは[<A HREF="emulate.html">Emulate</A> - New Disk]から作成できます。D88形式またはベタ形式で作成可能です。</P></DD>
+</DL>
+
+<BR><BR>
+
+<DL>
+<DT><B>ディスクイメージの作成方法</B></DT>
+<DD><P><FONT SIZE="-1" COLOR="#800000" style="font-weight:bold;"><U>※ イメージ化する場合には必ずライトプロテクトをして下さい。</U></FONT></P>
+<P><B>make_hdを用いて D88形式で作成</B></P>
+<OL>
+<LI>make_hdの存在するディレクトリに移動します。</LI>
+<LI>ドライブにイメージ化するフロッピーディスクを挿入します。</LI>
+<LI>make_hdを実行します。<BR>2HDディスクをイメージ化するには「make_hd <FONT COLOR="#008000"><I>ドライブ</I></FONT> -w -f<FONT COLOR="#008000"><I>ファイル名</I></FONT>.d88 -h」とタイプします。</LI>
+<LI>作成したイメージファイルをWindowsマシンへ転送します。</LI>
+</OL>
+<P>&nbsp;</P>
+<P><B>ディスク イマージュを用いて ベタ形式で作成</B></P>
+<P>PC-ATマシンでは 3モードドライブが搭載されている事が必要です。<BR>2モードドライブでの2HDディスクは 1.44MB形式だけしかイメージを作成する事ができません。</P>
+<OL>
+<LI>ディスク イマージュを起動し設定します。<BR>フロッピーディスクを挿入したドライブと ディスクタイプ(MS-DOSの1.2MBフォーマットは 1.25MB)を指定して FD -&gt; HDをクリックします。</LI>
+<LI>ファイル名を指定します。<BR>保存するファイル名指定のダイアログが表示されますので 保存するファイル名を指定します。</LI>
+<LI>拡張子を変更します。<BR>ディスクイマージュの拡張子は標準で binとなっていますが、一般的なベタイメージの拡張子は xdf, dup等ですので、これらに変更します。</LI>
+</OL>
+<P>ベタイメージは ファイルサイズが 1,261,568バイトのイメージファイルを指します。<BR>拡張子はあまり意味はありませんが、ねこープロジェクトIIでは xdf, dup等にしておくとディスクイメージ選択が容易に行なえます。</P>
+<P>&nbsp;</P>
+<P><B>NFDMAKEを用いて NFD形式で作成</B></P>
+<P>NFDMAKEは特殊フォーマットのイメージ化に向いています</P>
+<OL>
+<LI>NFDMAKEの存在するディレクトリに移動します。</LI>
+<LI>ドライブにイメージ化するフロッピーディスクを挿入します。</LI>
+<LI>NFDMAKEを実行します。<BR>ディスクをイメージ化するには「NFDMAKE <FONT COLOR="#008000"><I>ドライブ番号</I></FONT> <FONT COLOR="#008000"><I>ファイル名</I></FONT>.nfd」とタイプします。ドライブ番号は0から始まります。</LI>
+<LI>作成したイメージファイルをWindowsマシンへ転送します。</LI>
+</OL>
+<P>&nbsp;</P>
+<P><B>アドバイス</B></P>
+<P>PC-98上で作成したFDイメージが1枚のFDに収まらず、Windowsマシンへの転送が困難な場合があります。この場合は以下のいずれかのパターンで解決できる可能性があります。</P>
+<UL>
+<LI>実機が3モード対応で1.25MBディスクイメージの場合、1.44MBフォーマットのFDでデータを転送する</LI>
+<LI>ディスクイメージをFDに収まるサイズで分割して転送し、Windowsマシンで結合する</LI>
+<LI>実機がLAN等でネットワークにつながっている場合、ネットワーク経由でイメージを転送する</LI>
+<LI>実機とWindowsマシンがMOを取り扱える場合、MOを使ってデータを転送する</LI>
+<LI>Windowsマシンにシリアルポートがある場合、シリアルポートを使って転送する</LI>
+<LI><del style="color:#808080;">バイナリダンプしてWindowsマシン上のバイナリエディタに手打ちする</del></LI>
+</DD>
+</UL>
+</DL>
+</BODY>
+</HTML>
+

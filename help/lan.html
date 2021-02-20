@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <TITLE>ネットワーク機能(LAN)</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<BR><BR>
+
+<H3><B>ネットワーク機能(LAN)について</B></H3>
+
+<DL>
+<DD>
+<P>ねこープロジェクト21/Wはネットワーク機能(LAN接続)をサポートしています。</P>
+<P>
+	LANインタフェースのエミュレーションはTAP-Win32に依存しています。
+	TAP-Win32仮想ネットワークアダプタはOpenVPNに含まれています。
+	ねこープロジェクト21/Wで必要となるのは「TAP Virtual Ethernet Adapter」のみなので、OpenVPNの本体などはインストールする必要がありません。
+</P>
+<P>
+	ねこープロジェクト21/Wの設定画面ではTAP仮想ネットワークデバイスを選択してください。
+	TAPデバイスではないアダプタを選択しても無効です。
+	なお、実際に外部ネットワークに接続するにはTAPデバイスと実デバイスをブリッジ接続するなどの設定が必要です。
+</P>
+<P>
+	設定の詳細については<a href="netopt.html">Network option</a>をご覧ください。
+</P>
+</DD>
+</DL>
+
+</BODY>
+</HTML>
+

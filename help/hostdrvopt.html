@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <TITLE>Hostdrv option</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<BR><BR>
+
+<H3><B>Hostdrv option</B></H3>
+
+<P><IMG SRC="images/hostdrvopt.gif" BORDER="0" ALT="Hostdrv option" USEMAP="#general"></P>
+
+<P>
+<strong>注意: Neko Project 21/Wの不具合やゲストOSの暴走が発生した場合、その影響がホストのファイルにも及ぶことになりますので、共有範囲とアクセス権限は必要最小限にとどめる事をおすすめします。</strong>
+</P>
+
+<DL>
+<DT><B>Enable</B></DT>
+<DD><P>チェックを入れると共有フォルダ(hostdrv)機能が有効になります。<br>
+実際に使用する際は<a href="hostdrv.html">HOSTDRV.COMをMS-DOS上で実行して常駐</a>させて下さい。</P>
+</DD>
+</DL>
+
+<DL>
+<DT><B>Shared Directory</B></DT>
+<DD><P>
+ゲストOSと共有したいディレクトリを指定します。これが仮想ドライブルートになります。
+末尾のディレクトリ区切り文字はあってもなくても構いません。<br>
+<strong>注意: 相対パスは指定しないで下さい。相対パス指定時の動作は未定義です。</strong>
+</P></DD>
+</DL>
+
+<DL>
+<DT><B>Permission</B></DT>
+<DD>
+<P>
+	仮想ドライブ内のアクセス権を指定します。
+	Readは読取可能、Writeは書込可能、Deleteは削除可能です。
+</P>
+<P>
+	安全のためディレクトリを変更すると自動的にWriteとDeleteがオフになります。
+	必要であれば再度チェックを入れてオンにして下さい。
+</P></DD>
+</DL>
+
+</BODY>
+</HTML>
+

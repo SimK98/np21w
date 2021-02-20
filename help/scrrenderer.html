@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <TITLE>Screen option - Renderer</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<MAP NAME="scrrenderer">
+<AREA HREF="scrvideo.html" COORDS="14,32,52,47" ALT="Video">
+<AREA HREF="scrchip.html" COORDS="56,32,94,47" ALT="Chip">
+<AREA HREF="scrtiming.html" COORDS="98,32,140,47" ALT="Timing">
+<AREA HREF="scrfull.html" COORDS="144,32,210,47" ALT="FullScreen">
+</MAP>
+
+<BR><BR>
+
+<H3><B>Screen option - Renderer</B></H3>
+
+<P><IMG SRC="images/scrrenderer.gif" BORDER="0" ALT="Screen option" USEMAP="#scrrenderer"></P>
+
+<DL>
+<DT><B>Type</B></DT>
+<DD><P>使用したいレンダリングエンジンを選択します。</P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>項目名</TH><TH>内容</TH></TR>
+<TR><TD>DirectDraw</TD><TD>画面描画にDirectDrawを使用します。拡大時の補間モード等の細かい設定が不要な場合に使用できます。</TD></TR>
+<TR><TD>Direct3D</TD><TD>画面描画にDirect3Dを使用します。画面の拡大縮小時の補間モードを選択できるようになります。</TD></TR>
+</TABLE>
+</DD>
+</DL>
+
+<DL>
+<DT><B>Interpolation Mode</B></DT>
+<DD><P>画面の拡大縮小時の補間モードを設定します。Direct3Dを使用する場合のみ有効です。</P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>項目名</TH><TH>内容</TH></TR>
+<TR><TD>Nearest Neighbor</TD><TD>最近傍補間を使用します。周辺画素を考慮せずに最も近い位置の画素値が使用されます。</TD></TR>
+<TR><TD>Bilinear</TD><TD>バイリニア補間を使用します。周辺画素を考慮して線形補間された画素値が使用されます。</TD></TR>
+<TR><TD>Pixel-retained (Light)</TD><TD>出来るだけピクセルの形状を維持しつつ拡大します（弱め）。スクリーンに完全に収まる範囲で最近傍補間での整数倍拡大を行った後、スクリーンサイズに合うようにバイリニア補間での拡大を行います。</TD></TR>
+<TR><TD>Pixel-retained (Soft)</TD><TD>出来るだけピクセルの形状を維持しつつ拡大します（普通）。スクリーンサイズに近いサイズで最近傍補間での整数倍拡大を行った後、スクリーンサイズに合うようにバイリニア補間での拡大縮小を行います。</TD></TR>
+<TR><TD>Pixel-retained (Hard)</TD><TD>出来るだけピクセルの形状を維持しつつ拡大します（強め）。スクリーンを完全に収められるサイズで最近傍補間での整数倍拡大を行った後、スクリーンサイズに合うようにバイリニア補間での縮小を行います。</TD></TR>
+</TABLE>
+</DD>
+</DL>
+
+<DL>
+<DT><B>Use Direct3D fullscreen exclusive mode</B></DT>
+<DD><P>チェックするとDirect3D排他モードを使用してフルスクリーン表示にします。最近のWindowsでは排他モードを使用しない方が安定します。Direct3Dを使用する場合のみ有効です。</P>
+</DD>
+</DL>
+
+<DL>
+<DT><B>Use DirectDraw software rendering</B></DT>
+<DD><P>チェックするとDirectDrawをエミュレーションモードにします。大抵の場合エミュレーションモードでは最近傍補間となるので、拡大縮小時にドット境界をくっきりさせたい場合に利用できます。DirectDrawを使用する場合のみ有効です。</P>
+</DD>
+</DL>
+
+</BODY>
+</HTML>
+
