@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <TITLE>Screen option - Chip</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<MAP NAME="scrchip">
+<AREA HREF="scrvideo.html" COORDS="14,32,52,47" ALT="Video">
+<AREA HREF="scrtiming.html" COORDS="98,32,140,47" ALT="Timing">
+<AREA HREF="scrfull.html" COORDS="144,32,210,47" ALT="FullScreen">
+<AREA HREF="scrrenderer.html" COORDS="210,32,264,47" ALT="Renderer">
+</MAP>
+
+<BR><BR>
+
+<H3><B>Screen option - Chip</B></H3>
+
+<P><IMG SRC="images/scrchip.gif" BORDER="0" ALT="Screen option" USEMAP="#scrchip"></P>
+
+<A NAME="GDC"></A>
+<DL>
+<DT><B>Graphic Display Controller</B></DT>
+<DD><P>エミュレーションするGDCの設定をします。</P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>チップ</TH><TH>機能・搭載機種</TH></TR>
+<TR><TD>μPD7220</TD><TD>グラフィックのスクロール分割が４つです。<BR>主にi386以下のPC-9801シリーズ</TD></TR>
+<TR><TD>μPD72020</TD><TD>グラフィックのスクロール分割が２つです。<BR>主にi486以降のPC-9801 / PC-9821</TD></TR>
+</TABLE>
+</DD>
+</DL>
+
+<A NAME="GRCG"></A>
+<DL>
+<DT><B>Graphic Charger</B></DT>
+<DD><P>エミュレーションするグラフィックチャージャータイプを指定します。</P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>チップ</TH><TH>機能・搭載機種</TH></TR>
+<TR><TD>None</TD><TD>使用しません。<BR>初代PC-9801等</TD></TR>
+<TR><TD>GRCG</TD><TD>GRCGを使用します。<BR>PC-9801VM</TD></TR>
+<TR><TD>GRCG+</TD><TD>GRCGと CG-Windowを使用します。<BR>実際にはこのタイプのマシンは存在しません</TD></TR>
+<TR><TD>EGC</TD><TD>EGCを使用します。(動作が重くなります)<BR>PC-9801VX以降</TD></TR>
+<TR><TD>PEGC plane mode</TD><TD>PEGCプレーンモードを有効にします。この設定に関係なくパックトピクセルモードは常に有効です。<BR>PC-9821 初期モデル</TD></TR>
+</TABLE>
+<P>PC-9801VM,VX以降の製品はGRCGはほぼ必須です。<BR>EGCは市販ソフトではあまり使われませんが、逆にフリーソフト・同人ソフトでは EGCを要求するものが多数あります。<BR>また、EGCの搭載を判定して GRCGとEGCを使い分けるソフトウェアもあります。<BR>PEGCプレーンモードはPC-9821初期の一部のソフトで使用されている可能性があります。</P></DD>
+</DL>
+
+<DL>
+<DT><B>Enable 16color</B></DT>
+<DD><P>チェックをすると16色ボードを使用します。</P>
+<P>PC-9801VMではオプション(PC-9801-24)ボードとして存在しています。<BR>PC-9801VX以降では標準で装備されています。</P></DD>
+</DL>
+
+</BODY>
+</HTML>
+

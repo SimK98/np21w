@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <TITLE>非公開機能</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<BR><BR>
+
+<H3><B>非公開機能</B></H3>
+
+<DL>
+<DD><P>ねこープロジェクト21/Wでは iniファイルを操作することにより、非公開機能を操作することができます。</P><P>キーはnp21w.iniの [NekoProject21]へ追加してください。<BR>これらの機能は基本的に無保証・無サポートです。<BR>予告なしに変更・削除する可能性があります。</P>
+<P>&nbsp;</P>
+<P><B>ねこープロジェクトII 共通スイッチ</B></P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>キー名</TH><TH>機能</TH></TR>
+<TR><TD>ITF_WORK</TD><TD>FALSEでITFエミュレーションを抑制する。ねこープロジェクト21/WではOtherメニューのITF workと同じです。(デフォルト:TRUE)</TD></TR>
+<TR><TD>xspeaker</TD><TD>TRUEで左右出力を反転する</TD></TR>
+<TR><TD>BG_COLOR</TD><TD>液晶モードのバックグラウンドの色(RRGGBB 24bit値)</TD></TR>
+<TR><TD>FG_COLOR</TD><TD>液晶モードのフォアグラウンドの色(RRGGBB 24bit値)</TD></TR>
+<TR><TD>USE144FD</TD><TD>TRUEでFDDを３モードに(1.44MBをサポート)する。ねこープロジェクト21/Wでは常にTRUE扱いとなります。</TD></TR>
+<TR><TD>FDDRIVE3</TD><TD>TRUEでドライブ３を有効にする。</TD></TR>
+<TR><TD>FDDRIVE4</TD><TD>TRUEでドライブ４を有効にする。</TD></TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P><B>ねこープロジェクトII Windows版スイッチ</B></P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>キー名</TH><TH>機能</TH></TR>
+<TR><TD>np2title</TD><TD>ねこープロジェクトIIのキャプション文字列の指定</TD></TR>
+<TR><TD>np2winid</TD><TD>ねこープロジェクトIIのクラス名(半角３文字)<BR>複数起動を許すためのスイッチです。ねこープロジェクト21/Wではレジューム機能を使用しない限りデフォルトで複数起動が許可されています。</TD></TR>
+<TR><TD>paddingx</TD><TD>クライアント境界の横サイズ(0～32)</TD></TR>
+<TR><TD>paddingy</TD><TD>クライアント境界の縦サイズ(0～32)</TD></TR>
+<TR><TD>keyboard</TD><TD>キーボードの固定指定(通常は自動判定)<BR>PC-98 … PC-9821キーボード / PCAT … 106キーボード / KEY101 … 101キーボード</TD></TR>
+<TR><TD>clock_up</TD><TD>フルスクリーンの時計の色１(RRGGBB 24bit値)</TD></TR>
+<TR><TD>clock_dn</TD><TD>フルスクリーンの時計の色２(RRGGBB 24bit値)</TD></TR>
+<TR><TD>force400</TD><TD>TRUEでフルスクリーン時640x400にする。</TD></TR>
+<TR><TD>STATSAVE</TD><TD>TRUEでどこでもセーブを10スロット追加する。</TD></TR>
+<TR><TD style="color:gray">xrollkey</TD><TD><a href="device.html">正式機能に昇格(Swap PageUp/PageDown)</a>。<span style="color:gray">TRUEでROLLUP(PgDn)と ROLLDOWN(PgUp)キーを入れ換える。</span></TD></TR>
+<TR><TD>I286SAVE</TD><TD>TRUEでデバガを有効にする。</TD></TR>
+</TABLE>
+
+<P>&nbsp;</P>
+<P><B>ねこープロジェクト21/W の特殊な機能</B></P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>キー名</TH><TH>機能</TH></TR>
+<TR><TD>EMUDDRAW</TD><TD>TRUEでDirectDrawをエミュレーションオンリーにする（最近のPCはこの方が速かったりする）。これをONにすると恐らく拡大縮小の補間も効かなくなるのでドットがギザギザしてるのが好きな人もぜひ（なんじゃそりゃ）</TD></TR>
+<TR><TD>DRAGDROP</TD><TD>TRUEでエミュレーションウィンドウへの各種イメージファイルのドラッグアンドドロップを有効にする。</TD></TR>
+<TR><TD>MAKELHDD</TD><TD>TRUEでHDDイメージ作成サイズ8GB制限を解除して130GBくらいまでのイメージを作成可能にする。ただし、OSによっては起動できなかったりイメージ破壊を起こしたりする場合があるので注意。実機IDE BIOSでは8GB超えは使用できません。</TD></TR>
+<TR><TD>HALFTONE</TD><TD>TRUEでウィンドウアクセラレータ別窓の拡大縮小描画をHALFTONEで行います。あんまり綺麗じゃないのでボツ。<BR>(NP2 Window Acceleratorセクション内に追加)</TD></TR>
+<TR><TD>MOUSEMUL</TD><TD>マウス速度倍率を分数形式で指定します（分子）。設定できる値は整数のみですが、MOUSEDIVと合わせて任意の倍率に設定できます。</TD></TR>
+<TR><TD>MOUSEDIV</TD><TD>マウス速度倍率を分数形式で指定します（分母）。設定できる値は整数のみですが、MOUSEMULと合わせて任意の倍率に設定できます。</TD></TR>
+<TR><TD>MODELNUM</TD><TD>F8E8:003FのPC-9821機種IDを上書きする。指定する値は某所のDET98のソースを参考に。0にすると上書きしません。</TD></TR>
+<TR><TD>SVFDFILE</TD><TD>TRUEでFDDにセットしたイメージを設定ファイルに保存し、次回起動時に自動でセットする。</TD></TR>
+<TR><TD>USE_BIOS</TD><TD>FALSEでBIOS.ROMを読み込まなくなります。デフォルトはTRUE</TD></TR>
+<TR><TD>SAVESCRN</TD><TD>TRUEでスクリーン状態（フルスクリーンや回転）を保存し、次回起動時に復元する。</TD></TR>
+<TR><TD>WINNTFIX</TD><TD>TRUEにするとWinNT3.50でIDE HDDを認識するようにシステム共通域を設定する。ただし、Win3.1が挙動不審になる恐れあり。</TD></TR>
+<TR><TD>LGY98MAC</TD><TD>LGY-98のMACアドレスを変更する。他の機器と重複するとネットワークで問題を起こす可能性があるので不用意に値を入れないように注意</TD></TR>
+<TR><TD>OPTMPUAT</TD><TD>MPU-PC98IIのI/OポートをPC/AT互換機で使われている330h-331hにも開ける。主にWin2000の隠しドライバ用。</TD></TR>
+<TR><TD style="color:gray">SYSIOMSK</TD><TD><a href="cfgdlg.html">正式機能に昇格(Always use 16bit I/O port addressing (PC-9821) )</a>。<span style="color:gray">00h-ffhのI/Oポートをミラーにするかを設定します。SYSIOMSK=ff00でPC-9821相当（16bitフルデコード）、SYSIOMSK=0000でPC-9801相当になります。Win2000ではミラーを無効にする（ff00を指定する）必要があります。</span></TD></TR>
+<TR><TD>FSCRNMOD</TD><TD>bit4とbit0を1にしてbit1,5,6,7を0にする（ビットを0001xx01の状態にする。例えばFSCRNMOD=1dにする）と画面アスペクト比を強制的に4:3にします。誰得</TD></TR>
+<TR><TD>MEMCHKMX</TD><TD>この値以上のサイズのメモリチェックを省略します。チェックされないだけで起動後の使用は可能です。（最小は15・0は省略無し・単位はMB）</TD></TR>
+<TR><TD>SBEEPLEN</TD><TD>起動時のピポ音の長さを変更します。最大値は255です。0を指定するとデフォルト値（4）になります。</TD></TR>
+<TR><TD>SBEEPADJ</TD><TD>TRUEで起動時のピポ音の長さをクロックに応じて自動調節します。クロック倍率を変えても大体同じ長さで聞こえるようになります。長さはSBEEPLENで調整可能。</TD></TR>
+<TR><TD>cpu_fami</TD><TD>CPUID命令で返すファミリIDを設定します。詳細はIntelの資料を参照。</TD></TR>
+<TR><TD>cpu_mode</TD><TD>CPUID命令で返すモデルを設定します。詳細はIntelの資料を参照。</TD></TR>
+<TR><TD>cpu_step</TD><TD>CPUID命令で返すステッピングIDを設定します。詳細はIntelの資料を参照。</TD></TR>
+<TR><TD>cpu_feat</TD><TD>CPUID命令で返す機能情報(0000_0001h EDX)を16進数で設定します。詳細はIntelの資料を参照。存在しない機能のビットは立てても無視されます。</TD></TR>
+<TR><TD>cpu_f_ex</TD><TD>CPUID命令で返すAMD拡張機能情報(8000_0001h EDX)を16進数で設定します。詳細はAMDの資料を参照。存在しない機能のビットは立てても無視されます。</TD></TR>
+<TR><TD>cpu_fecx</TD><TD>CPUID命令で返すECX拡張機能情報(0000_0001h ECX)を16進数で設定します。詳細はIntelの資料を参照。存在しない機能のビットは立てても無視されます。</TD></TR>
+<TR><TD>cpu_vend</TD><TD>CPUID命令で返すベンダ文字列を設定します。詳細はIntelの資料を参照。特に指定しない場合は"GenuineIntel"になります。</TD></TR>
+<TR><TD>cpu_bran</TD><TD>CPUID命令で返すブランド文字列を設定します。詳細はIntelの資料を参照。特に指定しない場合はファミリID、モデル、ステッピングIDから自動的に名前を決定します。</TD></TR>
+<TR><TD>cpu_brid</TD><TD>CPUID命令で返すブランドIDを16進数で設定します。詳細はIntelの資料を参照。ffffffffを指定した場合はファミリID、モデル、ステッピングIDから自動的にIDを決定します。</TD></TR>
+<TR><TD>FPU_TYPE</TD><TD>数値演算コプロセッサ(x87 FPU)を種類を選択します。デフォルトは0です。64bit倍精度浮動小数点は比較的高速ですが拡張倍精度が必要な一部のアプリケーションで問題を起こす可能性があります。<br>0 = Berkeley SoftFloatによる80bit拡張倍精度浮動小数点エミュレーション <br>1 = 64bit倍精度浮動小数点エミュレーション <br>2 = 64bit倍精度浮動小数点エミュレーション（整数のロード・ストアのみ80bit拡張倍精度相当） </TD></TR>
+<TR><TD>CPUSTABF</TD><TD>CPU処理落ちした分を余裕のある時にクロック数を増やして回復させます。整数値で指定し、指定したフレーム数の間だけ有効（例えば60なら60フレーム以内の処理落ちを回復させる）。処理落ち回復時には事実上ノーウェイト状態になるので注意。</TD></TR>
+<TR><TD>SVCDFILE</TD><TD>TRUEでIDE CDドライブにセットしたイメージを設定ファイルに保存し、次回起動時に自動でセットする。</TD></TR>
+<TR><TD style="color:gray">HD_ASYNC</TD><TD style="color:gray">TRUEでIDE HDDの非同期アクセスを有効にする。しかし、期待に反してパフォーマンスが大幅に落ちるので設定しないが吉。（廃止）</TD></TR>
+<TR><TD>BIOSIOEM</TD><TD>TRUEでエミュレーションBIOSによるI/Oポート操作のエミュレーションを有効にする。実質的にWin3.1とWin9xのDOSプロンプト用。</TD></TR>
+<TR><TD>GDMELOFS</TD><TD>MELCO WAB-SのI/Oポートアドレスオフセットを指定します。WAB-Sのデフォルト設定は0です。</TD></TR>
+<TR><TD>MEMCKSPD</TD><TD>メモリチェックを高速化します。ここに指定した値が大きいほど速くなります。例えば4を指定すると通常の4倍速でチェックが終わります。</TD></TR>
+<TR><TD>TICKMODE</TD><TD>クロック同期用カウンタのモードを設定します。0=自動, 1=GetTickCount, 2=timeGetTime, 3=QueryPerformanceCounterを使用します。クロック同期の不具合がある場合は2や1を設定してみてください。</TD></TR>
+<TR><TD>USEWHEEL</TD><TD>TRUEでマウスホイールによる音量・マウス速度操作を有効にします。マウスホイール回転で音量変更、Ctrl+Shift+マウスホイール回転でマウス速度変更が可能です。</TD></TR>
+<TR><TD>READONLY</TD><TD>TRUEにすると設定変更をINIファイルに書き込まなくなります。</TD></TR>
+<TR><TD>GANBBSEX</TD><TD>TRUEにするとI-O DATA GA-98NBで1600x1024をスクロールなし表示できるようにします。使用する際はドライバ付属ユーティリティで解像度を1024x768または1280x1024に設定し、ビッグスクリーンのサイズを1600x1024にして下さい。</TD></TR>
+<TR><TD>USE_MVOL</TD><TD>TRUEにするとマスタボリュームコントロールが有効になります。デフォルトはTRUEです。</TD></TR>
+<TR><TD>TWNDHIST</TD><TD>ツールウィンドウのイメージファイル履歴の記憶数を指定します。0にするとデフォルト値になります。デフォルトは8件です。</TD></TR>
+<TR><TD>FSRESCFG</TD><TD>TRUEにすると各解像度毎にフルスクリーン設定、補間モード設定、ウィンドウサイズ設定を記憶します。</TD></TR>
+<TR><TD>IDEBADDR</TD><TD>IDE BIOSを配置するアドレスを設定します。D8ならD8000h（デフォルト）に、D0ならD0000h（本家np21標準）になります。0にするとBIOSが配置されなくなります。</TD></TR>
+<TR><TD>USERAM_D</TD><TD>D0000h～DFFFFhの範囲で空いている部分をRAM化します。実機IDE BIOS無し・SCSIディスク無し・HDDがSASI互換でない場合はD0000h～DFFFFh全部がRAM化します。</TD></TR>
+<TR><TD>CDDTSKIP</TD><TD>TRUEにするとCD-DA再生時にデータトラックを強制的にスキップします。</TD></TR>
+<TR><TD>USEMODEX</TD><TD>TRUEにするとPC-98でありながらPC/AT互換機のMODE X＋INT 10h VGA BIOSを一部サポートします。ウィンドウアクセラレータをPCI CL-GD5446にしないと効果がありません。使い道が分かる人以外はOFF推奨。</TD></TR>
+<TR><TD>GAMEPORT</TD><TD>TRUEにすると118音源のゲームポートが使えるようになります。ただし、かなり挙動が怪しいので注意（特に、Async CPUとの相性は最悪です）。</TD></TR>
+<TR><TD>OPTSB16A</TD><TD>TRUEにするとSound Blaster 16使用時にPC/AT互換機と同じポート番号も開けます。PC/AT互換機用のドライバを無理矢理使いたい人向け。</TD></TR>
+</TABLE>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>操作</TH><TH>機能</TH></TR>
+<TR><TD>PAUSEキーを押しながらリセット</TD><TD>ITFエミュレーション無しで起動します。ITF_WORKをFALSEにした場合と同じ動作になります。</TD></TR>
+</TABLE></DD>
+</DL>
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <TITLE>こまった時に - エミュレーション</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<BR><BR>
+
+<H3><B>こまった時に - エミュレーション</B></H3>
+
+<P>&nbsp;</P>
+<P><B>特定ソフトウェアが起動しない</B></P>
+<UL>
+<LI>メモリを 640KBにしてみてください。</LI>
+<LI>実機より<A HREF="how2use4.html#BIOSROM">BIOS.ROMを作成</A>して、BIOSを使用するようにしてください。</LI>
+<LI>プロテクトが掛かっているかどうか確認し、プロテクトを解除してください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>特定ソフトウェアの動作が遅い</B></P>
+<UL>
+<LI><A HREF="cfgdlg.html#BASECLOCK">CPUクロックを調節</A>してください。</LI>
+<LI>EGCが必須ではない場合には <A HREF="scrchip.html#GRCG">GRCGを選択</A>してください。</LI>
+<LI>サウンドボードを使用しない、もしくは PC-9801-26Kを<A HREF="device.html">選択</A>してください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>特定ソフトウェアが途中でフリーズする</B></P>
+<UL>
+<LI>設定をそのソフトの推奨環境に変更してみてください（大が小を兼ねないケースが多々あります）。</LI>
+<LI>CPUクロックやメモリ容量を減らしてみてください。</LI>
+<LI>エミュレータでは使用出来ない領域をUMBにしてしまっていないか確認してください。</LI>
+<LI>メモリマネージャをHIMEM.SYS + EMM386.EXEの構成にしてみてください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>GDCクロックを変更したい</B></P>
+<UL>
+<LI>一部のソフトウェアでは、GDCクロックを指定しなければならないことがあります。<BR><A HREF="syssetup.html">ソフトウェアディップスイッチ</A>で変更してください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>HELPキーでシステムセットアップメニューに入れない／TABキーで自動起動を解除できない／CtrlキーでWin98起動メニューに入れない</B></P>
+<UL>
+<LI>CPUクロック倍率が大きすぎるとシステムセットアップメニューなどに入れない場合があります。一時的に<A HREF="cfgdlg.html#BASECLOCK">CPUクロック倍率</A>を20倍かそれ以下に落としてみてください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>描画が崩れる</B></P>
+<UL>
+<LI>[<A HREF="screen.html">Screen</A> - Disp Vsync] で表示タイミングを変更してください。</LI>
+<LI><A HREF="scrchip.html#GDC">グラフィックコントローラをμPD7220</A>にしてください。</LI>
+<LI>386以降のBIOSを使用している場合には <A HREF="scrchip.html#GRCG">EGCを選択</A>してください。</LI>
+<LI>CPUクロックを20MHz以下まで落としてみてください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>色が変です</B></P>
+<UL>
+<LI>[<A HREF="screen.html">Screen</A> - Real Palettes]を指定すると改善されることがあります。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>漢字ROMを認識しません</B></P>
+<UL>
+<LI>フォントの形状をチェックして、漢字ROMを認識するソフトウェアがあります。<BR>この場合には 実機より<A HREF="how2use4.html#FONTROM">FONT.ROMを作成</A>して、導入してください。<BR><FONT SIZE="-1">昔LOCUSより出てた ウィザードリィ・コレクションはこれが原因で漢字が表示されなかった…</FONT></LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>サウンドが再生されない</B></P>
+<UL>
+<LI>サウンドカードが接続されているか確認してください。</LI>
+<LI>DirectX3.0以上が正常にインストールされているか確認してください。(Windows95の場合)</LI>
+<LI>メモリスイッチでサウンドボードを使用するになっているか確認してください。</LI>
+<LI>実機より<A HREF="how2use4.html#SOUNDROM">SOUND.ROMを作成</A>して、SOUND BIOSを使用するようにしてください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>サウンドが音飛びする</B></P>
+<UL>
+<LI><A HREF="cfgdlg.html#SAMPLERATE">Sampling Rateを22kHz</A>にしてください。</LI>
+<LI><A HREF="cfgdlg.html#BUFFER">Bufferの値を調節</A>してください。</LI>
+<LI>DirectXを更新してください。</LI>
+<LI>サウンドカードのドライバを最新のものに更新してください。</LI>
+<LI>実機より<A HREF="how2use4.html#SOUNDROM">SOUND.ROMを作成</A>して、SOUND BIOSを使用するようにしてください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>マウスが動かない</B></P>
+<UL>
+<LI>[<A HREF="device.html">Device</A> - Mouse - Mouse Capture]、マウスの中ボタンを押してマウス占有モードに切替えてください。占有されていない場合にはエミュレーションのマウスは不動として扱われます。</LI>
+<LI>[<A HREF="device.html">Device</A> - Mouse - Non-capture Control]を使用すると占有されていない状態で操作出来るようになります。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>ディップスイッチを変更したい</B></P>
+<UL>
+<LI><A HREF="syssetup.html">システムセットアップメニュー</A>より変更してください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>メモリスイッチを変更したい</B></P>
+<UL>
+<LI><A HREF="syssetup.html">システムセットアップメニュー</A>より変更してください。</LI>
+<LI>N88-BASICのswitch.n88を使用してください。(N88(86)-BASICのマニュアルも参照してください。)</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>リアルタイムセーブ（ステートセーブ）を使いたい</B>
+<UL>
+<LI>基本的にサポートはしませんが、<A HREF="othercfg.html">非公開機能</A>を設定することで使用可能になります。<BR>但し、アプリケーションの整合性が合わなくなったり、イメージの破損に繋がる恐れもありますので注意して下さい。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>フルスクリーンにしたときの画面が汚い</B>
+<UL>
+<LI><A HREF="scrrenderer.html">Direct3D描画のNearest Neighbor系を選択し</A>、<A HREF="scrfull.html">フルスクリーンをInteger multipleにしてください</A>。</LI>
+<LI><A HREF="scrrenderer.html">Direct3D描画のPixel-retained系を選択してください</A>。<BR>整数倍でない中途半端なサイズでもそこそこ綺麗に拡大できます。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>フルスクリーンのディスプレイサイズを640x400にしたい</B>
+<UL>
+<LI><A HREF="othercfg.html">非公開機能</A>で強制的に変更することができます。<BR>しかし、PC-9801シリーズの一般的なスクリーンサイズは640x400なのですが、一部のソフトウェアで CRTCを制御して 変則的なスクリーンサイズを表示しますので、フルスクリーンのサイズを640x400にすることは推奨いたしません。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>大容量ハードディスクイメージを作るには？</B>
+<UL>
+<LI>[<A HREF="emulate.html">Emulate</A> - NewDisk]でファイルの種類をNHDまたはVHDにして作成してください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>DOSでCDを使うときにはどのドライバ使うべき？</B>
+<UL>
+<LI>NECCDD.SYSが最適です。NECCDM.SYSもとりあえず使用できます。FreeDOS系のドライバも使用出来ます。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>実機IDE BIOSは用意すべき？</B>
+<UL>
+<LI>必ずしも用意する必要はありません。無い方がまともに動く場合も多々あります。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>FDアクセスが遅い／FDDのシーク音を消したい</B>
+<UL>
+<LI>[<A HREF="device.html">Device</A> - Sound - Seek Sound]を外してください。アクセスウェイトも解除されます。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>CD交換が上手くいかない／CDアクセスが不安定</B>
+<UL>
+<LI>CD交換時は数秒間ウェイトがかかります。タイトルバーの表示が選択したファイル名に変わるまで少し待ってください。</LI>
+<LI>[Harddisk - <A HREF="ideopt.html">IDE option</A>]でAsync CD-ROM AccessやCD-ROM EDC/ECC Emulationを無効にしてみてください。</LI>
+<LI>CDイメージを使用している場合、実CDを試してみてください。逆に、実CDを使用している場合、CDイメージを試してみてください。</LI>
+<LI>メモリマネージャ周りの設定を見直してください。そのせいで挙動がおかしくなる場合があります。</LI>
+</UL>
+
+<P>&nbsp;</P>
+
+<H4><B>ウィンドウアクセラレータ関連</B></H4>
+
+<P><B>ウィンドウアクセラレータの機種はどれにしたら良いですか</B>
+<UL>
+<LI>WinNT系, Win98ではXe10内蔵またはPCI CL-GD5446を推奨します。</LI>
+<LI>Win95, FreeBSD系ではXe10内蔵を推奨します。</LI>
+<LI>Win3.1, DOS系ではGA-98NB系, WAB-S, WSN系を推奨します。</LI>
+<LI>一部のアプリケーションではPC-9801-96で正常動作する場合があります。</LI>
+<LI>セットアップ時以外では自動切替も使用できます。ただし、判定が上手くいくかどうかはアプリケーション依存です。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>ウィンドウアクセラレータに切り替わるときにパチパチ音がします</B>
+<UL>
+<LI>出力切替の電磁リレーの音です。</LI>
+<LI>不要な場合は<A HREF="wabopt.html">Window Accelerator option</A>のUse Analog Switch ICにチェックを入れてください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>ウィンドウアクセラレータの別窓が操作しにくいです</B>
+<UL>
+<LI>今となっては別窓を使う必要性はあまりないので統合窓にすることをおすすめします。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>Windowsで動画再生すると激しく色化けする</B>
+<UL>
+<LI>YUVフォーマットへの対応が完全でないことが原因の場合があります。デコーダの設定でYUV関連のアクセラレーションを無効にしてみてください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+
+<H4><B>ネットワーク関連</B></H4>
+
+<P><B>LGY-98が認識しません／外部ネットワークと通信できません</B>
+<UL>
+<LI>ホストにTAP-Win32が正常にインストールされているか確認してください。</LI>
+<LI>TAPデバイスが<A HREF="faqnet.html">ブリッジ接続などで外部ネットワークに接続</A>されているか確認してください。</LI>
+<LI><A HREF="netopt.html">TAP device name</A>で有効なTAPデバイスを指定しているか確認してください。</LI>
+<LI>割り込みの設定が合っているかを確認してください。設定画面の番号はIRQではなくINTですので注意してください。</LI>
+</UL>
+
+<P>&nbsp;</P>
+<P><B>LGY-98のセットアップユーティリティが使えません</B>
+<UL>
+<LI>I/OポートとIRQは設定ウィンドウで設定してください。</LI>
+</UL>
+
+</BODY>
+</HTML>
+
