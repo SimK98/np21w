@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>更新履歴 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+	<h1>更新履歴</h1>
+	<div style="margin:4px; padding 4px; border: 3px groove gray">
+		<p>
+<pre>
+【2021/01/17】 
+Neko Project 21/W ver0.86 rev79を公開しました。
+・マウス割り込みが消える不具合に対症療法で対応
+・HRTIMER周りを多少綺麗なコードに書き換えました
+・画面周りのBIOS不具合修正
+・セクタ数255のディスクを正しく扱えない不具合を修正
+・BIOS経由の大容量ディスクへのアクセスが出来ない不具合を修正
+・非公開機能MAKELHDD有効時の作成可能容量上限を130GBくらいにしました
+・48bit LBAに対応させました
+・TABキーでHDDの自動起動解除が出来ない問題を修正
+・CPUクロック数が大きいとき86音源が狂う問題を修正
+・Win10環境でウィンドウの位置が正しく復元されない問題を修正
+・86音源の割り込みをいじりました
+　・86音源のPCMがまともになったはず
+・SB16のPCM周りを調整しました
+
+【2020/09/26】 
+Neko Project 21/W ver0.86 rev78を公開しました。
+・色々な情報を参考にEGC周りをかなりいじくりました。
+・AMD系プロセッサでCMPXCHG8B命令サポートのフラグが立っていなかったのを修正
+・configureで設定されたクロック数をRDTSCで取得出来るようにしました
+
+【2020/08/14】 
+Neko Project 21/W ver0.86 rev77を公開しました。
+Direct3D描画の時にフルスクリーン表示にすると画面が表示されない場合がある不具合を修正しました。
+
+【2020/07/17】 
+Neko Project 21/W ver0.86 rev76を公開しました。
+プレーンモード有無の判定が上手くいくようにしました
+
+【2020/06/22】 
+Neko Project 21/W ver0.86 rev75を公開しました。
+CD交換時の挙動を改良しました
+
+【2020/06/21】 
+Neko Project 21/W ver0.86 rev74を公開しました。
+・IDE周りの接続フラグを調整。Win9x,WinNT4.0両方で変な構成も含めて一応使えるようにしたつもり。
+・FreeBSDでXe10内蔵CL-GD5430が動かなくなっていた不具合を修正
+・SB16のモノラルPCM再生を調整
+・PCI CL-GD5446でDOSプロンプトを全画面にしてから戻すと描画が狂う問題を誤魔化し
+・ジョイパッドが未接続の時にはゲームポートも未接続として応答するように修正
+
+【2020/05/10】 
+Neko Project 21/W ver0.86 rev73を公開しました。
+・Async CPU使用中に動的クロック変更（NPCNGCFG）が正しく動かない不具合を修正
+・Screen optionのRendererをDirect3Dに設定してフルスクリーンにすると画面右側1ドットが欠ける不具合を修正
+・118音源周りを少しいじりました
+・CL-GD54xxのバグを修正
+・GDCのSingle Dot Writingを実装したつもり
+・86音源周りでWin3.1/9x系がフリーズする問題を修正したつもり
+
+【2020/03/20】 
+Neko Project 21/W ver0.86 rev72を公開しました。
+一部のプログラムでマウス移動範囲がおかしくなる不具合を修正
+
+【2020/03/12】 
+Neko Project 21/W ver0.86 rev71を公開しました。
+・SB16のPCMが使えるようになりました（WindowsもOK）
+・シリアルポートの不具合を修正
+・SSE2のPSLLDQ命令とPSRLDQ命令の実装ミスを修正
+・118音源にゲームポートを追加
+
+【2020/02/03】 
+Neko Project 21/W ver0.86 rev70を公開しました。
+・CL-GD5446のVideo Window機能に対応しました
+・CD-ROM周りの修正
+・CPUクロック倍率設定の追加
+・CPUフラグのCPU_FEATURE_CX8を立て忘れていたので立てました
+・MODE X絡みの怪しい機能をオプションとして追加（実機にない領域）
+
+【2019/12/08】 
+Neko Project 21/W ver0.86 rev69を公開しました。
+・BIOS無しの状態でもWin9xのIDEドライバでHDDを認識するようになりました！
+・NVL.DLL使用時のステートセーブの不具合を修正
+・その他不具合をいくつか修正
+・HAXM版とソースを統合しました
+
+【2019/10/14】 
+Neko Project 21/W ver0.86 rev68を公開しました。
+・Win10 1903環境のDirect3Dフルスクリーンでメニューが出ない問題に対応
+・シリアルポート関連の大幅変更と不具合修正、機能追加（ペンタブ・名前付きパイプなど）
+・メモリリーク系のバグを徹底的に修正しました
+
+【2019/09/11】 
+Neko Project 21/W ver0.86 rev67を公開しました。
+Super MPUを部分実装しました！
+
+【2019/09/07】 
+Neko Project 21/W ver0.86 rev66を公開しました。
+・処理落ち時に86音源のPCMが鳴らなくなる場合がある不具合を今度こそ修正
+・試しに21じゃない方を作ってみました
+・Direct3Dメニューバグ修正したつもり（微妙に失敗）
+・MIDIバグ修正
+・BIOSの256色モード切替バグ修正
+
+【2019/07/27】 
+Neko Project 21/W ver0.86 rev65を公開しました。
+ウィンドウアクセラレータのマルチスレッドモードを使うと画面描画が止まる不具合を修正しました
+
+【2019/07/27】 
+Neko Project 21/W ver0.86 rev64を公開しました。
+処理落ち時に86音源のPCMが鳴らなくなる場合がある不具合を修正＆86音源+スピークボードのOPNAタイマー不具合修正＆サウンドボードにWaveStarを追加しました
+
+【2019/07/13】 
+Neko Project 21/W ver0.86 rev63を公開しました。
+スパークボードでYM3438が鳴らない不具合を修正＆86音源+スピークボードを選択できるようにしました！
+
+【2019/06/30】 
+Neko Project 21/W ver0.86 rev62を公開しました。
+ウィンドウアクセラレータ使用中も画面回転可能に＆各画面解像度毎にフルスクリーン時の表示設定やウィンドウサイズ設定を覚えるオプションを追加しました
+
+【2019/06/08】 
+Neko Project 21/W ver0.86 rev61を公開しました。
+PageDownキーとPageUpキーの入れ替えをメニューで設定可能にしました
+
+【2019/04/20】 
+Neko Project 21/W ver0.86 rev60を公開しました。
+RaSCSI形式(.HDN)で作成可能なイメージファイルサイズ制限を緩和しました
+
+【2019/03/23】 
+Neko Project 21/W ver0.86 rev59を公開しました。
+マルチスレッド絡みとCDイメージマウントのバグ修正をしました
+
+【2019/02/23】 
+Neko Project 21/W ver0.86 rev58を公開しました。
+CS4231のノイズを改善したつもり
+
+【2019/02/17】 
+Neko Project 21/W ver0.86 rev57を公開しました。
+タイミングを維持したままCPUをフル稼働させるオプションを足しました
+
+【2019/01/23】 
+Neko Project 21/W ver0.86 rev56を公開しました。
+Direct3D描画の安定性を改善したつもり＆Win3.1でOPL3SA.DRVが多分使えるようなりました
+
+【2019/01/12】 
+Neko Project 21/W ver0.86 rev55を公開しました。
+PEGCのMMIOがおかしくなっていたのを修正
+
+【2019/01/06】 
+Neko Project 21/W ver0.86 rev54を公開しました。
+CDイメージ使用時にEDC/ECCのエミュレーションを行う機能を追加しました
+
+【2019/01/05】 
+Neko Project 21/W ver0.86 rev53を公開しました。
+・高速メモリチェックの設定が正しく保存されない不具合を修正
+・Windows10環境でウィンドウのサイズがおかしくなる不具合を暫定修正
+
+【2018/12/22】 
+Neko Project 21/W ver0.86 rev52を公開しました。
+PEGCプレーンモードの一部を仮実装しました
+
+【2018/12/16】 
+Neko Project 21/W ver0.86 rev51を公開しました。
+Win3.1フリーズ対策とマウス周りの不具合修正をしました
+
+【2018/12/14】 
+Neko Project 21/W ver0.86 rev50を公開しました。
+プラグアンドプレイとウィンドウアクセラレータ周りの不具合修正をしました
+
+【2018/12/10】 
+Neko Project 21/W ver0.86 rev49を公開しました。
+メモリ周りとBIOS I/Oエミュレーションの不具合修正をしました
+
+【2018/12/09】 
+Neko Project 21/W ver0.86 rev48を公開しました。
+GA-98NBがまともに使えるようになりました！＆細かい不具合修正
+
+【2018/11/23】
+Neko Project 21/W ver0.86 rev47を公開しました。
+・Windows2000でIDEスレーブデバイスを認識するようになりました！
+・BIOSでのI/Oポート操作エミュレーションを改良
+・Win9xでWSN-A2F/A4Fがある程度使用可能になりました
+・Direct3D描画周りの不具合を修正
+・拡張メモリ容量設定を実質無制限にしました
+・メモリチェックを高速化する機能を付けてみました
+・Win3.1/信長の野望 天翔記でGA-98NBがある程度使用可能になりました
+・np2fmgen風のマウスホイール操作を追加しました（非公開機能）
+
+【2018/10/27】
+Neko Project 21/W ver0.86 rev46を公開しました。仮想86モード拡張の一部をサポート&DOSプロンプト画面表示不具合修正&Windows95でプロテクトモードFDDドライバが使用できるようになりました！
+
+【2018/10/13】
+Neko Project 21/W ver0.86 rev45を公開しました。Direct3Dを使った画面描画に対応しました！
+
+【2018/09/27】
+Neko Project 21/W ver0.86 rev44を公開しました。
+・SSE命令の不具合を修正
+・CPUにSSE2, SSE3命令を追加
+・動的ハードウェア構成変更機能追加
+・HRTIMERのBIOS実装
+・PCIバスを実装
+・PCI接続ウィンドウアクセラレータ CL-GD5446を実装
+
+【2018/08/09】
+Neko Project 21/W ver0.86 rev43を公開しました。NVL.DLLで結構色々読めることが判明したのでファイル選択時の拡張子にそこそこ有名な形式を追加＆実CDドライブ関連の不具合を修正しました。
+
+【2018/06/26】
+Neko Project 21/W ver0.86 rev42を公開しました。SoftFloat FPUのFXAM命令のバグを修正＆容量可変VHDイメージ作成バグ修正＆非同期CD-ROMアクセスが出来るようになりました！
+
+【2018/05/20】
+Neko Project 21/W ver0.86 rev41を公開しました。CPUにSSE命令, Enhanced 3DNow!命令を実装しました！
+
+【2018/03/17】
+Neko Project 21/W ver0.86 rev40を公開しました。拡張倍精度FPUサポート＆FPU,CPU命令を追加＆MMX命令,3DNow!命令を実装しました！
+
+【2018/02/17】
+Neko Project 21/W ver0.86 rev39を公開しました。FDCとFPUの不具合を修正＆ピポ音調整機能追加
+
+【2018/02/03】
+Neko Project 21/W ver0.86 rev38を公開しました。118音源とMate-X PCMとSB16用の設定画面を追加＆NECCDM.SYSをある程度使用できるようにしました＆実機BIOS無しの場合にWindows2000でFDDが見えなくなる不具合を修正
+
+【2017/11/18】
+Neko Project 21/W ver0.86 rev37を公開しました。Win2000のデバイス検出でブルースクリーンが出る不具合を修正＆CPU処理速度を若干改善しました！
+
+【2017/10/19】
+Neko Project 21/W ver0.86 rev36を公開しました。118音源・Mate-X PCM・Sound Blaster 16が追加されました！
+
+【2017/09/30】
+Neko Project 21/W ver0.86 rev35を公開しました。fmgenがサポートされました！
+
+【2017/08/06】
+Neko Project 21/W ver0.86 rev34を公開しました。ホストのCD/DVDドライブマウント機能の不具合が修正されました
+
+【2017/06/30】
+Neko Project 21/W ver0.86 rev33を公開しました。ホストのCD/DVDドライブをマウントできるようになりました！
+
+【2017/05/28】
+Neko Project 21/W ver0.86 rev32を公開しました。Win9xでのマルチメディアタイマーの不具合が修正されました！
+
+【2017/05/27】
+Neko Project 21/W ver0.86 rev31を公開しました。LGY-98 LANボードのDOSドライバが使用可能になりました！
+
+【2017/05/16】
+Neko Project 21/W ver0.86 rev30を公開しました。FreeBSDのX Window SystemでXe10内蔵ウィンドウアクセラレータが使えなくなっていた不具合を修正
+
+【2017/03/04】
+Neko Project 21/W ver0.86 rev29を公開しました。Win9xの高速再起動でCDドライブが認識しなくなる不具合を修正＆
+CL-GD54xx使用中にWin3.1,Win9xの文字列描画が乱れる不具合を修正＆任意CHSイメージ作成＆動的容量VHDサポートなど
+
+【2017/01/26】
+Neko Project 21/W ver0.86 rev28を公開しました。86音源のフリーズ対策・HOSTDRVのGUI設定追加・PC-9801-86の追加など
+
+【2017/01/14】
+Neko Project 21/W ver0.86 rev27を公開しました。プロテクトモードFDCドライバが動くようになりました！（Win95除く）
+
+【2017/01/03】
+Neko Project 21/W ver0.86 rev26を公開しました。IDEの割り込みバグ修正＆ウィンドウアクセラレータの自動選択
+
+【2016/12/19】
+Neko Project 21/W ver0.86 rev25を公開しました。ウィンドウアクセラレータを若干修正
+
+【2016/12/16】
+Neko Project 21/W ver0.86 rev24を公開しました。WSN-A4FがWindows3.1で程々に映るようになりました
+
+【2016/12/09】
+Neko Project 21/W ver0.86 rev23を公開しました。WAB-Sのハードウェアカーソルが表示できるようになりました
+
+【2016/12/07】
+Neko Project 21/W ver0.86 rev22を公開しました。ウィンドウアクセラレータ修正＆MELCO WAB-S実装＆メモリ上限増などなど
+
+【2016/11/20】
+Neko Project 21/W ver0.86 rev21を公開しました。Raw Input Mode不具合修正＆実機BIOS無しでWinNTを起動できるようにするオプションを追加しました
+
+【2016/07/27】
+Neko Project 21/W ver0.86 rev20を公開しました。VM設定ファイルを作成できるようにしました
+
+【2016/07/17】
+Neko Project 21/W ver0.86 rev19を公開しました。ステートセーブとレジューム機能が再び使えるようになりました
+
+【2016/06/25】
+Neko Project 21/W ver0.86 rev18を公開しました。IDE BIOSを使用すると書き込みデータが破損するバグを修正
+
+【2016/06/19】
+Neko Project 21/W ver0.86 rev17を公開しました。I/O 1E8Ehのバンク切り替えに暫定対応
+
+【2016/06/11】
+Neko Project 21/W ver0.86 rev16を公開しました。CL-GD5430とhostdrvのバグを修正
+
+【2016/06/02】
+Neko Project 21/W ver0.86 rev15を公開しました。CL-GD5430のVRAMウィンドウを実装しました
+
+【2016/05/16】
+Neko Project 21/W ver0.86 rev14を公開しました。MS-DOS, Windows3.1での音楽CD再生が正常化しました！
+
+【2016/05/15】
+Neko Project 21/W ver0.86 rev13を公開しました。マウスとCD-DA関連の動作を改善しました。
+
+【2016/05/03】
+Neko Project 21/W ver0.86 rev12を公開しました。FPUがほぼ正常に動くようになりました！
+
+【2016/05/01】
+Neko Project 21/W ver0.86 rev11を公開しました。FPUが試験的に追加されました！
+
+【2016/04/29】
+Neko Project 21/W ver0.86 rev10を公開しました。
+
+【2016/04/24】
+Neko Project 21/W ver0.86 rev9を公開しました。NFD形式サポート
+
+【2016/04/12】
+Neko Project 21/W ver0.86 rev8を公開しました。VHDサポートが無効になっていたので使えるように修正
+
+【2016/04/09】
+Neko Project 21/W ver0.86 rev7を公開しました。ウィンドウアクセラレータの256色モードパレットのバグ修正。Winキー対応
+
+【2016/03/29】
+Neko Project 21/W ver0.86 rev6を公開しました。ウィンドウアクセラレータがエミュレーションウィンドウに統合されました
+
+【2016/03/26】
+Neko Project 21/W ver0.86 rev5を公開しました。VHD形式のハードディスクイメージに対応
+
+【2016/03/25】
+Neko Project 21/W ver0.86 rev4を公開しました。
+
+【2016/03/23】
+Neko Project 21/W ver0.86 rev3を公開しました。
+
+【2016/03/19】
+Neko Project 21/W ver0.86 rev2を公開しました。
+</pre>
+		</p>
+	</div>
+	<p>
+		<a href="./index.html">トップに戻る</a>
+	</p>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>なんかくれ - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+	<h1>なんかくれ</h1>
+	<img src="img/pc9821np2_emu3t2_logo.png">
+	<p>
+		このエミュレータはWindows2000（SP4 SRP1v2必須）以降のホストでのみ実行できます。Linux等では実行できません。非Windows環境の場合はAZO氏の<a href="https://domisan.sakura.ne.jp/article/np2kai/np2kai.html" target="_blank">Neko Project II (NP2) 改変</a>を使うとほぼ同等の機能が使えます。
+	</p>
+	<h2>Neko Project 21/W関連</h2>
+	<p>
+		※ステートセーブ・レジュームの互換性はバージョンアップの際に無くなる場合がありますのでご注意ください<br>
+		※初めて使用される場合はページ下部の注意事項もご覧下さい
+	</p>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1SuXsIoM0VDeY_gW4kIyK_Yh6qIReryZW/view?usp=sharing">Neko Project 21/W ダウンロード（ver0.86 rev79）</a><br>
+		通常版です。ソースコード付きです。
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1R7YK4YRZXO5_-owK4if8i_U4BsjTRJpw/view?usp=sharing">Neko Project II ユーティリティディスク（np2tool.d88）</a><br>
+		HOSTDRV.COM, PWOFF.COMなど
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/18KH-ZV6kCa0j0fg-4JHgSIQsiX8N6whE/view?usp=sharing">Neko Project 21/W ユーティリティディスク（np21wtool.d88）</a><br>
+		NPCNGCLK.EXE, NPCNGCFG.EXEなど（本家np2/np21で使っても何も起こりません）
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/drive/folders/0B19bYGqHu2lvTWZWSHlHLWMxVW8?usp=sharing">過去バージョンのアーカイブ</a><br>
+		旧バージョンのテストやdiffをしたい人向け（致命的なバグがあるバージョンも含まれます・ディスクイメージバックアップ推奨）
+	</div>
+	<h3>バージョン履歴</h3>
+	<p>
+		長いので<a href="./version.html">バージョン履歴</a>へ。
+	<p>
+
+	<h2>実機関連</h2>
+	<div class="downloadContents">
+<a href="https://drive.google.com/file/d/1MZegrFGA5fcsQ4uyvOw8EXtM97aDP15i/view?usp=sharing">Sound Blaster 16 for PC-98 Windows2000用ドライバ (WDM) パッチ ver.0.8</a><br>
+Windows2000でSound Blaster 16 for PC-98を使うためのドライバをPC/AT互換機用ドライバから生成するパッチです。実機でも使えます。旧バージョンが欲しい方は上記の過去バージョンのアーカイブから探してください。
+	</div>
+	<div class="downloadContents">
+<a href="https://drive.google.com/file/d/15bCvlKX3XHIpepg2ZcdDh4SUVEUJkVPr/view?usp=sharing">MPU-PC98II Windows2000用ドライバ (WDM) パッチ ver.0.8</a><br>
+Windows2000でMPU-PC98IIまたはその互換デバイスを使うためのドライバをPC/AT互換機用ドライバから生成するパッチです。実機でも使えます。安定性を求めるならNT4.0のドライバを借りてくる方が良いかもしれません。旧バージョンが欲しい方は上記の過去バージョンのアーカイブから探してください。
+	</div>
+
+	<h2>SL9821勝手に改造関連</h2>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1SqW39FldFSygA8yWXgyrlEU0TWLZIcWK/view?usp=sharing">SL9821 + LGY-98(TAP-Win32)</a><br>
+		Neko Project 21/Wのソースを流用してSL9821(0.2.4.2)をLGY-98対応させてみたものです。使用条件等はSL9821のサイトをご覧下さい。
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1mxQN7yfvJuCzq3yEqEXxI67YDzWl9dW6/view?usp=sharing">SL9821 + LGY-98(TAP-Win32) + CL-GD5430</a><br>
+		Neko Project 21/Wのソースを流用してSL9821(0.2.4.2)をLGY-98とCL-GD5430ウィンドウアクセラレータに対応させてみたものです。別窓モードしか実装していないので使いにくいと思います。使用条件等はSL9821のサイトをご覧下さい。
+	</div>
+
+	<h2>注意事項</h2>
+	
+	<h3>メモリマップについて</h3>
+	<p>
+		Neko Project 21/Wのメモリマップはやや特殊ですので、UMBの設定の際はご注意下さい。
+	</p>
+	<div style="margin:16px;">
+	<table style="max-width:100%;" border=1>
+		<thead>
+			<tr><th style="min-width:6em;">使用機器</th><th style="min-width:9em;">アドレス</th><th>備考</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>SASI</td><td>D0000h～D0FFFh</td><td>SASI互換HDDをIDE#1, IDE#2に接続した場合のみ使用されます</td></tr>
+			<tr><td>SCSI</td><td>D2000h～D5FFFh</td><td>SCSIを使用していない場合は空きになります</td></tr>
+			<tr><td>IDE</td><td>D8000h～DBFFFh</td><td>rev69以降のエミュレーションIDE BIOSでは使用されません（実機IDE BIOS使用時のみ占有）。非公開機能で変更可能（付属ヘルプ参照のこと）</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h3>ディスクイメージ追加サポートについて</h3>
+	<p>
+		NVL.DLLを用意するとNeko Project 21/Wで追加のディスクイメージが読めるようになります。NVL.DLLについては「Neko Project 21/W(np21w, ねこープロジェクト21/W)用のVirtualPC等イメージ使用ライブラリ」で検索してください（ディスクイメージエディタのNDと同じサイトです）。ページにはビルド手順が書かれていますが、現在のバージョンでは既に取り込まれていますので変更用ファイルの中のNVL.DLLだけを用意すればOKです。
+	</p>
+	<p>
+		追加サポートされる主要なイメージ形式は以下の通りです。
+	</p>
+	<ul>
+		<li>容量可変VirtualPC形式</li>
+		<li>VMware形式</li>
+		<li>Hyper-V形式</li>
+		<li>VirtualBox形式</li>
+		<li>QEMU qcow形式</li>
+	</ul>
+	
+	<h3>ライセンスについて</h3>
+	<p>
+		Neko Project 21/Wの大半のコードは修正BSDライセンスですが、以下のファイルは移植のためライセンスが異なっています。これらを含めてコンパイルすると全体としてのライセンスが変わりますのでご注意ください。 
+	</p>
+	<div style="margin:16px;">
+	<table style="max-width:100%;" border=1>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:9em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c<br>fpemul_softfloat.c</td><td>GPL</td><td> fpemul_dosbox.c,fpemul_dosbox2.c,fpemul_softfloat.c)をコンパイルから除外する
+（Berkeley SoftFloatは本来別のライセンスですがfpemul_softfloat.cだけはDOSBox由来のコードを含むためGPLです）</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、softfloat/*.*を除外する</td></tr>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>USE_MAMEをプリプロセッサ定義から削除し、/sound/mame/*.*を除外する</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<p>
+		<a href="./index.html">トップに戻る</a>
+	</p>
+</body>
+</html>

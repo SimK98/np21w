@@ -3,3 +3,13 @@
 img{
 	max-width:100%;
 }
+pre {
+	padding:4px;
+	line-height: 130%;
+	white-space: pre-wrap ;
+}
+
+.downloadContents {
+	margin:8px;
+	padding-left:2em;
+}
