@@ -1,1 +1,91 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+	<h1><span style="font-size:smaller;">PC-9800 Series Emulator</span><br> Neko Project 21/W</h1>
+	<img src="img/np21w_topimg.png">
+	<img src="img/pc9821np2_emu3t2_logo.png">
+	<p>
+		とりあえずお察しください。
+	</p>
+	<p>
+		PC-98エミュレータ Neko Project II/21（ねこープロジェクトII/21）をベースに、ニッチなハードウェアのエミュレーションやPC-98後期モデル（1993～2000頃）の再現に耐えうる改造を施したNeko Project 21/W（ねこープロジェクト21/W）を配布しています。
+	</p>
+	<p>
+		また、ニッチなハードウェアのエミュレーションに限定してNeko Project II相当まで簡略化したNeko Project II/W（ねこープロジェクトII/W）も配布しています。CPUが80286（プロテクトモードなし）相当ですが比較的軽量に動きます。
+	</p>
+	<h4>注意</h4>
+	<p style="font-size:smaller;">
+		本エミュレータの機能追加の多くは98らしさが失われていった後期モデル相当ですので、開発者の腕試し的な要素が強く、一般ユーザーにはあまり役に立たないニッチなものです。
+	</p>
+	<p style="font-size:smaller;">
+		本家のNeko Project II/21で動く物は基本的にそのまま動きますが、特別良くなるわけでもありません。
+		PC-98前期～中期（1993頃迄）のエミュレーションはNeko Project II fmgen版をおすすめします。
+	</p>
+	<h2>本家からの変更点</h2>
+	<p>
+		本家から変更されている点は以下の通りです。
+	</p>
+	<h3>CPU／メモリ周辺</h3>
+	<ul>
+		<li>CPUクロック倍率制限の緩和</li>
+		<li>i486DX以降のCPUを追加（実機であり得ない物も含む）</li>
+		<li>CPU拡張命令の実装（FPU, MMX, SSE, 3DNow! など）</li>
+		<li>大容量メモリに対応</li>
+		<li>高速メモリチェック</li>
+		<li>CPUの非同期的動作＋動的なCPUクロック変更</li>
+	</ul>
+	<h3>ハードウェア（音源・MIDI）</h3>
+	<ul>
+		<li>fmgenの部分的サポート</li>
+		<li>MAME OPL音源（118音源とSB16で使用）</li>
+		<li>118音源の修正</li>
+		<li>Mate-X PCMの追加</li>
+		<li>SoundBlaster 16（PCM可）の追加</li>
+		<li>Super MPU（32ポートMIDI）の追加</li>
+	</ul>
+	<h3>ハードウェア（グラフィック・ウィンドウアクセラレータ）</h3>
+	<ul>
+		<li>PEGCプレーンモードの一部</li>
+		<li>PC-9821内蔵 CL-GD54xx ウィンドウアクセラレータ</li>
+		<li>PC-9801-96拡張ボード CL-GD54xx ウィンドウアクセラレータ</li>
+		<li>MELCO WAB-S，WSN-A2F, WSN-A4F ウィンドウアクセラレータ</li>
+		<li>I-O DATA GA-98NBI/C, II, IV ウィンドウアクセラレータ</li>
+	</ul>
+	<h3>ハードウェア（その他）</h3>
+	<ul>
+		<li>大容量HDDのサポート（4GB未満推奨、最大2TB）</li>
+		<li>IDE 4ポート（HDD または 光学ドライブを任意に選択可）</li>
+		<li>CD-DAの再生</li>
+		<li>PCIバス</li>
+		<li>WACOMペンタブレットエミュレーション</li>
+	</ul>
+	<h3>UI周辺／その他</h3>
+	<ul>
+		<li>追加のディスクイメージサポート（NVL.DLLで更に追加可能）/li>
+		<li>メニューにマウント中のHDDイメージを表示</li>
+		<li>マウスキャプチャしないでマウス操作</li>
+		<li>マウス挙動の修正、マウス速度の指定</li>
+		<li>Direct3D描画</li>
+		<li>画面の整数倍拡大、整数倍風拡大（疑似）</li>
+		<li>メニューにマウント中のHDDイメージを表示</li>
+	</ul>
+	<h2>メインコンテンツ</h2>
+	<ul>
+		<li>なんかくれ</li>
+		<li>よくある質問</li>
+		<li>簡単な使い方</li>
+		<li>ギャラリー</li>
+		<li>資料集</li>
+		<li>解決策募集</li>
+		<li>ヘルプ</li>
+	</ul>
+</body>
+</html>
