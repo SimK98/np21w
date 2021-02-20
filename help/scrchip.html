@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <TITLE>Screen option - Chip</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
@@ -23,11 +23,11 @@
 <A NAME="GDC"></A>
 <DL>
 <DT><B>Graphic Display Controller</B></DT>
-<DD><P>�G�~�����[�V��������GDC�̐ݒ�����܂��B</P>
+<DD><P>エミュレーションするGDCの設定をします。</P>
 <TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
-<TR><TH>�`�b�v</TH><TH>�@�\�E���ڋ@��</TH></TR>
-<TR><TD>��PD7220</TD><TD>�O���t�B�b�N�̃X�N���[���������S�ł��B<BR>���i386�ȉ���PC-9801�V���[�Y</TD></TR>
-<TR><TD>��PD72020</TD><TD>�O���t�B�b�N�̃X�N���[���������Q�ł��B<BR>���i486�ȍ~��PC-9801 / PC-9821</TD></TR>
+<TR><TH>チップ</TH><TH>機能・搭載機種</TH></TR>
+<TR><TD>μPD7220</TD><TD>グラフィックのスクロール分割が４つです。<BR>主にi386以下のPC-9801シリーズ</TD></TR>
+<TR><TD>μPD72020</TD><TD>グラフィックのスクロール分割が２つです。<BR>主にi486以降のPC-9801 / PC-9821</TD></TR>
 </TABLE>
 </DD>
 </DL>
@@ -35,22 +35,22 @@
 <A NAME="GRCG"></A>
 <DL>
 <DT><B>Graphic Charger</B></DT>
-<DD><P>�G�~�����[�V��������O���t�B�b�N�`���[�W���[�^�C�v���w�肵�܂��B</P>
+<DD><P>エミュレーションするグラフィックチャージャータイプを指定します。</P>
 <TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
-<TR><TH>�`�b�v</TH><TH>�@�\�E���ڋ@��</TH></TR>
-<TR><TD>None</TD><TD>�g�p���܂���B<BR>����PC-9801��</TD></TR>
-<TR><TD>GRCG</TD><TD>GRCG���g�p���܂��B<BR>PC-9801VM</TD></TR>
-<TR><TD>GRCG+</TD><TD>GRCG�� CG-Window���g�p���܂��B<BR>���ۂɂ͂��̃^�C�v�̃}�V���͑��݂��܂���</TD></TR>
-<TR><TD>EGC</TD><TD>EGC���g�p���܂��B(���삪�d���Ȃ�܂�)<BR>PC-9801VX�ȍ~</TD></TR>
-<TR><TD>PEGC plane mode</TD><TD>PEGC�v���[�����[�h��L���ɂ��܂��B���̐ݒ�Ɋ֌W�Ȃ��p�b�N�g�s�N�Z�����[�h�͏�ɗL���ł��B<BR>PC-9821 �������f��</TD></TR>
+<TR><TH>チップ</TH><TH>機能・搭載機種</TH></TR>
+<TR><TD>None</TD><TD>使用しません。<BR>初代PC-9801等</TD></TR>
+<TR><TD>GRCG</TD><TD>GRCGを使用します。<BR>PC-9801VM</TD></TR>
+<TR><TD>GRCG+</TD><TD>GRCGと CG-Windowを使用します。<BR>実際にはこのタイプのマシンは存在しません</TD></TR>
+<TR><TD>EGC</TD><TD>EGCを使用します。(動作が重くなります)<BR>PC-9801VX以降</TD></TR>
+<TR><TD>PEGC plane mode</TD><TD>PEGCプレーンモードを有効にします。この設定に関係なくパックトピクセルモードは常に有効です。<BR>PC-9821 初期モデル</TD></TR>
 </TABLE>
-<P>PC-9801VM,VX�ȍ~�̐��i��GRCG�͂قڕK�{�ł��B<BR>EGC�͎s�̃\�t�g�ł͂��܂�g���܂��񂪁A�t�Ƀt���[�\�t�g�E���l�\�t�g�ł� EGC��v��������̂���������܂��B<BR>�܂��AEGC�̓��ڂ𔻒肵�� GRCG��EGC���g��������\�t�g�E�F�A������܂��B<BR>PEGC�v���[�����[�h��PC-9821�����̈ꕔ�̃\�t�g�Ŏg�p����Ă���\��������܂��B</P></DD>
+<P>PC-9801VM,VX以降の製品はGRCGはほぼ必須です。<BR>EGCは市販ソフトではあまり使われませんが、逆にフリーソフト・同人ソフトでは EGCを要求するものが多数あります。<BR>また、EGCの搭載を判定して GRCGとEGCを使い分けるソフトウェアもあります。<BR>PEGCプレーンモードはPC-9821初期の一部のソフトで使用されている可能性があります。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Enable 16color</B></DT>
-<DD><P>�`�F�b�N�������16�F�{�[�h���g�p���܂��B</P>
-<P>PC-9801VM�ł̓I�v�V����(PC-9801-24)�{�[�h�Ƃ��đ��݂��Ă��܂��B<BR>PC-9801VX�ȍ~�ł͕W���ő�������Ă��܂��B</P></DD>
+<DD><P>チェックをすると16色ボードを使用します。</P>
+<P>PC-9801VMではオプション(PC-9801-24)ボードとして存在しています。<BR>PC-9801VX以降では標準で装備されています。</P></DD>
 </DL>
 
 </BODY>

@@ -1,56 +1,56 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
-  <TITLE>���܂������� - �l�b�g���[�N</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <TITLE>こまった時に - ネットワーク</TITLE>
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
 <BR><BR>
 
-<H3><B>���܂������� - �l�b�g���[�N</B></H3>
+<H3><B>こまった時に - ネットワーク</B></H3>
 
 <P>&nbsp;</P>
-<P><B>TAP-Win32�Ƃ́H</B></P>
+<P><B>TAP-Win32とは？</B></P>
 <DL>
 <DD>
 <P>
-Unix�nOS�Ŏg�p�ł��鉼�z�l�b�g���[�N�A�_�v�^��Windows�Ŏg�p�ł���悤�ɂ������̂ł��B
-Windows�ł�OpenVPN�Ɋ܂܂�Ă��܂��B
+Unix系OSで使用できる仮想ネットワークアダプタをWindowsで使用できるようにしたものです。
+Windows版のOpenVPNに含まれています。
 </P>
 </DL>
 
 <P>&nbsp;</P>
-<P><B>TAP-Win32���C���X�g�[������ɂ́H</B></P>
+<P><B>TAP-Win32をインストールするには？</B></P>
 <DL>
 <DD>
 <P>
-OpenVPN�̃p�b�P�[�W�Ɋ܂܂��TAP-Win32����肵�ăC���X�g�[�����Ă��������B
-�C���X�g�[���ŊȒP�ɃC���X�g�[���ł���悤�ɂȂ��Ă��܂��B
-�K�v�ƂȂ�̂́uTAP Virtual Ethernet Adapter�v�݂̂Ȃ̂ŁAOpenVPN�̖{�̂Ȃǂ��C���X�g�[������K�v�͂���܂���i�J�X�^���C���X�g�[���Ń`�F�b�N���O���Ă��������j�B
+OpenVPNのパッケージに含まれるTAP-Win32を入手してインストールしてください。
+インストーラで簡単にインストールできるようになっています。
+必要となるのは「TAP Virtual Ethernet Adapter」のみなので、OpenVPNの本体などをインストールする必要はありません（カスタムインストールでチェックを外してください）。
 </P>
 </DL>
 
 <P>&nbsp;</P>
-<P><B>TAP�f�o�C�X���O���l�b�g���[�N�ɐڑ�����ɂ́H</B></P>
+<P><B>TAPデバイスを外部ネットワークに接続するには？</B></P>
 <DL>
 <DD>
 <P>
-TAP-Win32���C���X�g�[������ƃP�[�u�����ڑ��̃A�_�v�^�iTAP�A�_�v�^�j���o�����܂��̂ŁA����ƊO���l�b�g���[�N�ɐڑ��ł���A�_�v�^���u���b�W�ڑ����Ă��������B
-�f�t�H���g�̃A�_�v�^���̓��[�J���G���A�ڑ��ȂǂɂȂ��Ă��܂����A������₷���悤��TAP1�̂悤�Ȗ��O�ɕύX����ƕ֗��ł��B
+TAP-Win32をインストールするとケーブル未接続のアダプタ（TAPアダプタ）が出現しますので、それと外部ネットワークに接続できるアダプタをブリッジ接続してください。
+デフォルトのアダプタ名はローカルエリア接続などになっていますが、分かりやすいようにTAP1のような名前に変更すると便利です。
 </P>
-<IMG SRC="images/bridge.png" ALT="TAP-Win32�̃u���b�W�ڑ�">
+<IMG SRC="images/bridge.png" ALT="TAP-Win32のブリッジ接続">
 </DL>
 
 <P>&nbsp;</P>
-<P><B>TAP�f�o�C�X���g�p����ɂ́H</B></P>
+<P><B>TAPデバイスを使用するには？</B></P>
 <DL>
 <DD>
 <P>
-<A HREF="netopt.html">Network option</A>��TAP device name��TAP�A�_�v�^��I�����Ă��������B
+<A HREF="netopt.html">Network option</A>のTAP device nameでTAPアダプタを選択してください。
 </P>
-<IMG SRC="images/tap.png" ALT="TAP device name��TAP�A�_�v�^��I��">
+<IMG SRC="images/tap.png" ALT="TAP device nameでTAPアダプタを選択">
 </DL>
 
 </BODY>

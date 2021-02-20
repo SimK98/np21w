@@ -1,34 +1,34 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
-  <TITLE>�ȒP�ȓ������@ - �C���X�g�[��</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <TITLE>簡単な導入方法 - インストール</TITLE>
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
 <BR><BR>
 
-<H3><B>�ȒP�ȓ������@ / �C���X�g�[��</B></H3>
+<H3><B>簡単な導入方法 / インストール</B></H3>
 
 <DL>
-<DT><B>�C���X�g�[��</B></DT>
-<DD><P>�K���ȃt�H���_�� np21w_???.zip ���𓀂��܂��B</P><P>�˂��[�v���W�F�N�g21/W�̓C���X�g�[���͕t�����Ă��炸�A�𓀂��ꂽ np21w.exe (64bit���̎��� np21x64w.exe ���g�p�\)�����̂܂܋N�����܂��B<BR>�����ݒ肵�Ă��Ȃ���Ԃł́A�N����Ƀ������J�E���g���n�܂�u�V�X�e���f�B�X�N���Z�b�g���Ă��������v�ƕ\������܂��B</P></DD>
+<DT><B>インストール</B></DT>
+<DD><P>適当なフォルダに np21w_???.zip を解凍します。</P><P>ねこープロジェクト21/Wはインストーラは付属しておらず、解凍された np21w.exe (64bit環境の時は np21x64w.exe も使用可能)をそのまま起動します。<BR>何も設定していない状態では、起動後にメモリカウントが始まり「システムディスクをセットしてください」と表示されます。</P></DD>
 </DL>
 
 <BR><BR>
 
 <DL>
-<DT><B>��{�ݒ�</B></DT>
+<DT><B>基本設定</B></DT>
 <DD><P><IMG SRC="images/entercfg.gif" BORDER="0" ALT="Emulate - Configure..."></P>
-<P>[<A HREF="emulate.html">Emulate</A> - <a href="cfgdlg.html">Configure...</a>]��I���� �ݒ�_�C�A���O��\�����܂��B</P>
+<P>[<A HREF="emulate.html">Emulate</A> - <a href="cfgdlg.html">Configure...</a>]を選択し 設定ダイアログを表示します。</P>
 <P>&nbsp;</P>
 <P><IMG SRC="images/cfgdlg.gif" BORDER="0" ALT="Configure"></P>
-<P>�܂��A�G�~�����[�^��CPU�����ݒ肵�܂��B<BR>PC-9821���G�~�����[�V��������ꍇ�ɂ�50�`100MHz���x�œ��삳���邱�Ƃ��]�܂����ł��B�N���b�N�{���͒��ړ��͂Ŕ��������邱�Ƃ��������߂��܂��B</P>
-<P>�A�[�L�e�N�`���̕\����PC-9801VX�ƂȂ��Ă��܂����A���ۂɂ�PC-9821�����œ��삵�܂��B�uPC-9801VX�ȍ~�̃A�[�L�e�N�`���v�Ƃ������x�̈Ӗ��Ƃ��l�����������B<a href="cfgdlg.html">�ڍ�</a></P>
-<P>���삳����A�v���P�[�V�����ɂ�菈������������ �t���[���X�L�b�v���������ď[���ɃG�~�����[�g�ł��Ȃ��ꍇ������܂��B<BR>���̏ꍇ�́ACPU����ݒ�̃N���b�N���������Ă��������B</P>
-<P>�����ăT�E���h�ݒ���s���܂��B<BR>�}�V���p���[������� 44KHz�֕ύX����Ɨǂ��ł��傤�B����ȏ�͂��܂�Ӗ�������܂���B<BR>Buffer�̒l�� �������ǂ��t���Œ�̒l��ݒ肵�܂��B<BR>���ɂ��܂����A�����}�V���ł���� 50ms�`300ms, �ʏ�� 500ms���炢���ڈ��ł��B</P>
-<P>Resume���`�F�b�N���Ă����ƁAPC-98NOTE�̂悤�Ƀ��W���[���������悤�ɂȂ�܂��B<BR>�D�݂ɂ��`�F�b�N���ĉ������B</P></DD>
+<P>まず、エミュレータのCPU動作を設定します。<BR>PC-9821をエミュレーションする場合には50〜100MHz程度で動作させることが望ましいです。クロック倍率は直接入力で微調整することをおすすめします。</P>
+<P>アーキテクチャの表示はPC-9801VXとなっていますが、実際にはPC-9821相当で動作します。「PC-9801VX以降のアーキテクチャ」という程度の意味とお考えください。<a href="cfgdlg.html">詳細</a></P>
+<P>動作させるアプリケーションにより処理落ちしたり フレームスキップが発生して充分にエミュレートできない場合があります。<BR>その場合は、CPU動作設定のクロック数を下げてください。</P>
+<P>続いてサウンド設定を行います。<BR>マシンパワーがあれば 44KHzへ変更すると良いでしょう。それ以上はあまり意味がありません。<BR>Bufferの値は 処理が追い付く最低の値を設定します。<BR>環境によりますが、速いマシンであれば 50ms〜300ms, 通常で 500msくらいが目安です。</P>
+<P>Resumeをチェックしておくと、PC-98NOTEのようにレジュームが働くようになります。<BR>好みによりチェックして下さい。</P></DD>
 </DL>
 
 </BODY>

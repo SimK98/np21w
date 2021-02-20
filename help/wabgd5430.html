@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <TITLE>Window Accelerator option - CL-GD54xx</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
@@ -19,24 +19,24 @@
 
 <DL>
 <DT><B>Enable</B></DT>
-<DD><P>�`�F�b�N�������Cirrus Logic CL-GD54xx�E�B���h�E�A�N�Z�����[�^���L���ɂȂ�܂��B���̐ݒ�̓��Z�b�g��ɔ��f����܂��B</P></DD>
+<DD><P>チェックを入れるとCirrus Logic CL-GD54xxウィンドウアクセラレータが有効になります。この設定はリセット後に反映されます。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Type</B></DT>
 <DD>
-<P>�Č�������CL-GD54xx�����̋@���I�����܂��B
-�����A�N�Z�����[�^�ɂ��Ă͋@��ID��ύX���邾���Ŋ�{����͕ς��܂��񂪁AB-MATE�n�̓����A�N�Z�����[�^���w�肵���ꍇ�͎኱�������ω����܂��B
-���ɗ��R���������Xe10�ɂ��Ă������Ƃ��������߂��܂����A�ꍇ�ɂ���Ă�B-MATE�n��PC-9801-96���g���Ɠ����ꍇ������܂��B</P>
-<P>��r�I�V����OS�ł����PCI�ڑ���CL-GD5446���g�p���邱�Ƃ��o���܂��B
-CL-GD5446���g�p����ƁA256�F��1280x1024�̉𑜓x��A64k�F��1024x768�̉𑜓x�ł̕\�����\�ƂȂ�܂��B
-�������A������g�p����ꍇ��<A href="pciopt.html">PCI�o�X</A>���L���ɂ��AOS��PCI�o�X�̃h���C�o������K�v������܂��B</P>
-<P>MELCO���E�B���h�E�A�N�Z�����[�^��MS-DOS�AWindows3.1�ł̎g�p�ɍœK������Ă��܂����AWin9x�Ŏg�p���邱�Ƃ��o���܂��B</P>
-<P>I-O DATA���E�B���h�E�A�N�Z�����[�^��MS-DOS�AWindows3.1�ł̎g�p�ɍœK������Ă��܂����AWin9x�Ŏg�p���邱�Ƃ��o���܂��B</P>
-<P>Auto Select�ɂ���ƁA�A�N�Z�X���ꂽI/O�|�[�g���琄�����Ď����؂�ւ����܂��B
-��x�ǂ��炩�ɐ؂�ւ���CPU�����Z�b�g�����܂ŕς�鎖�͂���܂���B
-�������A�Z�b�g�A�b�v�̃f�o�C�X���o���Ȃǃ|�[�g���T�[�`���ɗ���󋵂ł̎g�p�͌�쓮�̋��ꂪ���邽�߁A���̐ݒ�͂������߂��܂���B</P>
-<P>�eOS�ōœK�ȑg�ݍ��킹�͈ȉ��̕\�̒ʂ�ł��B</P>
+<P>再現したいCL-GD54xx内蔵の機種を選択します。
+内蔵アクセラレータについては機種IDを変更するだけで基本動作は変わりませんが、B-MATE系の内蔵アクセラレータを指定した場合は若干挙動が変化します。
+特に理由が無ければXe10にしておくことをおすすめしますが、場合によってはB-MATE系やPC-9801-96を使うと動く場合もあります。</P>
+<P>比較的新しいOSであればPCI接続のCL-GD5446を使用することも出来ます。
+CL-GD5446を使用すると、256色で1280x1024の解像度や、64k色で1024x768の解像度での表示が可能となります。
+ただし、これを使用する場合は<A href="pciopt.html">PCIバス</A>も有効にし、OSにPCIバスのドライバを入れる必要があります。</P>
+<P>MELCO製ウィンドウアクセラレータはMS-DOS、Windows3.1での使用に最適化されていますが、Win9xで使用することも出来ます。</P>
+<P>I-O DATA製ウィンドウアクセラレータもMS-DOS、Windows3.1での使用に最適化されていますが、Win9xで使用することも出来ます。</P>
+<P>Auto Selectにすると、アクセスされたI/Oポートから推測して自動切り替えします。
+一度どちらかに切り替わるとCPUがリセットされるまで変わる事はありません。
+ただし、セットアップのデバイス検出時などポートをサーチしに来る状況での使用は誤作動の恐れがあるため、この設定はおすすめしません。</P>
+<P>各OSで最適な組み合わせは以下の表の通りです。</P>
 <table border=1>
 <thead>
 <tr>
@@ -50,35 +50,35 @@ CL-GD5446���g�p����ƁA256�F��1280x1024�̉𑜓x��A64k�F��1024x768�̉𑜓x�ł̕\
 </tr>
 </thead>
 <tbody>
-<tr><td>PC-9821Bp,Bs,Be,Bf</td><td>��</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td></tr>
-<tr><td>PC-9821Xe</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td></tr>
-<tr><td>PC-9821Cb</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td></tr>
-<tr><td>PC-9821Cf</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td></tr>
-<tr><td>PC-9821Xe10,Xa7e,Xb10</td><td>��</td><td>��</td><td>��</td><td>��</td><td>��</td><td>��</td></tr>
-<tr><td>PC-9821Cb2</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td></tr>
-<tr><td>PC-9821Cx2</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td></tr>
-<tr><td>PCI CL-GD5446</td><td>�~</td><td>�~</td><td>�~</td><td>��</td><td>��</td><td>��</td></tr>
-<tr><td>WAB-S</td><td>��</td><td>��</td><td>�H</td><td>�H</td><td>�~</td><td>�~</td></tr>
-<tr><td>WSN-A2F/A4F</td><td>��</td><td>��</td><td>��</td><td>��</td><td>��</td><td>��</td></tr>
-<tr><td>GA-98NB</td><td>��</td><td>��</td><td>��</td><td>��</td><td>�~</td><td>�~</td></tr>
-<tr><td>PC-9801-96</td><td>��</td><td>�H</td><td>�H</td><td>�H</td><td>�H</td><td>�~</td></tr>
+<tr><td>PC-9821Bp,Bs,Be,Bf</td><td>○</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td></tr>
+<tr><td>PC-9821Xe</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td></tr>
+<tr><td>PC-9821Cb</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td></tr>
+<tr><td>PC-9821Cf</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td></tr>
+<tr><td>PC-9821Xe10,Xa7e,Xb10</td><td>○</td><td>○</td><td>◎</td><td>○</td><td>○</td><td>○</td></tr>
+<tr><td>PC-9821Cb2</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td></tr>
+<tr><td>PC-9821Cx2</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td><td>？</td></tr>
+<tr><td>PCI CL-GD5446</td><td>×</td><td>×</td><td>×</td><td>◎</td><td>◎</td><td>◎</td></tr>
+<tr><td>WAB-S</td><td>○</td><td>○</td><td>？</td><td>？</td><td>×</td><td>×</td></tr>
+<tr><td>WSN-A2F/A4F</td><td>○</td><td>○</td><td>△</td><td>△</td><td>△</td><td>△</td></tr>
+<tr><td>GA-98NB</td><td>◎</td><td>◎</td><td>○</td><td>○</td><td>×</td><td>×</td></tr>
+<tr><td>PC-9801-96</td><td>○</td><td>？</td><td>？</td><td>？</td><td>？</td><td>×</td></tr>
 </tbody>
 </table>
-<P>��=�œK, ��=�g�p��, ��=����, �~=�g�p�s��, �H=���m�F</P></DD>
+<P>◎=最適, ○=使用可, △=微妙, ×=使用不可, ？=未確認</P></DD>
 </DL>
 
 <DL>
 <DT><B>Defaults</B></DT>
-<DD><P>CL-GD54xx�̐ݒ��������Ԃɖ߂��܂��B</P></DD>
+<DD><P>CL-GD54xxの設定を初期状態に戻します。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Use Fake Hardware Cursor</B></DT>
 <DD>
 <P>
-�{���̃n�[�h�E�F�A�J�[�\���̑���Ƀz�X�g�̃J�[�\���Ɠ����O���t�B�b�N�̃J�[�\����\�����܂��B
-�{���̃n�[�h�E�F�A�J�[�\�����G�~�����[�V�����s��Ō������A����s�\�ƂȂ��Ă��܂����ꍇ�Ɏb��I�ɗp���邱�Ƃ��o���܂��B
-���݂̃o�[�W�����ł̓n�[�h�E�F�A�J�[�\���n�s��̑������C�����ꂽ���ߎg���K�v�͂قƂ�ǂ���܂���B
+本来のハードウェアカーソルの代わりにホストのカーソルと同じグラフィックのカーソルを表示します。
+本来のハードウェアカーソルがエミュレーション不具合で見えず、操作不能となってしまった場合に暫定的に用いることが出来ます。
+現在のバージョンではハードウェアカーソル系不具合の多くが修正されたため使う必要はほとんどありません。
 </P>
 </DD>
 </DL>

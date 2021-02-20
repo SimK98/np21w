@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <TITLE>PCI option - General</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
@@ -15,23 +15,23 @@
 
 <DL>
 <DT><B>Enable</B></DT>
-<DD><P>�`�F�b�N�������PCI�o�X���L���ɂȂ�܂��B���̐ݒ�̓��Z�b�g��ɔ��f����܂��B</P>
-<P>Win9x�ŃZ�b�g�A�b�v���PCI��L���ɂ����ꍇ�A�蓮��PCI�o�X�̃h���C�o��ǉ�����K�v������܂��B�ǉ�������̓v���O�A���h�v���C��PCI�f�o�C�X�������ǉ�����܂��B<br>
-Win2000�̏ꍇ�͌ォ��PCI�o�X�̗L����ύX���邱�Ƃ͏o���܂���i�N�����Ƀu���[�X�N���[���ɂȂ�܂��j�B</P></DD>
+<DD><P>チェックを入れるとPCIバスが有効になります。この設定はリセット後に反映されます。</P>
+<P>Win9xでセットアップ後にPCIを有効にした場合、手動でPCIバスのドライバを追加する必要があります。追加した後はプラグアンドプレイでPCIデバイスが自動追加されます。<br>
+Win2000の場合は後からPCIバスの有無を変更することは出来ません（起動時にブルースクリーンになります）。</P></DD>
 </DL>
 
 <DL>
 <DT><B>PCMC</B></DT>
-<DD><P>�g�p����PCI�`�b�v�Z�b�g��I�����܂��B</P></DD>
+<DD><P>使用するPCIチップセットを選択します。</P></DD>
 </DL>
 
 <DL>
 <DT><B>Use BIOS32</B></DT>
 <DD>
 <P>
-	32bit�v���e�N�g���[�h����PCI BIOS���Ăяo���@�\�iBIOS32�j��L���ɂ��܂��B
-	�������A���̋@�\�̃G�~�����[�V�����̂��߂ɂ��܂���S�ł͂Ȃ���@���p�����Ă��邽�߁A���ɖ�肪�Ȃ���Ζ����ɂ��邱�Ƃ��������߂��܂��B
-	��ʓI�ȃ\�t�g�E�F�A��BIOS32���g�p���Ȃ��Ă����삷��悤�ɐ݌v����Ă��邽�߁A�����ėL���ɂ���K�v�͂���܂���B
+	32bitプロテクトモードからPCI BIOSを呼び出す機能（BIOS32）を有効にします。
+	ただし、この機能のエミュレーションのためにあまり安全ではない手法が用いられているため、特に問題がなければ無効にすることをおすすめします。
+	一般的なソフトウェアはBIOS32を使用しなくても動作するように設計されているため、あえて有効にする必要はありません。
 </P></DD>
 </DL>
 

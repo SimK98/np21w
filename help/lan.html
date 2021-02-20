@@ -1,31 +1,31 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-  <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=Shift_JIS">
-  <TITLE>�l�b�g���[�N�@�\(LAN)</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="common.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <TITLE>ネットワーク機能(LAN)</TITLE>
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
 </HEAD>
 <BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
 
 <BR><BR>
 
-<H3><B>�l�b�g���[�N�@�\(LAN)�ɂ���</B></H3>
+<H3><B>ネットワーク機能(LAN)について</B></H3>
 
 <DL>
 <DD>
-<P>�˂��[�v���W�F�N�g21/W�̓l�b�g���[�N�@�\(LAN�ڑ�)���T�|�[�g���Ă��܂��B</P>
+<P>ねこープロジェクト21/Wはネットワーク機能(LAN接続)をサポートしています。</P>
 <P>
-	LAN�C���^�t�F�[�X�̃G�~�����[�V������TAP-Win32�Ɉˑ����Ă��܂��B
-	TAP-Win32���z�l�b�g���[�N�A�_�v�^��OpenVPN�Ɋ܂܂�Ă��܂��B
-	�˂��[�v���W�F�N�g21/W�ŕK�v�ƂȂ�̂́uTAP Virtual Ethernet Adapter�v�݂̂Ȃ̂ŁAOpenVPN�̖{�̂Ȃǂ̓C���X�g�[������K�v������܂���B
+	LANインタフェースのエミュレーションはTAP-Win32に依存しています。
+	TAP-Win32仮想ネットワークアダプタはOpenVPNに含まれています。
+	ねこープロジェクト21/Wで必要となるのは「TAP Virtual Ethernet Adapter」のみなので、OpenVPNの本体などはインストールする必要がありません。
 </P>
 <P>
-	�˂��[�v���W�F�N�g21/W�̐ݒ��ʂł�TAP���z�l�b�g���[�N�f�o�C�X��I�����Ă��������B
-	TAP�f�o�C�X�ł͂Ȃ��A�_�v�^��I�����Ă������ł��B
-	�Ȃ��A���ۂɊO���l�b�g���[�N�ɐڑ�����ɂ�TAP�f�o�C�X�Ǝ��f�o�C�X���u���b�W�ڑ�����Ȃǂ̐ݒ肪�K�v�ł��B
+	ねこープロジェクト21/Wの設定画面ではTAP仮想ネットワークデバイスを選択してください。
+	TAPデバイスではないアダプタを選択しても無効です。
+	なお、実際に外部ネットワークに接続するにはTAPデバイスと実デバイスをブリッジ接続するなどの設定が必要です。
 </P>
 <P>
-	�ݒ�̏ڍׂɂ��Ă�<a href="netopt.html">Network option</a>���������������B
+	設定の詳細については<a href="netopt.html">Network option</a>をご覧ください。
 </P>
 </DD>
 </DL>
