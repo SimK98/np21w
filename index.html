@@ -7,12 +7,24 @@
 	<link rel="SHORTCUT ICON" href="./favicon.ico">
 	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
 	<title>PC-9800 Series Emulator Neko Project 21/W</title>
-	<link rel="stylesheet" type="text/css" href="./style.css">
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=1">
 </head>
 <body>
-	<h1><span style="font-size:smaller;">PC-9800 Series Emulator</span><br> Neko Project 21/W</h1>
+	<h1><span style="font-size:medium;">PC-9800 Series Emulator</span><br> Neko Project 21/W</h1>
 	<img src="img/np21w_topimg.png">
 	<img src="img/pc9821np2_emu4_21w.png">
+	<div style="float:left;border:2px solid black;padding:8px;margin:8px;">
+	<h2 style="margin-top:0;">メインコンテンツ</h2>
+	<ul>
+		<li><a href="./download.html">なんかくれ</a></li>
+		<li><a href="./faq.html">よくある質問</a></li>
+		<li><a href="./freedos98.html">簡単な使い方</a></li>
+		<li><a href="./gallery.html">ギャラリー</a></li>
+		<li>資料集</li>
+		<li><a href="./help/index.html">ヘルプ</a></li>
+	</ul>
+	</div>
+	<div>
 	<p>
 		PC-98エミュレータ Neko Project II/21（ねこープロジェクトII/21）をベースに、ニッチなハードウェアのエミュレーションやPC-98後期モデル（1993～2000頃）の再現に耐えうる改造を施したNeko Project 21/W（ねこープロジェクト21/W）を配布しています。
 	</p>
@@ -27,7 +39,45 @@
 		本家のNeko Project II/21で動く物は基本的にそのまま動きますが、特別良くなるわけでもありません。
 		PC-98前期～中期（1993頃迄）のエミュレーションは例えば<a href="http://nenecchi.kirara.st/" target="_blank">Neko Project II fmgen版</a>などをおすすめします。
 	</p>
-	<h2>本家からの変更点</h2>
+	</div>
+	<h2>NEWS</h2>
+	<div style="margin:4px; padding 4px; border: 3px groove gray">
+		<p>
+<pre>
+【2021/01/17】 
+Neko Project 21/W ver0.86 rev79を公開しました。
+・マウス割り込みが消える不具合に対症療法で対応
+・HRTIMER周りを多少綺麗なコードに書き換えました
+・画面周りのBIOS不具合修正
+・セクタ数255のディスクを正しく扱えない不具合を修正
+・BIOS経由の大容量ディスクへのアクセスが出来ない不具合を修正
+・非公開機能MAKELHDD有効時の作成可能容量上限を130GBくらいにしました
+・48bit LBAに対応させました
+・TABキーでHDDの自動起動解除が出来ない問題を修正
+・CPUクロック数が大きいとき86音源が狂う問題を修正
+・Win10環境でウィンドウの位置が正しく復元されない問題を修正
+・86音源の割り込みをいじりました
+　・86音源のPCMがまともになったはず
+・SB16のPCM周りを調整しました
+
+【2020/09/26】 
+Neko Project 21/W ver0.86 rev78を公開しました。
+・色々な情報を参考にEGC周りをかなりいじくりました。
+・AMD系プロセッサでCMPXCHG8B命令サポートのフラグが立っていなかったのを修正
+・configureで設定されたクロック数をRDTSCで取得出来るようにしました
+
+【2020/08/14】 
+Neko Project 21/W ver0.86 rev77を公開しました。
+Direct3D描画の時にフルスクリーン表示にすると画面が表示されない場合がある不具合を修正しました。
+
+【2020/07/17】 
+Neko Project 21/W ver0.86 rev76を公開しました。
+プレーンモード有無の判定が上手くいくようにしました
+</pre>
+		</p>
+		<p><a href="./history.html">更に前の更新履歴</a></p>
+	</div>
+	<h2 style="clear:both;">本家からの変更点</h2>
 	<p>
 		本家から変更されている点は以下の通りです。
 	</p>
@@ -75,53 +125,6 @@
 		<li>Direct3D描画</li>
 		<li>画面の整数倍拡大、整数倍風拡大（疑似）</li>
 		<li>メニューにマウント中のHDDイメージを表示</li>
-	</ul>
-	<h2>NEWS</h2>
-	<div style="margin:4px; padding 4px; border: 3px groove gray">
-		<p>
-<pre>
-【2021/01/17】 
-Neko Project 21/W ver0.86 rev79を公開しました。
-・マウス割り込みが消える不具合に対症療法で対応
-・HRTIMER周りを多少綺麗なコードに書き換えました
-・画面周りのBIOS不具合修正
-・セクタ数255のディスクを正しく扱えない不具合を修正
-・BIOS経由の大容量ディスクへのアクセスが出来ない不具合を修正
-・非公開機能MAKELHDD有効時の作成可能容量上限を130GBくらいにしました
-・48bit LBAに対応させました
-・TABキーでHDDの自動起動解除が出来ない問題を修正
-・CPUクロック数が大きいとき86音源が狂う問題を修正
-・Win10環境でウィンドウの位置が正しく復元されない問題を修正
-・86音源の割り込みをいじりました
-　・86音源のPCMがまともになったはず
-・SB16のPCM周りを調整しました
-
-【2020/09/26】 
-Neko Project 21/W ver0.86 rev78を公開しました。
-・色々な情報を参考にEGC周りをかなりいじくりました。
-・AMD系プロセッサでCMPXCHG8B命令サポートのフラグが立っていなかったのを修正
-・configureで設定されたクロック数をRDTSCで取得出来るようにしました
-
-【2020/08/14】 
-Neko Project 21/W ver0.86 rev77を公開しました。
-Direct3D描画の時にフルスクリーン表示にすると画面が表示されない場合がある不具合を修正しました。
-
-【2020/07/17】 
-Neko Project 21/W ver0.86 rev76を公開しました。
-プレーンモード有無の判定が上手くいくようにしました
-</pre>
-		</p>
-		<p><a href="./history.html">更に前の更新履歴</a></p>
-	</div>
-	<h2>メインコンテンツ</h2>
-	<ul>
-		<li><a href="./download.html">なんかくれ</a></li>
-		<li><a href="./faq.html">よくある質問</a></li>
-		<li><a href="./freedos98.html">簡単な使い方</a></li>
-		<li>ギャラリー</li>
-		<li>資料集</li>
-		<li>解決策募集</li>
-		<li><a href="./help/index.html">ヘルプ</a></li>
 	</ul>
 </body>
 </html>
