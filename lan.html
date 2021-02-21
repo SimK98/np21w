@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>Neko Project 21/WのLAN設定 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=1">
+</head>
+<body>
+	<h1>Neko Project 21/WのLAN設定</h1>
+	<p>
+		Neko Project 21/WはMELCO LGY-98 LANボードを搭載していますが、実際に外部ネットワークに繋ぐまでの手順が若干わかりにくいのでここに書いておきます。VMwareのネットワークブリッジとケンカするという噂もあるのでそのあたりは要注意。
+	</p>
+	<p>
+		↓TAP-Win32についてはこのページの方が詳しいかもしれません
+		<a href="https://web.archive.org/web/20130703043456/http://xm6i.org/setup-wintap.html" target="_blank">TAP-Win32 のインストールおよび設定方法（リンク切れのためInternet Archiveへのリンク）</a>
+	</p>
+	<ol>
+		<li>OpenVPNに含まれるTAP-Win32を入手してインストールしてください。必要となるのは「TAP Virtual Ethernet Adapter」のみなので、OpenVPNの本体などをインストールする必要はありません。</li>
+		<li>
+			TAP-Win32をインストールするとケーブル未接続のアダプタ（TAPアダプタ）が出現するので、それと外部ネットワークに接続できるアダプタをブリッジ接続してください。このときにTAPアダプタをわかりやすい名前にしておくと後の設定で楽です。<br>
+			<img src="./lan/bridge.png">
+		</li>
+		<li>
+			Neko Project 21/WのNetwork Optionでブリッジ接続したTAPアダプタを選択してください。TAPではないアダプタも選べますが選んでも無意味です。<br>
+			<img src="./lan/tap.png">
+		</li>
+		<li>
+			これで設定は完了です。
+		</li>
+	</ol>
+	<p>
+		<a href="./index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
