@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>本体内蔵CIRRUSアクセラレータ(CL-GD54xx)解析資料 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=1">
+</head>
+<body>
+	<h1>本体内蔵CIRRUSアクセラレータ(CL-GD54xx)解析資料</h1>
+	<p>
+		ここではCL-GD5428,CL-GD5430についての詳細を書きます。
+	</p>
+	<p>
+		有名な以下のページの補足資料です。<br>
+		<a href="http://www.webtech.co.jp/company/doc/undocumented_mem/io_wab.txt" target="_blank">http://www.webtech.co.jp/company/doc/undocumented_mem/io_wab.txt</a>
+	</p>
+	<p>
+		QEMUのCirrusVGAのソースも役に立ちます
+	</p>
+	<h2>基本仕様</h2>
+	<ul>
+		<li>基本的な事は上記ページを参照</li>
+		<li>VRAMはたぶん1MB</li>
+	</ul>
+	<h2>I/Oポート</h2>
+	<ul>
+		<li>CL-GD54xxのネイティブポートと内蔵アクセラレータのポート対応は恐らく以下の通り</li>
+	</ul>
+	<div style="margin:16px;">
+	<table style="max-width:100%;" border=1>
+		<thead>
+			<tr><th>内蔵アクセラレータ ポート番号</th><th>ネイティブ ポート番号</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>CAxh (x=0～F)</td><td>3Cxh (x=0～F)</td></tr>
+			<tr><td>BA4h</td><td>3B4h</td></tr>
+			<tr><td>BA5h</td><td>3B5h</td></tr>
+			<tr><td>DA4h</td><td>3D4h</td></tr>
+			<tr><td>DA5h</td><td>3D5h</td></tr>
+			<tr><td>BAAh</td><td>3BAh</td></tr>
+			<tr><td>DAAh</td><td>3DAh</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<ul>
+		<li>内蔵アクセラレータ独自のポートで使われていそうなものは以下の通り</li>
+	</ul>
+	<div style="margin:16px;">
+	<table style="max-width:100%;" border=1>
+		<thead>
+			<tr><th style="min-width:6em;">ポート番号</th><th>役割</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>FAAh</td><td>FABhで返すレジスタの選択</td></tr>
+			<tr>
+				<td>FABh</td>
+				<td>
+					レジスタ00hはCL-GD54xxの機種ID<br>
+					説明は上記ページの通り<br>
+					<br>
+					レジスタ01hはCL-GD54xxのMMIOウィンドウアドレスを設定する<br>
+					0x10 → 0x0b0000<br>
+					0x80 → <b>0xf20000</b><br>
+					0xA0 → <b>0xf00000</b><br>
+					0xC0 → 0xf40000<br>
+					0xF0 → 0xf60000<br>
+					割り当てられるサイズは0x8000<br>
+					<br>
+					レジスタ02hはCL-GD54xxのリニアMMIOアドレスを設定する<br>
+					設定された値&lt;&lt;24がリニアMMIOの開始アドレスとなる<br>
+					VRAMは1MBのはずだが、何故かMMIOは4MB分くらい確保されている（4MB未満の場合、Win9xは起動時に黒画面のままフリーズする）<br>
+					<br>
+					レジスタ03hは画面出力リレー制御<br>
+					説明は上記ページの通り<br>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>リニアMMIO</h2>
+	<ul>
+		<li>FABhのレジスタ02hで設定されたアドレスにVRAMと同じサイズで割り当てられると思ったら何故か4MBくらいアクセス出来るようにしなければならない（つまり、リニアMMIOウィンドウは4MBくらいのサイズで開けておかなければならない）</li>
+		<li>単にVRAMを直接読み書きするだけのモードとMMIOでBitBlt等を実行できるモードの2つがあり、CL-GD54xx内のレジスタで切り替える（ソースコード参照）</li>
+		<li>主にWin95以降のOSで使用される</li>
+	</ul>
+	
+	<h2>MMIOウィンドウ</h2>
+	<ul>
+		<li>FABhのレジスタ01hで設定されたアドレスに0x8000のサイズで割り当てられる</li>
+		<li>リニアMMIOと同様、単にVRAMを直接読み書きするだけのモードとMMIOでBitBlt等を実行できるモードの2つがあり、CL-GD54xx内のレジスタで切り替える</li>
+		<li>主にWin3.1、DOSのソフトで使用される</li>
+	</ul>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>

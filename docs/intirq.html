@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>INT-IRQ対応表 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=1">
+</head>
+<body>
+	<h1>INT-IRQ対応表</h1>
+	<p>
+		INTとIRQの対応をしょっちゅう忘れるのでメモ。主な用途はXa10のもの。Googleで調べた方が詳しいです。
+	</p>
+	<div style="margin:16px;">
+	<table style="max-width:100%;text-align:center;" border=1>
+		<thead>
+			<tr><th>INT</th><th>IRQ </th><th>主な用途 </th></tr>
+		</thead>
+		<tbody>
+			<tr><td>0</td><td>3</td><td></td></tr>
+			<tr><td>1</td><td>5</td><td>2nd CCU</td></tr>
+			<tr><td>2</td><td>6</td><td>PCカードスロット</td></tr>
+			<tr><td>3</td><td>9</td><td>内蔵固定ディスクインタフェース</td></tr>
+			<tr><td>41</td><td>10</td><td>640KB FDインタフェース </td></tr>
+			<tr><td>42</td><td>11</td><td>1MB/1.44MB FDインタフェース</td></tr>
+			<tr><td>5</td><td>12</td><td>MATE-X PCM</td></tr>
+			<tr><td>6</td><td>13</td><td>マウス</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>

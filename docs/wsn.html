@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>WSN-A2F/A4F解析資料 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=1">
+</head>
+<body>
+	<h1>WSN-A2F/A4F解析資料</h1>
+	<p>
+		仕様が似ているWAB-Sについては以下に他の方が作成された資料がありますので参考にして下さい。<br>
+		<a href="https://drive.google.com/file/d/1mfKgsAtqHZiRRm07hVsYBbct-P3kN90z/view?usp=sharing">WABTECH.LZH</a>
+	</p>
+	<p>
+WSN-A2F/A4Fはこの仕様をベースに作られているようですが、WAB-Sとやや違う点があるようなのでメモとして残しておきます。あくまでメモ程度です。私が調べたものではない情報も含まれています。
+Neko Project 21/Wのソースも参考にして下さい。
+	</p>
+	<h2>基本仕様</h2>
+	<ul>
+		<li>基本的には先のWABTECH.LZHに似ています</li>
+		<li>WAB-Sはオフセット（最後の桁の数字）を選べましたがWSNは2で固定？</li>
+	</ul>
+	<h2>I/Oポート</h2>
+	<div style="margin:16px;">
+	<table style="max-width:100%;" border=1>
+		<thead>
+			<tr><th>WSN ポート番号</th><th>役割</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>0x40E2</td><td>CL-GD5434 ネイティブポート 0x3C0 </td></tr>
+			<tr><td>0x41E2</td><td>CL-GD5434 ネイティブポート 0x3C1 </td></tr>
+			<tr><td>0x42E2</td><td>CL-GD5434 ネイティブポート 0x3C2 </td></tr>
+			<tr><td>0x43E2</td><td>CL-GD5434 ネイティブポート 0x3C3 </td></tr>
+			<tr><td>0x44E2</td><td>CL-GD5434 ネイティブポート 0x3C4 </td></tr>
+			<tr><td>0x45E2</td><td>CL-GD5434 ネイティブポート 0x3C5 </td></tr>
+			<tr><td>0x46E2</td><td>CL-GD5434 ネイティブポート 0x3C6 </td></tr>
+			<tr><td>0x47E2</td><td>CL-GD5434 ネイティブポート 0x3C7 </td></tr>
+			<tr><td>0x48E2</td><td>CL-GD5434 ネイティブポート 0x3C8 </td></tr>
+			<tr><td>0x49E2</td><td>CL-GD5434 ネイティブポート 0x3C9 </td></tr>
+			<tr><td>0x4AE2</td><td>CL-GD5434 ネイティブポート 0x3CA </td></tr>
+			<tr><td>0x4BE2</td><td>CL-GD5434 ネイティブポート 0x3CB </td></tr>
+			<tr><td>0x4CE2</td><td>CL-GD5434 ネイティブポート 0x3CC </td></tr>
+			<tr><td>0x4DE2</td><td>CL-GD5434 ネイティブポート 0x3CD </td></tr>
+			<tr><td>0x4EE2</td><td>CL-GD5434 ネイティブポート 0x3CE </td></tr>
+			<tr><td>0x4FE2</td><td>CL-GD5434 ネイティブポート 0x3CF </td></tr>
+			<tr><td>0x58E2</td><td>CL-GD5434 ネイティブポート 0x3B4?</td></tr>
+			<tr><td>0x59E2</td><td>CL-GD5434 ネイティブポート 0x3B5?</td></tr>
+			<tr><td>0x54E2</td><td>CL-GD5434 ネイティブポート 0x3D4?</td></tr>
+			<tr><td>0x55E2</td><td>CL-GD5434 ネイティブポート 0x3D5?</td></tr>
+			<tr><td>0x5AE2</td><td>CL-GD5434 ネイティブポート 0x3DA?</td></tr>
+			<tr><td>0x40E3</td><td>bit0でリレーを切り替える。他は不明。初期値は0x7b？</td></tr>
+			<tr><td>0x46E8</td><td>詳細不明。初期値は0x18？</td></tr>
+			<tr><td>0x51E1</td><td>0x51E3と同じ？</td></tr>
+			<tr><td>0x51E3</td><td>Winドライバがボードのチェックに使っている？初期値は0xC2？</td></tr>
+			<tr><td>0x59E3</td><td>Winドライバがボードのチェックに使っている？0x06を返さないとドライバがエラーになるらしい。</td></tr>
+			<tr><td>0x5BE3</td><td>Winドライバがボードのチェックに使っている？bit3が0ならWSN-A4F, 1ならWSN-A2F？初期値は0xf7？</td></tr>
+			<tr><td>0x42E1</td><td>詳細不明。</td></tr>
+			<tr><td>0x42E3</td><td>詳細不明。</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>MMIO</h2>
+	<h3>E-BANK</h3>
+	<ul>
+		<li>WAB-Sと同じ？</li>
+	</ul>
+	<h3>16MBシステム空間(0xF00000)</h3>
+	<ul>
+		<li>(0xF00000～0xF10000) E-BANKモードのバンクサイズが0x4000から0x8000に変わったかのような挙動？</li>
+		<li>(0xF10000～0xF18000) アドレスの16進下三桁を取り出す（アドレスに0xFFFをANDする）とCL-GD5434 ネイティブポート番号になり、そのポートに読み書きしたかのような扱いになる？</li>
+		<li>(0xF18000～0xF20000) アドレスの16進下三桁を取り出す（アドレスに0xFFFをANDする）と、その番号でCL-GD54xxのMMIO BitBltを実行したのと同じ働きをするらしい？（QEMUのcirrus_mmio_blt系の関数）</li>
+	</ul>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
