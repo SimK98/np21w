@@ -42,7 +42,7 @@ small {
 	padding-left:2em;
 }
 
-@media screen and (min-width: 481px)Å@{
+@media screen and (min-width: 481px) {
 #contents_menu {
 	float: left;
 }
