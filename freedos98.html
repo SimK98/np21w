@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>簡単な使い方 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+	<h1>簡単な使い方</h1>
+	<p>
+		ここはFreeDOS(98)を使ってとりあえずNeko Project 21/W（それ以外のエミュレータでも良いけど）を使ってみよう！･･･というページです
+	</p>
+	<p>
+		実機を引っ張り出すのは面倒だけど、とりあえず動作試験してみたい人向けにBIOS無し・3モードFDD無し・まともに動く実機無しの状態で使う方法を書いておきます。
+一昔前のFreeDOS(98)は起動するのも面倒でしたが今は割と簡単になっています。
+	</p>
+	<p>
+		気に入ったら是非まともな実機を確保してください！ということで･･･
+	</p>
+	<p>
+		一応あまり詳しくない人（あるいは忘れた人）向けに書いていますが、PC-98に関する基本事項は知っている前提です。
+	</p>
+	<p>
+		フォントによっては￥がバックスラッシュになっちゃってる気がしますがそこは適当に読み替えてください。
+	</p>
+	<h2>基本的な流れ</h2>
+	<ol type="I" style="font-weight:bold;">
+		<li>Neko Project 21/Wの準備
+			<ol style="font-weight:normal;">
+				<li><a href="./download.html">なんかくれ</a>ページから最新のNeko Project 21/W（通常版）をダウンロードしてください。</li>
+				<li>アーカイブの中のbinを適当なところにファイルを展開してください。srcはソースコードなので通常は用がないと思います。</li>
+				<li>bin/np21w.exe（32bit版）, bin/np21x64w.exe（64bit版）が本体です。（Neko Project IIに対応する286相当はbin/9801/内にあります）</li>
+			</ol>
+		</li>
+		<li>FreeDOS(98)をダウンロードする
+			<ol style="font-weight:normal;">
+				<li>FreeDOS 方面（<a href="http://bauxite.sakura.ne.jp/software/dos/freedos.htm">http://bauxite.sakura.ne.jp/software/dos/freedos.htm</a>）のページから FreeDOS(98)起動フロッピーディスクイメージ(2HD)　または　FreeDOS(98)各種PC-98エミュレータ用ハードディスクイメージ（HDI形式） をダウンロードしてください（ここではハードディスクイメージをダウンロードしたものとして説明を進めます）。</li>
+				<li>ダウンロードしたファイルを適当なところに展開してください。</li>
+			</ol>
+		</li>
+		<li>起動確認
+			<ol style="font-weight:normal;">
+				<li>Neko Project 21/Wを起動して、Harddisk → IDE #0 → Open...を選択。</li>
+				<li>先程展開したFreeDOS(98)のディスクイメージを選択してください。</li>
+				<li>Emulate→Resetを選択してエミュレータをリセットしてください。</li>
+				<li>しばらく待つとA:\のプロンプトで入力待ちになります。これでFreeDOS(98)の起動は成功です。</li>
+			</ol>
+			<div style="margin:4px;"><small>※FreeDOSのコマンドについてはこのページの後半を参照。</small></div>
+			<div style="margin:4px;"><small>※MS-DOSをよく知っている人は差し当たってはFORMAT→FDFORMAT, FORMAT /H→BTNPARTさえ知っておけば問題ないと思います。</small></div>
+		</li>
+		<li>起動ディスクを作る（フロッピーディスク）
+			<ol style="font-weight:normal;">
+				<li>あらかじめFreeDOS(98)を起動しておいてください。</li>
+				<li>Emulate → New disk → Floppy disk image...を選択してください。</li>
+				<li>好きなファイル形式を選択して適当なファイル名を入れて保存を押してください。データ交換目的ならベタイメージ(raw image file)にするのが便利です。PC-98で標準的なサイズは1.2MBなのでここではこれを選択します（PC-9821からは1.44MBも使用可能）。</li>
+				<li>D88形式の場合はDisk labelやDisk typeを聞かれるので、Disk typeを2HDにしてOKを押してください。Disk labelは空白で構いません。</li>
+				<li>FDD1 → Open...で先程作成したディスクイメージを選択してください。</li>
+				<li>FDFORMAT B: /sと入力してRETURNキー（ENTERキー）を押してください。MS-DOSと同じく大文字小文字は関係ありません。</li>
+				<li>ディスクを挿入してくださいと出ますが、もう既に挿入しているのでそのまま何かキー（RETURNキーなど）を押してください。</li>
+				<li>ディスクタイプを聞かれるので"4"キーを押して2HD(1.23M)を選択しRETURNキーを押してください。</li>
+				<li>フォーマットが完了してプロンプトに戻ったらFDを入れたままリセットしてください。/li>
+				<li>現在の日付や時刻を聞かれますが何も入れずにそのままRETURNキーを押してください。</li>
+				<li>A:\のプロンプトで入力待ちになれば起動ディスクの作成は成功です。</li>
+			</ol>
+			<div style="margin:4px;"><small>※間違って別のディスクを初期化しないように注意（一瞬でディスクの中身がまっさらになります）</small></div>
+			<div style="margin:4px;"><small>※ハードディスクを初期化する場合はオプションを付けずにBTNPARTコマンドを実行して画面の指示に従ってください</small></div>
+			<div style="margin:4px;"><small>※日付設定が鬱陶しい場合はAUTOEXEC.BATという名前で空っぽのファイルを作っておけば聞かれなくなります（テキストファイルの作り方は後述）</small></div>
+		</li>
+		<li>FDイメージにファイルを転送してエミュレータで起動する
+			<ol style="font-weight:normal;">
+				<li>ディスクイメージエディタを入手してください。ND(<a href="http://euee.web.fc2.com/tool/nd.html">http://euee.web.fc2.com/tool/nd.html</a>)がおすすめです。これ以降もそれを前提で進めます。</li>
+				<li>NDを起動して、先程作成したフロッピーディスクイメージを開いてください。OFFSET=0等と表示されますがこれを選択してそのままOKで構いません。</li>
+				<li>ディスク内のファイル一覧が表示されます。ここまでの手順でKERNEL.SYS(MS-DOSのIO.SYS,MSDOS.SYSに相当)とCOMMAND.COMが入っているはずです。</li>
+				<li><a href="https://www.vector.co.jp/vpack/filearea/dos/">VectorのMS-DOSの所</a>やこのサイトの<a href="https://drive.google.com/drive/folders/1rH0WvcEHXRQ6QzEztpM0-i3dDFtWHN2A?usp=sharing">再配布アーカイブ</a>あたりから適当なPC-98用プログラムを入手してください。ここでは再配布アーカイブのdepth100.lzhをダウンロードしたものとして進めます。</li>
+				<li>depth100.lzhを展開して（LZHファイルの展開がWindows標準で出来たかは忘れました）、ディスクイメージの中に放り込んでください（NDならドラッグアンドドロップで出来ます）。</li>
+				<li>放り込み終えたらNDを終了してこのディスクイメージを使用してFreeDOS(98)を起動してください。</li>
+				<li>A:\のプロンプトで入力待ちになったらDEPTHと入力してRETURNキーを押してください。</li>
+				<li>Super Depthが起動するので自由に遊んでください</li>
+			</ol>
+			<div style="margin:4px;"><small>※他でも基本的にやることは同じで、ディスクイメージに放り込んで本体（名前はDIRコマンドなどで調べる・基本的には拡張子EXEかCOM、たまにBAT）を実行するだけです。MS-DOSをよく使っていた人なら言うまでもないと思いますが･･･</small></div>
+			<div style="margin:4px;"><small>※再配布アーカイブの蟹味噌(kani100.lzh)はEmulate → Configure →CPUでクロック倍率を8倍くらい（CPUクロック20MHz以下くらい）にしないと動きません（実機でもCPUが速すぎるとバグります）。np21wtoolのNPCNGCLKを使って動的に減らすのもOKです。</small></div>
+			<div style="margin:4px;"><small>※音が大きすぎる場合はWindowsのミキサーで調整するか、Device → Sound → Beep lowにしたりDevice → Sound optionのMixerで調整したりしてください。</small></div>
+			<div style="margin:4px;"><small>※プログラムによってはGDCクロックを変更しなければならない場合があります。そのときはHELPキー（ENDキー）を押しながらリセットしてシステムセットアップメニューを起動し、ディップスイッチ2のGDCクロックを2.5MHzや5MHzに変えてください。変えるのが面倒な場合はDOS用のユーティリティもあったりするので活用してください。</small></div>
+			<div style="margin:4px;"><small>※上記手順ではBIOS無し状態なのでROM BASICが必要なプログラムは起動できません。</small></div>
+			<div style="margin:4px;"><small>※上記手順ではサウンドBIOS無し状態なのでサウンドBIOSが必要なプログラムは正しく動きません。</small></div>
+		</li>
+	</ol>
+	<h1>基本的なコマンドなど</h1>
+	<p>
+		勢いで書いているので嘘書いてるかもしれません（ぉぃ
+	</p>
+	<h2>MS-DOS基本コマンド操作</h2>
+	<ul>
+		<li>間違って起動してしまった時･･･大抵はCtrl+CやESCキー、無入力でRETURNキー（ENTERキー）で終了できます</li>
+		<li>DIR　カレントディレクトリ（Windowsで言うフォルダ）にあるファイルとディレクトリの一覧を表示する
+			<ul style="font-weight:normal;">
+				<li>DIR /Wでファイル名のみ一覧表示</li>
+				<li>DIR /Pで1画面毎に表示</li>
+				<li>DIR &lt;パス&gt;　パスで指定したディレクトリのファイル一覧を表示</li>
+				<li>DIR &lt;ファイル名（ワイルドカード可）&gt;　指定したファイルの情報を表示</li>
+			</ul>
+		</li>
+		<li>x:　xドライブに移動する</li>
+		<li>CD　カレントディレクトリを表示（CHDIRコマンドの短縮形）
+			<ul style="font-weight:normal;">
+				<li>CD &lt;パスまたはディレクトリ名&gt;　指定したパスやディレクトリに移動（ドライブの移動は出来ません）</li>
+				<li>CD ..　一つ上のディレクトリに移動</li>
+				<li>CD \　ルートディレクトリ（ドライブ直下）に移動</li>
+			</ul>
+		</li>
+		<li>COPY &lt;コピー元ファイル&gt; &lt;送り先パスまたはファイル名&gt;　ファイル1をファイル2にコピーします。ワイルドカード使用可能。ディレクトリのコピーは不可
+			<ul style="font-weight:normal;">
+				<li>COPY *.* &lt;送り先パス&gt;　カレントディレクトリ内の全ファイルを送り先にコピー</li>
+				<li>COPY CON &lt;ファイル名&gt;　簡易的なテキストファイルを作成する（下記参照）</li>
+			</ul>
+		</li>
+		<li>DEL &lt;ファイル名&gt;　指定したファイルを削除する。ゴミ箱などという概念はないので即完全に消えます
+			<ul style="font-weight:normal;">
+				<li>DEL *.* カレントディレクトリのファイルを全て消す。間違って実行するとディレクトリ内が更地になるので注意</li>
+			</ul>
+		</li>
+		<li>MKDIR &lt;ディレクトリ名&gt;　ディレクトリ名で指定したディレクトリを作成する。短縮形はMD</li>
+		<li>RMDIR &lt;ディレクトリ名&gt;　ディレクトリ名で指定したディレクトリを削除する。短縮形はRD</li>
+		<li>TYPE &lt;ファイル名&gt;　指定したファイルの内容をコンソールに表示する。ある程度のCPUクロックがあると一瞬で流れるので長文の確認には不向き</li>
+	</ul>
+	<h2>COPY CONでのテキストファイルの作り方</h2>
+	<p>
+		あくまで簡易的な方法です。それなりの大きさのファイルを作りたい場合や既存のファイルを編集する場合は、エディタをどこかで確保して来るかディスクイメージ編集でファイル抽出して編集してください。
+	</p>
+	<ol>
+		<li>COPY CON &lt;ファイル名&gt;を実行。</li>
+		<li>プロンプトに戻らずに入力待ちになるので、1行目を打ち込んでRETURNキーを押す。RETURNを押すともうこの行には戻れないので間違いがないか良く確認する。</li>
+		<li>同様に2行目,3行目,･･･を打ち込んでいく</li>
+		<li>全て入力を終えたらCtrl+Zを入力（画面上では^Zと表示される）してRETURN</li>
+		<li>これで指定したファイル名に先程打ち込んだテキストが入っているはず</li>
+	</ol>
+	<h2>MS-DOSユーザーのための読み替え表</h2>
+	<ul>
+		<li>フロッピーディスクフォーマット　FORMAT→FDFORMAT</li>
+		<li>ハードディスクフォーマット　FORMAT /H→BTNPART（FAT16のみ）</li>
+		<li>内蔵IDE CDドライバ　NECCDD.SYS,NECCDM.SYS→PATACD.SYSで代用可</li>
+		<li>CD-ROM拡張機能　MSCDEX→SHSUCDX</li>
+	</ul>
+	<h2>AUTOEXEC.BATとCONFIG.SYS</h2>
+	<p>
+		MS-DOSユーザーならお馴染みですがWindows以降しか触ったことがない人だと知らないかも（一応Win9xにはありますが）。やはり勢いで書いているので嘘書いてるかもしれません（ぉぃ
+	</p>
+	<h3>AUTOEXEC.BAT</h3>
+	<p>
+		起動時に自動で実行してくれるバッチファイルです。中身はただのテキストファイルで1行毎に実行したいコマンドを順番に書いていくとその通りに実行してくれます。以下、知っておくと良いかもしれないもの（主観）。
+	</p>
+	<ul>
+		<li>ECHO &lt;ほげほげ&gt;　コンソールにほげほげで指定したテキストを表示する</li>
+		<li>ECHO.　ただの改行</li>
+		<li>@ECHO OFF　この行も含めて以降の行の実行コマンド文をコンソールに表示しない（頭に@を付けた行はECHO OFF扱いになるのでECHO OFFコマンド自体もコンソールに表示されないようにできる）</li>
+		<li>ECHO ON　上記ECHO OFF状態を解除する</li>
+		<li>PAUSE　実行を一時停止して何かキーを押してください状態にする</li>
+	</ul>
+	<h3>CONFIG.SYS</h3>
+	<p>
+		DOS用のドライバ（CD-ROM, 日本語入力FEP, メモリ管理など様々）を組み込むためのファイルです。基本的にDEVICE=ほげほげを書いていくだけです。私もあまり詳しくないので適当なことは書けませんが、とても頑張るとコンベンショナルメモリを相当空けられるようです。詳細は他のサイトにお任せします。以下、いくつか思いついたものを適当に。
+	</p>
+	<ul>
+		<li>DEVICE=&lt;ほげほげ&gt;　ドライバほげほげを組み込む。FEP系はADDDRVコマンドで後から入れることも出来たはず（たぶん）。</li>
+		<li>DEVICEHIGH=&lt;ほげほげ>&gt;　ドライバほげほげをUMBに組み込む。先にHIMEM.SYSやらEMM386.EXEやらを組み込んでDOS=UMBしないと駄目だったはず。UMB非対応のドライバもあるので注意。</li>
+		<li>FILES=&lt;整数値&gt;　同時に開けるファイルの数だったはず（あんまり多いとメモリが無駄なだけです）</li>
+		<li>BUFFERS=&lt;整数値&gt;　ディスクバッファのサイズ。エミュレータではほぼ価値無し。数値は2つ指定できた気がするけど忘れた。</li>
+		<li>LASTDRIVE=&lt;ドライブ文字&gt;　使用したい最後のドライブ文字。接続状況に合わせて適当に設定してくれますが、後からドライブ文字が割り当てられるCD-ROMを使う場合はちゃんと指定してやる必要があります。通常は面倒なのでLASTDRIVE=Z。</li>
+		<li>SHELL=&lt;実行ファイル&gt;　諸事情あってCOMMAND.COMを使いたくない場合に別のプログラムをシェルに出来ます。コマンドライン引数も指定可能　</li>
+	</ul>
+	<p>
+		<a href="./index.html">トップに戻る</a>
+	</p>
+</body>
+</html>

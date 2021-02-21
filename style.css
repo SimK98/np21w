@@ -8,6 +8,35 @@ pre {
 	line-height: 130%;
 	white-space: pre-wrap ;
 }
+dt {
+	line-height: 130%;
+	font-weight: bold;
+	margin-top: 1em;
+}
+dd {
+	line-height: 130%;
+}
+ol li{
+	margin-top: 1em;
+	line-height: 130%;
+}
+ol li ol li {
+	margin-top: 4px;
+	line-height: 130%;
+}
+ul li{
+	margin-top: 1em;
+	line-height: 130%;
+}
+ul li ul li {
+	margin-top: 4px;
+	line-height: 130%;
+}
+
+small {
+	line-height: 110%;
+}
+
 
 .downloadContents {
 	margin:8px;
