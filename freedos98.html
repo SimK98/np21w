@@ -7,7 +7,7 @@
 	<link rel="SHORTCUT ICON" href="./favicon.ico">
 	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
 	<title>簡単な使い方 - PC-9800 Series Emulator Neko Project 21/W</title>
-	<link rel="stylesheet" type="text/css" href="./style.css?dummy=4">
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=5">
 </head>
 <body>
 	<h1>簡単な使い方</h1>
@@ -89,11 +89,11 @@
 			<div style="margin:4px;"><small>※上記手順ではサウンドBIOS無し状態なのでサウンドBIOSが必要なプログラムは正しく動きません。</small></div>
 		</li>
 	</ol>
-	<h1>基本的なコマンドなど</h1>
+	<h2>基本的なコマンドなど</h2>
 	<p>
 		勢いで書いているので嘘書いてるかもしれません（ぉぃ
 	</p>
-	<h2>MS-DOS基本コマンド操作</h2>
+	<h3>MS-DOS基本コマンド操作</h3>
 	<ul>
 		<li>間違って起動してしまった時･･･大抵はCtrl+CやESCキー、無入力でRETURNキー（ENTERキー）で終了できます</li>
 		<li>DIR　カレントディレクトリ（Windowsで言うフォルダ）にあるファイルとディレクトリの一覧を表示する
@@ -127,7 +127,7 @@
 		<li>RMDIR &lt;ディレクトリ名&gt;　ディレクトリ名で指定したディレクトリを削除する。短縮形はRD</li>
 		<li>TYPE &lt;ファイル名&gt;　指定したファイルの内容をコンソールに表示する。ある程度のCPUクロックがあると一瞬で流れるので長文の確認には不向き</li>
 	</ul>
-	<h2>COPY CONでのテキストファイルの作り方</h2>
+	<h3>COPY CONでのテキストファイルの作り方</h3>
 	<p>
 		あくまで簡易的な方法です。それなりの大きさのファイルを作りたい場合や既存のファイルを編集する場合は、エディタをどこかで確保して来るかディスクイメージ編集でファイル抽出して編集してください。
 	</p>
@@ -138,18 +138,18 @@
 		<li>全て入力を終えたらCtrl+Zを入力（画面上では^Zと表示される）してRETURN</li>
 		<li>これで指定したファイル名に先程打ち込んだテキストが入っているはず</li>
 	</ol>
-	<h2>MS-DOSユーザーのための読み替え表</h2>
+	<h3>MS-DOSユーザーのための読み替え表</h3>
 	<ul>
 		<li>フロッピーディスクフォーマット　FORMAT→FDFORMAT</li>
 		<li>ハードディスクフォーマット　FORMAT /H→BTNPART（FAT16のみ）</li>
 		<li>内蔵IDE CDドライバ　NECCDD.SYS,NECCDM.SYS→PATACD.SYSで代用可</li>
 		<li>CD-ROM拡張機能　MSCDEX→SHSUCDX</li>
 	</ul>
-	<h2>AUTOEXEC.BATとCONFIG.SYS</h2>
+	<h3>AUTOEXEC.BATとCONFIG.SYS</h3>
 	<p>
 		MS-DOSユーザーならお馴染みですがWindows以降しか触ったことがない人だと知らないかも（一応Win9xにはありますが）。やはり勢いで書いているので嘘書いてるかもしれません（ぉぃ
 	</p>
-	<h3>AUTOEXEC.BAT</h3>
+	<h4>AUTOEXEC.BAT</h4>
 	<p>
 		起動時に自動で実行してくれるバッチファイルです。中身はただのテキストファイルで1行毎に実行したいコマンドを順番に書いていくとその通りに実行してくれます。以下、知っておくと良いかもしれないもの（主観）。
 	</p>
@@ -160,7 +160,7 @@
 		<li>ECHO ON　上記ECHO OFF状態を解除する</li>
 		<li>PAUSE　実行を一時停止して何かキーを押してください状態にする</li>
 	</ul>
-	<h3>CONFIG.SYS</h3>
+	<h4>CONFIG.SYS</h4>
 	<p>
 		DOS用のドライバ（CD-ROM, 日本語入力FEP, メモリ管理など様々）を組み込むためのファイルです。基本的にDEVICE=ほげほげを書いていくだけです。私もあまり詳しくないので適当なことは書けませんが、とても頑張るとコンベンショナルメモリを相当空けられるようです。詳細は他のサイトにお任せします。以下、いくつか思いついたものを適当に。
 	</p>
