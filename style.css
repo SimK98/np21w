@@ -1,5 +1,8 @@
 @charset "UTF-8";
 
+body {
+	word-wrap:break-word;
+}
 img{
 	max-width:100%;
 }
@@ -37,13 +40,39 @@ small {
 	line-height: 110%;
 }
 
+a {
+	word-break: break-all;
+}
+
 .downloadContents {
 	margin:8px;
 	padding-left:2em;
 }
 
+.tablediv {
+	overflow: auto;
+}
+.tablediv table {
+	width: 100%;
+}
+
 @media screen and (min-width: 481px) {
 #contents_menu {
 	float: left;
+}
+}
+@media screen and (max-width: 720px) {
+.tablediv {
+	font-size: 14px;
+}
+}
+@media screen and (max-width: 640px) {
+.tablediv {
+	font-size: 12px;
+}
+}
+@media screen and (max-width: 480px) {
+.tablediv {
+	font-size: 10px;
 }
 }
