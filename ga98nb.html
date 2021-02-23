@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>GA-98NBI/C, II, IV解析資料 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+</head>
+<body>
+	<h1>GA-98NBI/C, II, IV解析資料</h1>
+	<p>
+		I/Oポートの扱い等でWAB-SやWSNと似た部分が結構あるようですが、違う点が結構あるようなのでメモとして残しておきます。あくまでメモ程度です。自分が調べたものではない情報も含まれます。
+Neko Project 21/Wのソースも参考にして下さい。
+	</p>
+	<p>
+Cirrus LogicのTechnical Reference Manualも参照のこと。
+	</p>
+	<h2>基本仕様</h2>
+	<ul>
+		<li>WSNと妙に似ています。</li>
+	</ul>
+	<h2>I/Oポート</h2>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="max-width:100%;" border=1>
+		<thead>
+			<tr><th>I/Oポート</th><th>役割</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>0x40Ey</td><td>CL-GD5434 ネイティブポート 0x3C0</td></tr>
+			<tr><td>0x41Ey</td><td>CL-GD5434 ネイティブポート 0x3C1</td></tr>
+			<tr><td>0x42Ey</td><td>CL-GD5434 ネイティブポート 0x3C2</td></tr>
+			<tr><td>0x43Ey</td><td>CL-GD5434 ネイティブポート 0x3C3</td></tr>
+			<tr><td>0x44Ey</td><td>CL-GD5434 ネイティブポート 0x3C4</td></tr>
+			<tr><td>0x45Ey</td><td>CL-GD5434 ネイティブポート 0x3C5</td></tr>
+			<tr><td>0x46Ey</td><td>CL-GD5434 ネイティブポート 0x3C6</td></tr>
+			<tr><td>0x47Ey</td><td>CL-GD5434 ネイティブポート 0x3C7</td></tr>
+			<tr><td>0x48Ey</td><td>CL-GD5434 ネイティブポート 0x3C8</td></tr>
+			<tr><td>0x49Ey</td><td>CL-GD5434 ネイティブポート 0x3C9</td></tr>
+			<tr><td>0x4AEy</td><td>CL-GD5434 ネイティブポート 0x3CA</td></tr>
+			<tr><td>0x4BEy</td><td>CL-GD5434 ネイティブポート 0x3CB</td></tr>
+			<tr><td>0x4CEy</td><td>CL-GD5434 ネイティブポート 0x3CC</td></tr>
+			<tr><td>0x4DEy</td><td>CL-GD5434 ネイティブポート 0x3CD</td></tr>
+			<tr><td>0x4EEy</td><td>CL-GD5434 ネイティブポート 0x3CE</td></tr>
+			<tr><td>0x4FEy</td><td>CL-GD5434 ネイティブポート 0x3CF</td></tr>
+			<tr><td>0x58Ey</td><td>CL-GD5434 ネイティブポート 0x3B4?</td></tr>
+			<tr><td>0x59Ey</td><td>CL-GD5434 ネイティブポート 0x3B5?</td></tr>
+			<tr><td>0x54Ey</td><td>CL-GD5434 ネイティブポート 0x3D4?</td></tr>
+			<tr><td>0x55Ey</td><td>CL-GD5434 ネイティブポート 0x3D5?</td></tr>
+			<tr><td>0x5AEy</td><td>CL-GD5434 ネイティブポート 0x3DA?</td></tr>
+			<tr><td>0x40E3</td><td>bit0でリレーを切り替える。他は不明。初期値は0x7b？</td></tr>
+			<tr><td>0x46E8</td><td>CL-GD5434 46E8 Adapter Sleep Address。初期値は0x18？</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<div style="margin:4px;"><small>※WSNとほぼ同じっぽいですが、yの部分は偶数番号で選択できます</small></div>
+	
+	<h2>MMIO</h2>
+	<h3>E-BANK</h3>
+	<ul>
+		<li>レジスタSR7とGR6の値によってWSNと同じようにアクセスする場合もあれば、MMIO BitBltを実行する場合もあるようです。</li>
+	</ul>
+	<h3>16MBシステム空間(0xF00000)</h3>
+	<ul>
+		<li>詳細不明。E-BANKと同じような扱いだと思います（推測）</li>
+	</ul>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
