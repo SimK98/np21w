@@ -21,10 +21,11 @@
 		<dd>A2. ジョイパッドがない時にSound option -> JoyPad -> Use JoyPad-1にチェックを入れるとおかしくなるので使わない時は外す</dd>
 		<dd>A3. 非公開機能のTICKMODEを2か1にすると改善するかもしれません</dd>
 		<dd>A4. サウンドのサンプリングレートが過剰に大きくないか確認</dd>
+		<dd>A5. Async CPUを止めて処理落ちしない範囲の固定クロックにする</dd>
 		
 		<dt>Q. マウスが動かない</dt>
 		<dd>A1. 画面内でマウス中ボタンクリックまたはF12でマウスキャプチャできます。</dd>
-		<dd>A2. Device->Mouse->Non-capture Controlをオンにするとキャプチャ無しでも動かせるようになります。（エミュレータ側がマウス座標を把握出来ませんので、シームレスとまではいきません）</dd>
+		<dd>A2. Device->Mouse->Non-capture Controlをオンにするとキャプチャ無しでも動かせるようになります。（エミュレータ側はマウス座標を把握出来ませんので、シームレスとまではいきません）</dd>
 		
 		<dt>Q. 86音源のPCMがズレる</dt>
 		<dd>A1. ConfigureのCPUクロック倍率の設定を確認。大きすぎると処理落ちします（目安：ホストCPUクロック/50 MHz）</dd>
@@ -145,7 +146,7 @@
 		<dd>A. 付属のlanguageフォルダ内のreadme.txtを見てください。</dd>
 		
 		<dt>Q. 拡大時にドットのエッジをギザギザにして欲しい</dt>
-		<dd>レンダラをDirect3Dに、補間モードをNearest Neighborすればニアレストネイバーでの拡大になります。フルスクリーン設定のZoomをInteger multipleにするとなお良し。ディスプレイ解像度が640x400の整数倍でない場合は補間モードをPixel-retained (Soft)あたりにしてZoomをFixed aspect/Adjust aspectあたりにすると良いかもしれません。</dd>
+		<dd>A. レンダラをDirect3Dに、補間モードをNearest Neighborすればニアレストネイバーでの拡大になります。フルスクリーン設定のZoomをInteger multipleにするとなお良し。ディスプレイ解像度が640x400の整数倍でない場合は補間モードをPixel-retained (Soft)あたりにしてZoomをFixed aspect/Adjust aspectあたりにすると良いかもしれません。</dd>
 		
 		<dt>Q. 拡大時にドットのエッジをなめらかにして欲しい</dt>
 		<dd>A. レンダラをDirect3Dに、補間モードをBilinearにすれば補間されます。</dd>
