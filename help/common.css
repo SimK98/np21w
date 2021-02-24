@@ -1,10 +1,8 @@
-@charset "utf-8";
-
 
 BODY {
   COLOR: #000000;
   BACKGROUND: #ffffee;
-  FONT-FAMILY: ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯, MS UI Gothic;
+  FONT-FAMILY: ‚l‚r ‚oƒSƒVƒbƒN, MS UI Gothic;
   FONT-SIZE: 90%;
   word-wrap:break-word;
 }
@@ -142,6 +140,6 @@ TABLE {
 }
 @media screen and (max-width: 480px) {
 TABLE {
-	font-size: 10px;
+	font-size: 9px;
 }
 }
