@@ -6,6 +6,7 @@ BODY {
   BACKGROUND: #ffffee;
   FONT-FAMILY: ＭＳ Ｐゴシック, MS UI Gothic;
   FONT-SIZE: 90%;
+  word-wrap:break-word;
 }
 
 A:link {
