@@ -129,3 +129,19 @@ TD.spec2 {
 IMG {
   MAX-WIDTH: 100%;
 }
+
+@media screen and (max-width: 720px) {
+TABLE {
+	font-size: 14px;
+}
+}
+@media screen and (max-width: 640px) {
+TABLE {
+	font-size: 12px;
+}
+}
+@media screen and (max-width: 480px) {
+TABLE {
+	font-size: 10px;
+}
+}
