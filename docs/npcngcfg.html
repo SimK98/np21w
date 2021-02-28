@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="../favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>動的ハード構成変更 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+</head>
+<body>
+	<h1>動的ハード構成変更</h1>
+	<p>
+		Neko Project 21/W は特定のI/Oポートを操作することにより、エミュレータ本体で設定する必要がある項目（CPUクロック倍率、使用するサウンドボードなど）を動的に変更できます。
+	</p>
+	<p>
+		一般のユーザーがI/Oポートを操作することは容易ではありませんので、この操作を行うプログラムを用意しています。
+	</p>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/18KH-ZV6kCa0j0fg-4JHgSIQsiX8N6whE/view?usp=sharing">Neko Project 21/W ユーティリティ＆ディスクイメージ</a><br>
+		NPCNGCLK.EXE, NPCNGCFG.EXE, NPCCxx.COMなど（本家np2/np21で使っても何も起こりません）
+	</div>
+	<p>
+		NPCNGCLK.EXE, NPCNGCFG.EXEは汎用的なプログラムで、それぞれCPUクロック倍率とハードウェア構成を変更できます。
+		NPCxxx.COMは引数なしの固定設定にしてプログラムサイズを小さくしたものです。こちらはIPLwareへの登録も可能です。
+	</p>
+	<p>
+		これ以降はI/Oポートの仕様について説明します。
+	</p>
+	<h2>Neko Project II システムポート</h2>
+	<p>
+		Neko Project IIは2つのI/Oポート 7EDhと7EFhをエミュレータ本体との通信のために使用します。
+		動的ハード構成変更はこのポートを拡張して実装されています。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>I/Oポート</th><th>役割</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>7EDh</td><td>コマンドパラメータの書き込みとコマンド結果の読み取り</td></tr>
+			<tr><td>7EFh</td><td>コマンド文字列の書き込み</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<p>
+		なお、未知のコマンドの場合、エミュレータ側は何もしない仕様となっています。
+		つまり、本家Neko Project IIで対応していないコマンドを送っても問題はありません（何も起こりません）。
+	</p>
+	<p>
+		また、実機の場合はI/Oポート7EDhと7EFhに何もいなければ問題ありません（何も起こりません）。
+	</p>
+	<h3>Neko Project II システムポートとの通信方法</h3>
+	<p>
+		Neko Project II システムポートとの通信は以下の手順で行います。
+	</p>
+	<ol>
+		<li>I/Oポート7EDhにコマンドのパラメータをByteで書き込みます。パラメータが不要の場合は書き込まなくても問題ありません。</li>
+		<li>I/Oポート7EFhにコマンドの文字列を順に書き込みます。コマンド書き込みが終わった瞬間にコマンドが実行されます。</li>
+		<li>戻り値があるコマンドで、戻り値が必要な場合はI/Oポート7EFhからデータをByteで読み取ります。0（NULL文字）が来たら読み取り完了です。</li>
+	</ol>
+	<h3>Neko Project II システムポートのコマンド</h3>
+	<p>
+		Neko Project II 共通コマンドは、機能カットなどが行われていない限り、本家から派生した全てのNeko Project II／Neko Project 21で使用できます。
+	</p>
+	<p>
+		Neko Project 21/W 拡張コマンドはNeko Project 21/W／Neko Project II/Wでのみ使用できます。本家で実行しても何も起こりません。
+	</p>
+	<h4>Neko Project II 共通コマンド</h4>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>コマンド</th><th>パラメータ</th><th>戻り値</th><th>機能</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>"NP2"</td><td>なし</td><td>"NP2"</td><td>Neko Project IIまたはその派生であるかの判定に使用する。</td></tr>
+			<tr><td>"ver"</td><td>なし</td><td>バージョン番号文字列</td><td>Neko Project IIのバージョン番号を文字列で取得する。</td></tr>
+			<tr><td>"poweroff"</td><td>なし</td><td>なし</td><td>Neko Project IIを終了する。</td></tr>
+			<tr><td>"hardwarereset"</td><td>なし</td><td>なし</td><td>Neko Project IIをリセットする。Emulate→Resetの操作と同じです。</td></tr>
+			<tr><td>"cpu"</td><td>なし</td><td>CPU型番文字列</td><td>CPU型番を文字列で取得する。</td></tr>
+			<tr><td>"clock"</td><td>なし</td><td>動作クロック数文字列</td><td>動作クロック数を文字列で取得する。</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<h4>Neko Project 21/W 拡張コマンド</h4>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>コマンド</th><th>パラメータ</th><th>戻り値</th><th>機能</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>"changeclockmul"</td><td>クロック倍率の値(1byte)</td><td>設定されているクロック倍率(1byte)</td><td>CPUクロック倍率を設定する。パラメータと戻り値は文字列ではなく1byteの数値である事に注意。パラメータに0を渡すと設定変更せずに現在値が返ります。</td></tr>
+			<tr><td>"changeconfig"</td><td>可変長（後述）</td><td>可変長（後述）</td><td>Neko Project 21/Wの設定を変更する。ここで加えた変更はハードリセットで元に戻ります。</td></tr>
+			<tr><td>"getconfig"</td><td>可変長（後述）</td><td>可変長（後述）</td><td>Neko Project 21/Wの設定を取得する。</td></tr></td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>動的ハード構成変更コマンドについて</h2>
+	<p>
+		動的ハード構成変更コマンド"changeconfig"と、現在の設定を読み取るコマンド"getconfig"は可変長の引数と戻り値となっています。このため、扱いがやや特殊です。
+	</p>
+	<p>
+		これらのコマンドは以下のような流れで使用します。
+		先に、下記の<a href="#functionlist">機能番号表</a>から設定したいものを探し、その機能番号に対応するパラメータ値を調べておきます。
+	</p>
+	<h4>"changeconfig"コマンド</h4>
+	<ol>
+		<li>I/Oポート7EDhに機能番号に対応するパラメータ値を<b>byte列（リトルエンディアン）</b>で書き込みます。文字列ではないので注意してください。</li>
+		<li>続いて、I/Oポート7EDhに機能番号(<b>1byte</b>)を書き込みます。文字ではないので注意してください。</li>
+		<li>I/Oポート7EFhに"changeconfig"を順に書き込みます。コマンド書き込みが終わった瞬間にコマンドが実行されます。</li>
+		<li>戻り値が必要な場合はI/Oポート7EFhからデータを<b>文字列</b>で読み取ります。0（NULL文字）が来たら読み取り完了です。</li>
+	</ol>
+	<h4>"getconfig"コマンド</h4>
+	<ol>
+		<li>I/Oポート7EDhに機能番号(<b>1byte</b>)を書き込みます。文字ではないので注意してください。</li>
+		<li>I/Oポート7EFhに"getconfig"を順に書き込みます。コマンド書き込みが終わった瞬間にコマンドが実行されます。</li>
+		<li>I/Oポート7EFhからデータを<b>文字列</b>で読み取ります。0（NULL文字）が来たら読み取り完了です。</li>
+	</ol>
+	
+	<h4 id="functionlist">"changeconfig"コマンドと"getconfig"コマンドの機能番号表</h4>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>機能番号</th><th>パラメータ</th><th>戻り値</th><th>機能</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>1</td><td><a href="#functionvalue1">CL-GD54xxウィンドウアクセラレータ機種ID</a> (2byte)</td><td>設定されているウィンドウアクセラレータ機種IDの文字列</td><td>CL-GD54xxウィンドウアクセラレータの種類を変更する。</td></tr>
+			<tr><td>2</td><td><a href="#functionvalue1">サウンドボードID</a> (1byte)</td><td>設定されているサウンドボードIDの文字列</td><td>サウンドボードの種類を変更する。</td></tr>
+			<tr><td>3</td><td>1 (1byte)</td><td>なし</td><td>HRTIMERをコマンド実行時のホスト時刻と同期する。</td></tr>
+			<tr><td>4</td><td>有効=1, 無効=0 (1byte)</td><td>有効="1", 無効="0"</td><td>PCIバスの有無を設定する。</td></tr>
+			<tr><td>6</td><td>1 (1byte)</td><td>なし</td><td>サウンドROMを強制的に無効にする。</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h4 id="functionvalue1">機能番号1 CL-GD54xxウィンドウアクセラレータ機種ID(2byte)表</h4>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>ID</th><th>種類</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>80</td><td>コマンドパラメータの書き込みとコマンド結果の読み取り</td></tr>
+			<tr><td>80</td><td>PC-9821 Bp,Bs,Be,Bf内蔵</td></tr>
+			<tr><td>88</td><td>PC-9821 Xe内蔵</td></tr>
+			<tr><td>89</td><td>PC-9821 Cb内蔵</td></tr>
+			<tr><td>90</td><td>PC-9821 Cf内蔵</td></tr>
+			<tr><td>91</td><td>PC-9821 Xe10,Xa7e,Xb10内蔵</td></tr>
+			<tr><td>92</td><td>PC-9821 Cb2内蔵</td></tr>
+			<tr><td>93</td><td>PC-9821 Cx2内蔵</td></tr>
+			<tr><td>96</td><td>PC-9801-96(PC-9801B3-E02)</td></tr>
+			<tr><td>160</td><td>PC-9821 PCI CL-GD5446(要PCI)</td></tr>
+			<tr><td>256</td><td>MELCO WAB-S</td></tr>
+			<tr><td>257</td><td>MELCO WSN-A2F</td></tr>
+			<tr><td>258</td><td>MELCO WSN-A4F</td></tr>
+			<tr><td>512</td><td>I-O DATA GA-98NBI/C</td></tr>
+			<tr><td>513</td><td>I-O DATA GA-98NBII</td></tr>
+			<tr><td>514</td><td>I-O DATA GA-98NBIV</td></tr>
+			<tr><td>65527</td><td>自動選択(Xe10, GA-98NBI/C, PCI)</td></tr>
+			<tr><td>65528</td><td>自動選択(Xe10, GA-98NBII, PCI)</td></tr>
+			<tr><td>65529</td><td>自動選択(Xe10, GA-98NBIV, PCI)</td></tr>
+			<tr><td>65530</td><td>自動選択(Xe10, WAB-S, PCI)</td></tr>
+			<tr><td>65531</td><td>自動選択(Xe10, WSN-A4F, PCI)</td></tr>
+			<tr><td>65532</td><td>自動選択(Xe10, WSN-A2F, PCI)</td></tr>
+			<tr><td>65533</td><td>自動選択(Xe10, WAB-S)</td></tr>
+			<tr><td>65534</td><td>自動選択(Xe10, WSN-A2F)</td></tr>
+			<tr><td>65535</td><td>自動選択(Xe10, WSN-A4F)</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h4 id="functionvalue2">機能番号2 サウンドボードID(1byte)表</h4>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>ID</th><th>種類</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>0</td><td>サウンドボード無し</td></tr>
+			<tr><td>1</td><td>PC-9801-14</td></tr>
+			<tr><td>2</td><td>PC-9801-26K</td></tr>
+			<tr><td>4</td><td>PC-9801-86</td></tr>
+			<tr><td>6</td><td>PC-9801-86 + 26K</td></tr>
+			<tr><td>8</td><td>PC-9801-118</td></tr>
+			<tr><td>20</td><td>PC-9801-86 with ADPCM（ちびおと）</td></tr>
+			<tr><td>32</td><td>Speak board</td></tr>
+			<tr><td>36</td><td>PC-9801-86 + Speak board</td></tr>
+			<tr><td>50</td><td>SOUND ORCHESTRA</td></tr>
+			<tr><td>64</td><td>Spark board</td></tr>
+			<tr><td>65</td><td>Sound Blaster 16</td></tr>
+			<tr><td>66</td><td>PC-9801-86 + Mate-X PCM(B460) + Sound Blaster 16</td></tr>
+			<tr><td>67</td><td>Mate-X PCM(B460) + Sound Blaster 16</td></tr>
+			<tr><td>68</td><td>PC-9801-86 + Sound Blaster 16</td></tr>
+			<tr><td>69</td><td>PC-9801-118 + Sound Blaster 16</td></tr>
+			<tr><td>70</td><td>PC-9801-86 + PC-9801-118(B460) + Sound Blaster 16</td></tr>
+			<tr><td>96</td><td>Mate-X PCM</td></tr>
+			<tr><td>100</td><td>PC-9801-86 + Mate-X PCM(B460)</td></tr>
+			<tr><td>104</td><td>PC-9801-86 + PC-9801-118(B460)</td></tr>
+			<tr><td>112</td><td>WaveStar</td></tr>
+			<tr><td>128</td><td>AMD-98</td></tr>
+			<tr><td>130</td><td>SOUND ORCHESTRA-V</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
