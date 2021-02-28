@@ -91,7 +91,7 @@
 			<tr><th>コマンド</th><th>パラメータ</th><th>戻り値</th><th>機能</th></tr>
 		</thead>
 		<tbody>
-			<tr><td>"changeclockmul"</td><td>クロック倍率の値(1byte)</td><td>設定されているクロック倍率(1byte)</td><td>CPUクロック倍率を設定する。パラメータと戻り値は文字列ではなく1byteの数値である事に注意。パラメータに0を渡すと設定変更せずに現在値が返ります。</td></tr>
+			<tr><td>"changeclockmul"</td><td>クロック倍率の値(1byte)</td><td>設定されているクロック倍率の文字列</td><td>CPUクロック倍率を設定する。パラメータは文字列ではなく1byteの数値である事に注意。パラメータに0を渡すと設定変更せずに現在値が返ります。</td></tr>
 			<tr><td>"changeconfig"</td><td>可変長（後述）</td><td>可変長（後述）</td><td>Neko Project 21/Wの設定を変更する。ここで加えた変更はハードリセットで元に戻ります。</td></tr>
 			<tr><td>"getconfig"</td><td>可変長（後述）</td><td>可変長（後述）</td><td>Neko Project 21/Wの設定を取得する。</td></tr></td></tr>
 		</tbody>
