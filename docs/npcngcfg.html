@@ -105,14 +105,14 @@
 		これらのコマンドは以下のような流れで使用します。
 		先に、下記の<a href="#functionlist">機能番号表</a>から設定したいものを探し、その機能番号に対応するパラメータ値を調べておきます。
 	</p>
-	<h4>"changeconfig"コマンド</h4>
+	<h3>"changeconfig"コマンド</h3>
 	<ol>
 		<li>I/Oポート7EDhに機能番号に対応するパラメータ値を<b>byte列（リトルエンディアン）</b>で書き込みます。文字列ではないので注意してください。</li>
 		<li>続いて、I/Oポート7EDhに機能番号(<b>1byte</b>)を書き込みます。文字ではないので注意してください。</li>
 		<li>I/Oポート7EFhに"changeconfig"を順に書き込みます。コマンド書き込みが終わった瞬間にコマンドが実行されます。</li>
 		<li>戻り値が必要な場合はI/Oポート7EFhからデータを<b>文字列</b>で読み取ります。0（NULL文字）が来たら読み取り完了です。</li>
 	</ol>
-	<h4>"getconfig"コマンド</h4>
+	<h3>"getconfig"コマンド</h3>
 	<ol>
 		<li>I/Oポート7EDhに機能番号(<b>1byte</b>)を書き込みます。文字ではないので注意してください。</li>
 		<li>I/Oポート7EFhに"getconfig"を順に書き込みます。コマンド書き込みが終わった瞬間にコマンドが実行されます。</li>
@@ -127,7 +127,7 @@
 		</thead>
 		<tbody>
 			<tr><td>1</td><td><a href="#functionvalue1">CL-GD54xxウィンドウアクセラレータ機種ID</a> (2byte)</td><td>設定されているウィンドウアクセラレータ機種IDの文字列</td><td>CL-GD54xxウィンドウアクセラレータの種類を変更する。</td></tr>
-			<tr><td>2</td><td><a href="#functionvalue1">サウンドボードID</a> (1byte)</td><td>設定されているサウンドボードIDの文字列</td><td>サウンドボードの種類を変更する。</td></tr>
+			<tr><td>2</td><td><a href="#functionvalue2">サウンドボードID</a> (1byte)</td><td>設定されているサウンドボードIDの文字列</td><td>サウンドボードの種類を変更する。</td></tr>
 			<tr><td>3</td><td>1 (1byte)</td><td>なし</td><td>HRTIMERをコマンド実行時のホスト時刻と同期する。</td></tr>
 			<tr><td>4</td><td>有効=1, 無効=0 (1byte)</td><td>有効="1", 無効="0"</td><td>PCIバスの有無を設定する。</td></tr>
 			<tr><td>6</td><td>1 (1byte)</td><td>なし</td><td>サウンドROMを強制的に無効にする。</td></tr>
