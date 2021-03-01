@@ -19,8 +19,7 @@
 		一般のユーザーがI/Oポートを操作することは容易ではありませんので、この操作を行うプログラムを用意しています。
 	</p>
 	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/18KH-ZV6kCa0j0fg-4JHgSIQsiX8N6whE/view?usp=sharing">Neko Project 21/W ユーティリティ＆ディスクイメージ</a><br>
-		NPCNGCLK.EXE, NPCNGCFG.EXE, NPCCxx.COMなど（本家np2/np21で使っても何も起こりません）
+		<a href="https://drive.google.com/file/d/18KH-ZV6kCa0j0fg-4JHgSIQsiX8N6whE/view?usp=sharing">Neko Project 21/W ユーティリティ＆ディスクイメージ</a>
 	</div>
 	<p>
 		NPCNGCLK.EXE, NPCNGCFG.EXEは汎用的なプログラムで、それぞれCPUクロック倍率とハードウェア構成を変更できます。
@@ -33,7 +32,7 @@
 	<h2>Neko Project II システムポート</h2>
 	<p>
 		Neko Project IIは2つのI/Oポート 7EDhと7EFhをエミュレータ本体との通信のために使用します。
-		動的ハード構成変更はこのポートを拡張して実装されています。
+		動的ハード構成変更はこのポートの機能を拡張して実装されています。
 	</p>
 	<div  style="margin:16px;" class="tablediv">
 	<table style="width:auto;" border=1>
@@ -82,6 +81,7 @@
 			<tr><td>"hardwarereset"</td><td>なし</td><td>なし</td><td>Neko Project IIをリセットする。Emulate→Resetの操作と同じです。</td></tr>
 			<tr><td>"cpu"</td><td>なし</td><td>CPU型番文字列</td><td>CPU型番を文字列で取得する。</td></tr>
 			<tr><td>"clock"</td><td>なし</td><td>動作クロック数文字列</td><td>動作クロック数を文字列で取得する。</td></tr>
+			<tr><td>"multiple"</td><td>なし</td><td>動作クロック数文字列</td><td>動作クロック数を文字列で取得する。</td></tr>
 		</tbody>
 	</table>
 	</div>
