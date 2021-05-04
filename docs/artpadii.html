@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>WACOM ArtPad II 解析資料 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+</head>
+<body>
+	<h1>WACOM ArtPad II 解析資料</h1>
+	<p>
+		シリアル接続のペンタブレット WACOM ArtPad II の解析資料です。
+	</p>
+	<p>
+		この解析結果はシリアル接続の古いWACOM製ペンタブレットが対象です。
+		Neko Project 21/Wのwin9x/commng/cmwacom.cppも参考にして下さい。
+	</p>
+	<h2>基本仕様</h2>
+	<p>接続設定は以下の通り。</p>
+	<div style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>項目</th><th>設定値</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>通信速度</td><td>9600bps または 19200bps ※</td></tr>
+			<tr><td>データビット</td><td>8bit</td></tr>
+			<tr><td>パリティ</td><td>なし</td></tr>
+			<tr><td>ストップビット</td><td>1bit</td></tr>
+		</tbody>
+	</table>
+	<div>※通信速度はコマンドによって切り替える。電源投入時は9600bps。</div>
+	</div>
+	<p>
+		ペンタブレットへのコマンドをASCIIのテキストで送り、最後にCR（LFが無視されるかは未検証）を送信すると実行される（ただし「~#」コマンドは例外的に改行なしで即時実行される）。
+		判明しているコマンドは以下の通り。表中の\nはLF, \rはCRの意味。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>コマンド</th><th>機能</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>~#</td><td>ペンタブレットのモデル名を取得する。例えば「~#KT-0405-R00 V1.3-2\r」のような文字列が返される。</td></tr>
+			<tr><td>#\r</td><td>ペンタブレット設定をリセットする。筆圧有効の状態で通信速度は9600bpsになる。どこかで見た情報によるとprotocol IV commandとやらを有効にするらしいです。</td></tr>
+			<tr><td>$\r</td><td>ペンタブレット設定をリセットする。筆圧無効の状態<del>で通信速度は9600bps</del>になる。</td></tr>
+			<tr><td>#~*F202C800\r</td><td>通信速度を19200bpsに変更する？</td></tr>
+			<tr><td>~*F2039100,000,00,1000,1000\r</td><td>通信速度を19200bpsに変更して筆圧有効化？</td></tr>
+			<tr><td>~*E2039100,000,00,1000,1000\r</td><td>通信速度を9600bpsに変更して筆圧有効化？</td></tr>
+			<tr><td>ST\r</td><td>ペンタブレット座標の送信を開始する。</td></tr>
+			<tr><td>@ST\r</td><td>ペンタブレット座標の送信を開始し、現在位置の情報を直ちに送る。</td></tr>
+			<tr><td>SP\r</td><td>ペンタブレット座標の送信を停止する。</td></tr>
+			<tr><td>~R\r</td><td>詳細不明。何らかの値</td></tr>
+			<tr><td>~C\r</td><td>詳細不明。何らかの値</td></tr>
+			<tr><td>NR＜整数値＞\r</td><td>ペンタブレットの解像度を指定する。</td></tr>
+			<tr><td>AS＜0 or 1＞\r</td><td>AS0にするとCSV形式で座標データを送る。AS1の場合はバイナリで座標データを送る。</td></tr>
+			<tr><td>DE＜0 or 1＞\r</td><td>DE0にすると絶対座標データを送る。DE1の場合は相対座標データ（直前の座標との差）を送る。</td></tr>
+			<tr><td>SU＜01 or 00＞\r</td><td>00にすると一定間隔で座標を送り続ける。01にすると同じ座標値の場合には座標を送らない。</td></tr>
+			<tr><td>SC＜幅＞,＜高さ＞\r</td><td>画面上での操作領域のサイズを指定する？</td></tr>
+			<tr><td>TE\r</td><td>「KT-0405-R00 V1.3-2 95/04/28 by WACOM\r\nI AM FINE.\r\n」の形式のテキストを返す。</td></tr>
+			<tr><td>TE＜文字列＞\r</td><td>「KT-0405-R00 V1.3-2 95/04/28 by WACOM\r\n＜文字列4文字まで＞\r\nI AM FINE.\r\n」の形式のテキストを返す。4文字未満の場合は指定した文字数までとなり、5文字以上指定した場合は4文字以降がカットされる。</td></tr>
+		</tbody>
+	</table>
+	
+	<h2>座標データ（パケット）について</h2>
+	<p>
+		STコマンドでペンタブレット座標と状態の送信が開始される。
+		SUコマンドで常時送出モードにしない限り、ペン座標や状態が変わったときだけ送られる。
+	</p>
+	<p>
+		筆圧無効モードか筆圧有効モードかでパケットの内容が変化する。
+		また、筆圧無効モードの場合はCSV形式モード（ASコマンドで設定）が使用可能。
+	</p>
+	<h3>筆圧有効モード</h3>
+	<p>
+		パケットはバイナリ形式で、データの7bit目が1ならパケットデータ開始。
+	</p>
+	<table style="width:auto;text-align:center;" border=1>
+		<thead>
+			<tr><th>Byte</th><th style="width:5em;">bit 7</th><th style="width:5em;">bit 6</th><th style="width:5em;">bit 5</th><th style="width:5em;">bit 4</th><th style="width:5em;">bit 3</th><th style="width:5em;">bit 2</th><th style="width:5em;">bit 1</th><th style="width:5em;">bit 0</th></tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td style="font-weight:bold;">0</td>
+				<td>1</td><td>ペン不在</td><td>1</td><td>0</td><td>消ゴム?</td><td>?</td><td colspan=2>X座標 bit 15,14</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">1</td>
+				<td>0</td><td colspan=7>X座標 bit 13～7</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">2</td>
+				<td>0</td><td colspan=7>X座標 bit 6～0</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">3</td>
+				<td>0</td><td colspan=4>ペンボタン状態（各bitが対応）</td><td>?</td><td colspan=2>Y座標 bit 15,14</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">4</td>
+				<td>0</td><td colspan=7>Y座標 bit 13～7</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">5</td>
+				<td>0</td><td colspan=7>Y座標 bit 6～0</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">6</td>
+				<td>0</td><td>消ゴム</td><td colspan=6>筆圧値</td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>筆圧無効モード（バイナリ形式）</h3>
+	<p>
+		「$\r」コマンドを送ると筆圧が無効になる。電源投入時のパケットはバイナリ形式で、データの7bit目が1ならパケットデータ開始。
+	</p>
+	<table style="width:auto;text-align:center;" border=1>
+		<thead>
+			<tr><th>Byte</th><th style="width:5em;">bit 7</th><th style="width:5em;">bit 6</th><th style="width:5em;">bit 5</th><th style="width:5em;">bit 4</th><th style="width:5em;">bit 3</th><th style="width:5em;">bit 2</th><th style="width:5em;">bit 1</th><th style="width:5em;">bit 0</th></tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td style="font-weight:bold;">0</td>
+				<td>1</td><td>1</td><td>1</td><td>0</td><td>?</td><td>?</td><td colspan=2>X座標 bit 15,14</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">1</td>
+				<td>0</td><td colspan=7>X座標 bit 13～7</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">2</td>
+				<td>0</td><td colspan=7>X座標 bit 6～0</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">3</td>
+				<td>0</td><td>?</td><td>?</td><td>?</td><td>?</td><td>?</td><td colspan=2>Y座標 bit 15,14</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">4</td>
+				<td>0</td><td colspan=7>Y座標 bit 13～7</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">5</td>
+				<td>0</td><td colspan=7>Y座標 bit 6～0</td>
+			</tr>
+			<tr>
+				<td style="font-weight:bold;">6</td>
+				<td>0</td><td>?</td><td>?</td><td>?</td><td colspan=4>ペンボタン状態（各bitが対応）</td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>筆圧無効モード（CSV形式）</h3>
+	<p>
+		「$\r」コマンドを送ると筆圧が無効になる。「AS0\r」コマンドを送った後のパケットはCSVテキスト形式で、改行（CR LF）までが1パケットのデータ。
+	</p>
+	<p style="font-weight:bold;">
+		フォーマット： <br>#,＜X座標:10進数5桁＞,＜Y座標:10進数5桁＞,＜ボタンの値:10進数2桁　ペンがタブレット範囲外の時は99＞\r\n
+	</p>
+	<p>
+		(例1) #,0521,0012,12<br>
+		ペン座標が(x,y)=(521,12)で、ボタンフラグが12<br>
+		（12は2進数で1100すなわちbit2とbit3がONなのでボタン2とボタン3が押されている）
+	</p>
+	<p>
+		(例1) #,0001,1112,99<br>
+		ペン座標が(x,y)=(521,12)で、ペンがタブレット領域外
+	</p>
+	
+	<h2>確実に検出する方法</h2>
+	<p>
+		公式のWindows用ドライバは次のようなコマンドを送っていました。
+		以下のような手順で確実にタブレットを検出できると思われます。
+	</p>
+	<ol>
+		<li>19200bpsでシリアルポートをオープン。「#\r」コマンドと「SP\r」コマンドを交互に10セットくらい送る。返事は気にしない。</li>
+		<li>9600bpsでシリアルポートを再オープン。この際に受信バッファは破棄する。念のため「#\r」コマンドと「SP\r」コマンドを交互に何回か送った後「~#」コマンドで名前が返事として返ってくるか確認する。</li>
+		<li>名前がとれたら検出成功なので後は煮るなり焼くなり好きにする。とれなかった場合は諦める（検出失敗）か最初からやり直す。</li>
+	</ol>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
