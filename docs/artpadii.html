@@ -64,6 +64,7 @@
 			<tr><td>TE＜文字列＞\r</td><td>「KT-0405-R00 V1.3-2 95/04/28 by WACOM\r\n＜文字列4文字まで＞\r\nI AM FINE.\r\n」の形式のテキストを返す。4文字未満の場合は指定した文字数までとなり、5文字以上指定した場合は4文字以降がカットされる。</td></tr>
 		</tbody>
 	</table>
+	</div>
 	
 	<h2>座標データ（パケット）について</h2>
 	<p>
@@ -78,6 +79,7 @@
 	<p>
 		パケットはバイナリ形式で、データの7bit目が1ならパケットデータ開始。
 	</p>
+	<div  style="margin:16px;" class="tablediv">
 	<table style="width:auto;text-align:center;" border=1>
 		<thead>
 			<tr><th>Byte</th><th style="width:5em;">bit 7</th><th style="width:5em;">bit 6</th><th style="width:5em;">bit 5</th><th style="width:5em;">bit 4</th><th style="width:5em;">bit 3</th><th style="width:5em;">bit 2</th><th style="width:5em;">bit 1</th><th style="width:5em;">bit 0</th></tr>
@@ -113,10 +115,12 @@
 			</tr>
 		</tbody>
 	</table>
+	</div>
 	<h3>筆圧無効モード（バイナリ形式）</h3>
 	<p>
 		「$\r」コマンドを送ると筆圧が無効になる。電源投入時のパケットはバイナリ形式で、データの7bit目が1ならパケットデータ開始。
 	</p>
+	<div  style="margin:16px;" class="tablediv">
 	<table style="width:auto;text-align:center;" border=1>
 		<thead>
 			<tr><th>Byte</th><th style="width:5em;">bit 7</th><th style="width:5em;">bit 6</th><th style="width:5em;">bit 5</th><th style="width:5em;">bit 4</th><th style="width:5em;">bit 3</th><th style="width:5em;">bit 2</th><th style="width:5em;">bit 1</th><th style="width:5em;">bit 0</th></tr>
@@ -152,6 +156,7 @@
 			</tr>
 		</tbody>
 	</table>
+	</div>
 	<h3>筆圧無効モード（CSV形式）</h3>
 	<p>
 		「$\r」コマンドを送ると筆圧が無効になる。「AS0\r」コマンドを送った後のパケットはCSVテキスト形式で、改行（CR LF）までが1パケットのデータ。
