@@ -13,9 +13,16 @@
 	<h1>なんかくれ</h1>
 	<img src="img/pc9821np2_emu3t2_logo.png">
 	<p>
+		Neko Project 21/Wとその他色々を公開しています。
+	</p>
+	<p>
+		Neko Project 21/Wは本家Neko Project 21をベースとしてPC-98中期～末期（1993年頃～）のエミュレーションも出来るように色々と機能追加したでものです。
+	</p>
+	<p>
 		このエミュレータはWindows2000（SP4 SRP1v2必須）以降のホストでのみ実行できます。Linux等では実行できません。非Windows環境の場合はAZO氏の<a href="https://domisan.sakura.ne.jp/article/np2kai/np2kai.html" target="_blank">Neko Project II (NP2) 改変</a>を使うとほぼ同等の機能が使えます。
 	</p>
 	<h2>Neko Project 21/W関連</h2>
+	<img src="img/np21w.png">
 	<p>
 		※ステートセーブ・レジュームの互換性はバージョンアップの際に無くなる場合がありますのでご注意ください<br>
 		※初めて使用される場合はページ下部の注意事項もご覧下さい
@@ -25,7 +32,7 @@
 		通常版です。ソースコード付きです。
 	</div>
 	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/11M_u0JN0Rpc3jlcZqygXZ5Fo4Ydr5IiG/view?usp=sharing">Neko Project 21/W ダウンロード（ver0.86 rev82β3）</a><br>
+		<a href="https://drive.google.com/file/d/1wqeulfDkEBGt0Sg7Os_oxmr-IK9xJGqn/view?usp=sharing">Neko Project 21/W ダウンロード（ver0.86 rev82β4）</a><br>
 		β版です。ソースコード付きです。
 	</div>
 	<div class="downloadContents">
@@ -40,21 +47,27 @@
 		<a href="https://drive.google.com/drive/folders/0B19bYGqHu2lvTWZWSHlHLWMxVW8?usp=sharing">過去バージョンのアーカイブ</a><br>
 		旧バージョンのテストやdiffをしたい人向け（致命的なバグがあるバージョンも含まれます・ディスクイメージバックアップ推奨）
 	</div>
-	<div class="downloadContents">
+	<div class="downloadContents" style="font-size:smaller;">
 		<a href="https://drive.google.com/file/d/1hVnCLXoO3Qs_xRGiCKx7YLAZOA9d3OK_/view?usp=sharing">各ゲストOS向けの設定ファイル</a><br>
 		各OS用の推奨設定ファイルです。<del>Win2000 Setup（IDEのInterrupt DelayをRead/Writeともに2000以上にする必要あり）にさえ注意すればはあえて使う必要はないです。</del>rev.81β2からはWin2000 Setupでのディレイ設定不要です。
 	</div>
-	<div class="downloadContents">
+	<div class="downloadContents" style="font-size:smaller;">
 		<a href="https://drive.google.com/file/d/1SjKZUoMIDuom0iV44XS2ziDNWEaSm5vm/view?usp=sharing">各OSのセットアップ手順</a><br>
 		各OSのセットアップ手順（旧サイトにあったもの）のアーカイブです。最近のバージョンであればこれを見ないでセットアップしてもほぼ問題ないです。
 	</div>
 	
+	<div class="downloadContents">
 	<h3>バージョン履歴</h3>
 	<p>
 		長いので<a href="./version.html">バージョン履歴</a>へ。
 	<p>
+	</div>
 
 	<h2>実機関連</h2>
+	<img src="img/sb16.png">
+	<p>
+		エミュレータだけでなく実機でも使えます。
+	</p>
 	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1MZegrFGA5fcsQ4uyvOw8EXtM97aDP15i/view?usp=sharing">Sound Blaster 16 for PC-98 Windows2000用ドライバ (WDM) パッチ ver.0.8</a><br>
 		Windows2000でSound Blaster 16 for PC-98を使うためのドライバをPC/AT互換機用ドライバから生成するパッチです。実機でも使えます。旧バージョンが欲しい方は上記の過去バージョンのアーカイブから探してください。<br>
@@ -66,6 +79,16 @@
 	</div>
 
 	<h2>N88-BASIC関連</h2>
+	<img src="img/fft.png">
+	<p>
+		N88-BASICで高速フーリエ変換をするプログラムです。
+		そんなに速くない代わりに機械語なしで動きます。
+	</p>
+	<p>
+		ほぼ下記のC言語ソースの移植ですので、私は権利主張いたしません。制限無く自由に使って頂いて構いません。<br>
+		<span style="font-size:x-small;">とは言え、今更BASICで何かすることもないと思いますが･･･</span><br>
+		移植元→<a href="http://www.kurims.kyoto-u.ac.jp/~ooura/fftman/" taget="_blank" rel=noreferrer>FFT (高速フーリエ・コサイン・サイン変換) の概略と設計法</a>
+	</p>
 	<div class="downloadContents">
 		<a href="./src/FFT001.BAS">BASICで高速フーリエ変換　第1回</a><br>
 		<a href="./src/FFT002.BAS">BASICで高速フーリエ変換　第2回</a><br>
@@ -76,28 +99,51 @@
 		<a href="./src/FFT007.BAS">BASICで高速フーリエ変換　第7回</a><br>
 		<a href="./src/FFT008.BAS">BASICで高速フーリエ変換　第8回</a><br>
 		<a href="./src/FFT009.BAS">BASICで高速フーリエ変換　第9回</a><br>
-		N88-BASICで高速フーリエ変換をするプログラムです。
-		そんなに速くない代わりに機械語なしで動きます。<br>
-		ほぼ下記のC言語ソースの移植ですので、私は権利主張いたしません。制限無く自由に使って頂いて構いません。<br>
-		<span style="font-size:x-small;">とは言え、今更BASICで何かすることもないと思いますが･･･</span><br>
-		移植元→<a href="http://www.kurims.kyoto-u.ac.jp/~ooura/fftman/" taget="_blank" rel=noreferrer>FFT (高速フーリエ・コサイン・サイン変換) の概略と設計法</a>
 	</div>
 
 	<h2>SL9821勝手に改造関連</h2>
+	<img src="img/sl9821.png">
+	<p>
+		SL9821にNeko Project 21/WのLGY-98とCL-GD5430を無理やりくっつけてみた試作品です。
+	</p>
+	<p>
+		バージョンがかなり古いので注意。
+	</p>
 	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1SqW39FldFSygA8yWXgyrlEU0TWLZIcWK/view?usp=sharing">SL9821 + LGY-98(TAP-Win32)</a><br>
 		Neko Project 21/Wのソースを流用してSL9821(0.2.4.2)をLGY-98対応させてみたものです。使用条件等はSL9821のサイトをご覧下さい。
 	</div>
 	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1mxQN7yfvJuCzq3yEqEXxI67YDzWl9dW6/view?usp=sharing">SL9821 + LGY-98(TAP-Win32) + CL-GD5430</a><br>
-		Neko Project 21/Wのソースを流用してSL9821(0.2.4.2)をLGY-98とCL-GD5430ウィンドウアクセラレータに対応させてみたものです。別窓モードしか実装していないので使いにくいと思います。使用条件等はSL9821のサイトをご覧下さい。
+		Neko Project 21/Wのソースを流用してSL9821(0.2.4.2)をLGY-98とCL-GD5430ウィンドウアクセラレータに対応させてみたものです。別窓モードしか実装していない＆マウス操作はメイン画面でしかできないので使いにくいと思います。使用条件等はSL9821のサイトをご覧下さい。
 	</div>
 
 	<h2>注意事項</h2>
 	
+	<h3>BIOSについて</h3>
+	<p>
+		本家Neko Project IIと同じく、Neko Project 21/WもBIOSがなくてもそれなりに動くように作られています。<br>
+		BIOSがない場合の制限事項は以下の通りです。<span style="font-size:smaller;">逆に言えばこれ以外の制限はほぼありません。</span>
+	</p>
+	<ul>
+		<li>フォントが実機と異なる（FONT.ROMが無いとき）</li>
+		<li>ROM版・DISK版のN88-BASICが使用できない（BIOS.ROMが無いとき）</li>
+		<li>サウンドBIOSを使用するソフトが正しく動かない（SOUND.ROMが無いとき）</li>
+	</ul>
+	<p>
+		なお、ITF.ROMは必要ありません（使用しません）。他、IDE.ROM等は非推奨のため用意する必要はありません。
+	</p>
+	<p>
+		機種依存系のフラグは全てNeko Project 21/Wが修正しますので、よほど特殊でない限りはどんな機種から取ってきても問題ないはずです。
+	</p>
+	
 	<h3>メモリマップについて</h3>
 	<p>
 		Neko Project 21/Wのメモリマップはやや特殊ですので、UMBの設定の際はご注意下さい。
+		実機でチューニングしたものを持ってきてもそのままでは動かないと思います。
+	</p>
+	<p>
+		手動で設定するのが面倒な場合はHIMEM+EMM386やLEMMにしておけば自動でそれなりに設定してくれます。
 	</p>
 	<div  style="margin:16px;" class="tablediv">
 	<table style="max-width:100%;" border=1>
@@ -138,8 +184,7 @@
 		</thead>
 		<tbody>
 			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
-			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c<br>fpemul_softfloat.c</td><td>GPL</td><td> fpemul_dosbox.c, fpemul_dosbox2.c, fpemul_softfloat.c)をコンパイルから除外する
-（Berkeley SoftFloatは本来別のライセンスですがfpemul_softfloat.cだけはDOSBox由来のコードを含むためGPLです）</td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c<br>fpemul_softfloat.c</td><td>GPL</td><td> fpemul_dosbox.c, fpemul_dosbox2.c, fpemul_softfloat.c)をコンパイルから除外する（Berkeley SoftFloatは本来別のライセンスですがfpemul_softfloat.cだけはDOSBox由来のコードを含むためGPLです）</td></tr>
 			<tr><td>fpu/softfloat/*.*</td><td>Readme参照</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、softfloat/*.*を除外する</td></tr>
 			<tr><td>/sound/fmgen/*.*</td><td>Readme参照</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
 			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>USE_MAMEをプリプロセッサ定義から削除し、/sound/mame/*.*を除外する</td></tr>
