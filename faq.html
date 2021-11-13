@@ -25,7 +25,7 @@
 	<ul>
 		<li>不具合の再現方法などを記載しておいて下さい。必要ならこちらから尋ねますが、初めから書いて頂けた方がスムーズです。</li>
 		<li>具体的な原因が分かっていたり、既に修正案がある場合は記載していただけるとスムーズに修正できます。</li>
-		<li>np21/wの途中のrevから動かなくなっている場合は、どこから動かなくなったかを併せてご連絡頂けると解決しやすくなります（過去のバージョンは<a href="https://drive.google.com/drive/folders/0B19bYGqHu2lvTWZWSHlHLWMxVW8?usp=sharing">過去バージョンのアーカイブ</a>から入手できます）。</li>
+		<li>np21/wの途中のrevから動かなくなっている場合は、どこから動かなくなったかを併せてご連絡頂けると解決しやすくなります（過去のバージョンは<a href="https://drive.google.com/drive/folders/0B19bYGqHu2lvTWZWSHlHLWMxVW8?resourcekey=0-vfB2T2KV8fl8Y9QMFtWWoA&usp=sharing">過去バージョンのアーカイブ</a>から入手できます）。</li>
 		<li>本家np2,np21で動いていたものが動かなくなっている場合も調査して頂けると解決が速くなります。</li>
 		<li>ini設定ファイルも提供頂けますとより解決しやすくなります（個人情報は削除しても構いません）。</li>
 	</ul>
@@ -110,6 +110,9 @@
 		
 		<dt>Q. C86BOXを使うとnp21wからも音が鳴る</dt>
 		<dd>A. fmgenを使用する設定のときは両方から音が鳴ります。Sound optionでfmgenを無効にして下さい。</dd>
+		
+		<dt>Q. Win3.1のDOS窓を終了しようとすると一般保護例外が出る</dt>
+		<dd>A. 32bitディスクアクセスがONの状態だと変になるようです。SYSTEM.INIの32BitDiskAccessをOFFに書き換えて下さい。</dd>
 	</dl>
 	<h2>ウィンドウアクセラレータ関連</h2>
 	<dl>
