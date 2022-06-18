@@ -14,12 +14,14 @@
 	<div style="margin:4px; padding 4px; border: 3px groove gray">
 		<p>
 <pre>
-(2022/05/09 ver0.86 rev85β3)
-・RaSCSIを強制的に92互換モードにする怪しいオプションを追加（INIにrascsi92=trueで有効）
+(2022/06/18 ver0.86 rev85)
 ・ベタ形式FDイメージでDMFフォーマットに対応
 ・画面Bitmap保存時にちゃんとヘッダのファイルサイズを書くように修正
-・LGY-98使用中にメモリ破壊するバグを修正（β2）
-・RaSCSIのHDSに対応するテスト（β3）
+・LGY-98使用中にメモリ破壊するバグを修正
+・RaSCSIのHDS（92互換モード）に対応するテスト
+・CPUのFPU周辺およびSHLD/SHRD命令を修正
+・WACOMタブレットエミュレーションでゼロ除算が発生する可能性がある問題を修正
+・Visual Studio 2019のプロジェクトを用意してみました
 
 (2021/11/23 ver0.86 rev84)
 ・ザナドゥが動くようにFDCをいじりました
