@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>PC-9800シリーズエミュレータの現況 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=5">
+</head>
+<body>
+	<h1>PC-9800シリーズエミュレータの現況</h1>
+	<p>
+		PC-9800シリーズ（およびその互換機）エミュレータはかなり昔から開発されています。古くから開発され、現在でも有名なものとしてはT98-NEXT、Anex86、Neko Project II系の3つが存在しています。
+		また、比較的最近登場したものとして、QEMU/9821、SL9821、DOSBox-X(PC-98 mode)などが挙げられます。
+	</p>
+	<p>
+		どれが一番優れているのかという議論は基本的に無意味で、何を求めているかによってその答えは変わります。
+		一般に再現性と実行速度はトレードオフです。両方で優れたものは作れないと考えてください。
+		結局は動かしたいものが正常かつ処理落ちせず動けばOKですから、そのような観点で使い分けるのが正解です。
+	</p>
+	
+	<h2>T98-NEXT</h2>
+	<p>
+		T98-NEXTは開発当時としては高性能なPC-9821エミュレータであり、一般的なソフトウェアであれば問題なく動かすことが出来ます。
+		ただし、2000年頭には開発が中断しほぼ休止状態となったため、今後のメンテナンスにはあまり期待出来ません。
+		そんな状況ではあるものの、現時点でも十分な完成度ですので大抵の場合は問題なかったりします。
+	</p>
+	<p>
+		UI周りが扱いやすいことと、そこそこ高速に動くという点が利点だと思います。
+		また、独自のBIOSを搭載することで次のAnex86と同じく実機のBIOS無しでもほぼ動くようになっています。
+		一方、トリッキーなものの再現には弱かったりします。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">T98-NEXTの基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9821</td></tr>
+			<tr><td>CPU</td><td>i486DX または i486SX</td></tr>
+			<tr><td>拡張メモリ</td><td>最大64MB</td></tr>
+			<tr><td>FDD</td><td>3モード対応 実ドライブマウント可</td></tr>
+			<tr><td>HDD</td><td>IDE? SASI?</td></tr>
+			<tr><td>拡張ボード</td><td>86音源など。プラグイン式のため自作可能</td></tr>
+			<tr><td>その他</td><td>CDアクセス(SCSI)、ステートセーブあり</td></tr>
+			<tr><td>実機BIOS</td><td>任意</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>Anex86</h2>
+	<p>
+		Anex86はPC-98エミュレータではなくEPSON互換機のエミュレータです。
+		しかし、書籍等でPC-98エミュレータとして紹介されたこともあり、一般にはPC-98エミュレータの一つとして認識されています。
+	</p>
+	<p>
+		独自開発のBIOSを搭載していますので実機のBIOSを準備する必要はなく、BASICが絡まなければ大抵のPC-98用ソフトウェアを使用することが出来ます。
+		なお、互換機の宿命としてﾐｲｿのPC-98チェックに引っかかるので何とかしなければならないという面倒臭さはあります。
+		こちらも開発は終了し、現在は公式サイトもなくなってしまいました。
+	</p>
+	<p>
+		他と比べると軽快に動作すること、書籍等で紹介されたことで使い方の情報が多いことが利点だと思います。
+		一方、互換機のエミュレータであることによる根本的な違いや、軽快にする為の再現性の妥協などがあるように思います。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">Anex86の基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-286/386/486/586</td></tr>
+			<tr><td>CPU</td><td>i486?</td></tr>
+			<tr><td>拡張メモリ</td><td>最大14MB</td></tr>
+			<tr><td>FDD</td><td>3モード対応</td></tr>
+			<tr><td>HDD</td><td>IDE</td></tr>
+			<tr><td>拡張ボード</td><td>26K音源、86音源など。</td></tr>
+			<tr><td>その他</td><td>CDアクセス可能(独自ドライバ)</td></tr>
+			<tr><td>実機BIOS</td><td>未使用</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>Neko Project II系</h2>
+	<p>
+		Neko Project IIおよびその派生は動作の軽快さよりも細かい挙動の再現を重視して開発されたエミュレータです。
+		オリジナルのNeko Project IIは高度なエミュレーション機能を省略してPC-9801の細かい挙動および周辺ハードウェアを重視して開発されていますが、オープンソースであるため高度な機能を持った多数の派生品が存在しています。
+	</p>
+	<p>
+		本家の開発は停滞気味ですが、オープンソースであることから多数の派生品が存在しています。
+	</p>
+	<h3>Neko Project II</h3>
+	<p>
+		全ての派生の根本となるオリジナル版です。
+		CPUは80286相当でプロテクトモードは省略されています。
+		PC-9801用の比較的古いソフトであれば特に問題なく動かすことができ、高い再現性を持っています。
+	</p>
+	<p>
+		独自開発のBIOSを搭載していますので、実機のBIOSを準備しなくても使えます。
+		開発は停滞気味ですが、それでもAnex86やT98-NEXTと比べると最近まで更新されていました。
+	</p>
+	<p>
+		他と比べると負荷は大きいですが、細かい挙動を含めた再現性が高いように思います。
+		また、ちょっと変わった周辺機器や特殊な挙動を再現できますので、そのような用途ではほぼ一択になります。
+		386以降の命令やプロテクトモードは省略されていますが、リアルモードの範囲で動作できるソフトウェアを動かすのであれば十分に価値があります。
+	</p>
+	<p>
+		近年はメンテナンスされていないという意味で、後述のfmgen版などを使う方がよいと思います。
+		オープンソースですので気に入らないところがあれば自分で直すことも出来ます。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">Neko Project IIの基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9801</td></tr>
+			<tr><td>CPU</td><td>80286相当（プロテクトモードは省略）</td></tr>
+			<tr><td>拡張メモリ</td><td>最大14MB</td></tr>
+			<tr><td>FDD</td><td>3モード対応（要INI編集）</td></tr>
+			<tr><td>HDD</td><td>SASI, SCSI</td></tr>
+			<tr><td>拡張ボード</td><td>RS-232C、MPU-PC98II、各種音源(26K, 86, 118, etc.)など多彩。</td></tr>
+			<tr><td>その他</td><td>マニアックな機能多数あり。ステートセーブもあり（要INI編集）。</td></tr>
+			<tr><td>実機BIOS</td><td>任意</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<h3>Neko Project 21</h3>
+	<p>
+		オリジナル版Neko Project IIを制作した本家が公開している派生品です。
+		諸般の事情により「お察しください」バージョンとなっています。
+		CPUはi486SX相当(+Pentium命令の一部)でプロテクトモードも含めて再現されています。
+	</p>
+	<p>
+		独自開発のBIOSを搭載していますので、実機のBIOSを準備しなくても使えます。
+		256色モードなども搭載され、PC-9821用のソフトウェアを動かすこともできます。
+		こちらも開発は停滞気味ですが、それでもAnex86やT98-NEXTと比べると最近まで更新されていました。
+	</p>
+	<p>
+		他と比べるとやはり負荷は大きいですが、Neko Project IIの良さを継承して細かい挙動を含めた再現性が高いように思います。
+		また、ちょっと変わった周辺機器や特殊な挙動を再現できますので、そのような用途ではほぼ一択になります。
+		386以降の命令やプロテクトモードが必要であればこちらを使うことになると思います。
+	</p>
+	<p>
+		近年はメンテナンスされていないという意味で、後述のfmgen版などを使う方がよいと思います。
+		オープンソースですので気に入らないところがあれば自分で直すことも出来ます。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">Neko Project 21の基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9821</td></tr>
+			<tr><td>CPU</td><td>i486SX相当(+Pentium命令の一部)</td></tr>
+			<tr><td>拡張メモリ</td><td>最大63MB</td></tr>
+			<tr><td>FDD</td><td>3モード対応</td></tr>
+			<tr><td>HDD</td><td>SASI, SCSI</td></tr>
+			<tr><td>拡張ボード</td><td>RS-232C、MPU-PC98II、各種音源(26K, 86, 118, etc.)など多彩。</td></tr>
+			<tr><td>その他</td><td>マニアックな機能多数あり。ステートセーブもあり（要INI編集）。</td></tr>
+			<tr><td>実機BIOS</td><td>任意</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<h3>Neko Project II fmgen版</h3>
+	<p>
+		本家のNeko Project II ver. 0.83をベースに色々と改造されている派生品です。
+		Neko Project IIとNeko Project 21の派生品も含まれています。
+		特に、音の再現性についてのこだわりが強い派生品です。
+		音源周りの再現性を求めるならばこれが最優先の選択肢になります。
+	</p>
+	<p>
+		最近までメンテナンスされており、本家に存在している不具合の修正や追加機能の実装などが行われています。
+		高品質なFM音を生成するfmgenが完全な形で搭載されているのは魅力的です。
+		現代的なスペックのPCで、前期PC-9821くらいまでの再現をしたい場合は一番良い選択だと思います。
+	</p>
+	<p>
+		機能的な仕様は本家とほぼ同じですが、多種イメージ対応やUI周りの操作性改善が行われていたりします。
+	</p>
+	<h3>Neko Project II改変</h3>
+	<p>
+		Neko Project II ver. 0.86のRaspberry Pi・RetroPie向け移植品をベースにNeko Project 21/Wの一部をくっつけて、クロスプラットフォーム対応にしたものです。
+		SDL2、libretro、X11の3つに対応しているため、UNIX(Linux), Windows, Mac, Android, iOS 他多くの環境に対応しています。
+		マルチエミュレータシステム「RetroArch」に対応しているため、かなり多くのプラットフォームで利用できます。
+	</p>
+	<p>
+		最近はあまり更新されていませんが、メンテナンスが完全に止まったわけではありません。
+		Windows以外のOSで動かしたいと考えるならば最も良い選択になり得ると思います。
+	</p>
+	<h3>Neko Project 21/W</h3>
+	<p>
+		拙作の物です。
+		このサイトのメインですのでここではあまり詳しく書きません。
+		本家のNeko Project II ver. 0.86をベースに制作されています。
+		Neko Project 21/Wと名付けていますが、Neko Project II/WというNeko Project II相当の物も含まれています。
+		また、実質的にWindows NT4以降専用のHAXMによるCPUアクセラレーション版もあります。
+	</p>
+	<p>
+		位置付けとしては、さらにマニアックな周辺機器の利用やPC-9821中期～後期の再現に最適化しています。
+		Super MPUや変な音源ボード構成、LANボード、ウィンドウアクセラレータ、Pentium以降のCPU命令、大容量メモリなどを使いたいという希な状況ではこれ（または上記Neko Project II改変）以外の選択はないと思います。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">Neko Project 21/Wの基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9821</td></tr>
+			<tr><td>CPU</td><td>80386相当～Pentium 4相当命令</td></tr>
+			<tr><td>拡張メモリ</td><td>最大4GB（実際上は1GBちょっと）</td></tr>
+			<tr><td>FDD</td><td>3モード対応</td></tr>
+			<tr><td>HDD</td><td>IDE, SASI, SCSI （IDEはオプションで最大2TB対応）</td></tr>
+			<tr><td>拡張ボード</td><td>本家のものに加えて、Super MPU, LGY-98, ウィンドウアクセラレータ、Sound Blaster 16、音源複数枚差しなど。</td></tr>
+			<tr><td>その他</td><td>マニアックな機能多数あり。ステートセーブもあり（要INI編集）。</td></tr>
+			<tr><td>実機BIOS</td><td>任意</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>QEMU/9821</h2>
+	<p>
+		先の3つの系統に比べると後発のエミュレータです。
+		PC-9801BX4をターゲットとして、QEMUをベースに開発されたものです。
+		QEMUベースと言うだけあって、動作はかなり高速で上手くやるとハードウェアアクセラレーションも使えます。
+	</p>
+	<p>
+		かなり高速に動作するのが1つの利点だと思います。
+		一方、PC-9801BX4がターゲットであり独自のBIOSも持っていないため、この機種のBIOSイメージが実質的に必須であることが一番の難点です。
+		UIの操作がQEMUの流儀のためあまりやりやすいとは言えないというのも欠点かもしれません。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">QEMU/9821の基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9801BX4</td></tr>
+			<tr><td>CPU</td><td>Pentium?</td></tr>
+			<tr><td>拡張メモリ</td><td>最大512MB</td></tr>
+			<tr><td>FDD</td><td>たぶん3モード対応</td></tr>
+			<tr><td>HDD</td><td>IDE</td></tr>
+			<tr><td>拡張ボード</td><td>LGY-98（LAN）、Mate-X PCM（WSS音源）など</td></tr>
+			<tr><td>その他</td><td>KQEMU（CPUアクセラレーション）使用可能</td></tr>
+			<tr><td>実機BIOS</td><td>必須</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>SL9821</h2>
+	<p>
+		上記よりもさらに後発のエミュレータです。
+		初代PC-9821をターゲットとして、フルスクラッチで開発されたものです。
+	</p>
+	<p>
+		フルスクラッチで独自に開発されてきたという経緯もあり、過去のエミュレータで上手く動かなかったものがこれでは上手く動くということがあります。
+		特に、PC-9821の初期に搭載されたPEGCプレーンモードはほぼ完全に再現されています。
+		一方、初代PC-9821がターゲットでありそれほど完全な独自BIOSを持っていないため、この機種のBIOSイメージが実質的に必須であることが難点です。
+		UIの操作は最近の流れに合わせて洗練されているように思います。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">SL9821の基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>初代PC-9821</td></tr>
+			<tr><td>CPU</td><td>i486SX → 後に命令セットは初代Corei相当（SSE4.2）まで拡張</td></tr>
+			<tr><td>拡張メモリ</td><td>最大254.6MB</td></tr>
+			<tr><td>FDD</td><td>1.44MB非対応</td></tr>
+			<tr><td>HDD</td><td>IDE 最大4GB</td></tr>
+			<tr><td>拡張ボード</td><td>初代PC-9821相当の内蔵音源あり</td></tr>
+			<tr><td>その他</td><td>PC-9801-55L相当でCD-ROMアクセス可能、たPEGCプレーンモード完全サポート</td></tr>
+			<tr><td>実機BIOS</td><td>任意だが恐らくほぼ必須</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h2>DOSBox-X(PC-98 mode)</h2>
+	<p>
+		PC-98としては上記よりもさらに後発のエミュレータですが、DOSBox自体の歴史は古く、根本は「x86アーキテクチャ上のMS-DOSを再現する」という発想のものです。
+		PC-98 modeの名の通り、MS-DOSなしにDOSベースのPC-98ソフトウェアを動かせるようにした、というものになります。
+	</p>
+	<p>
+		あまり詳しくありませんので詳細は書けませんが、DOSベースのPC-98ソフトウェアをMS-DOS無しで動かしたいのであれば選択肢になるかもしれません。
+	</p>
+	
+	<p>
+		<a href="./index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
