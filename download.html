@@ -183,6 +183,22 @@
 	</p>
 	<div  style="margin:16px;" class="tablediv">
 	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev88以降</caption>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c</td><td>GPL</td><td> fpemul_dosbox.c, fpemul_dosbox2.c, fpemul_softfloat.c)をコンパイルから除外する（Berkeley SoftFloatは本来別のライセンスですがfpemul_softfloat.cだけはDOSBox由来のコードを含むためGPLです）</td></tr>
+			<tr><td>fpu/fpemul_softfloat.c<br>fpu/softfloat/*.*</td><td>修正BSD風味</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、fpemul_softfloat.cとsoftfloat/*.*を除外する</td></tr>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>USE_MAMEをプリプロセッサ定義から削除し、/sound/mame/*.*を除外する</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev87以前</caption>
 		<thead>
 			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
 		</thead>
