@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>Win9xのCDからDOS起動ディスクを作る - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+</head>
+<body>
+	<h1>Win9xのCDからDOS起動ディスクを作る</h1>
+	<p>
+		MS-DOSのFDからイメージファイルを作成するという作業は、FDドライブやMS-DOS自体の入手が困難になった現在ではかなりハードルが高いものです。
+		<a href="../freedos.html">FreeDOS</a>でなんとかなれば良いのですが、互換性の問題が時々あります。
+	</p>
+	<p>
+		本稿では、意外と持っている可能性が高く、現代のPCでも読み込みが容易なPC-98版Win9xのセットアップCDからDOS起動ディスクを生成する方法を記載しておきます。
+	</p>
+	
+	<h2>Win9xのCD→DOS起動ディスクで困ること</h2>
+	<p>
+		Windows 9xは自前でDOS（バージョンは7）を持っていて起動ディスクを作ることもできます。
+		こちらはWin用に最適化されてはいますが、MS-DOSの系統なのでFreeDOSよりは互換性があります（と思っています）。
+		しかし、Win9xのセットアップCDだけを持っている状況でこれを使おうとすると困ることに気付きます。
+	</p>
+	<p>
+		起動ディスクに必要なファイルはCDの中に入っています。
+		ところが、起動ディスク自体はWindowsが起動する状態か、その起動ディスクを持っている状態でないと作成できません。
+		起動ディスクを作るためにFreeDOSへWin9xのFORMATやSYSを持っていってもバージョン違いで拒否されます。
+		Windowsから作ろうとしても、FreeDOSでWin9xのセットアップを走らせようとすると互換性の問題で途中で止まってしまいます。
+	</p>
+	<p>
+		つまり、Win9xのDOSが起動するディスクを作るためにはWin9xのDOSが起動するディスク（または、MS-DOSの起動ディスク）が必要という無限ループになります。
+		したがって、なんとかしてこれ以外のルートで起動ディスクを生成しなければなりません。
+	</p>
+	
+	<h2>作り方</h2>
+	<p>
+		作る際に必要なものは以下の通りです。
+		あらかじめ用意しておいてください。
+	</p>
+	<ul type="I" style="font-weight:bold;">
+		<li>PC-98版 Windows 95 または Windows 98 セットアップディスク</li>
+		<li>FreeDOS(98) FDイメージ（<a href="http://bauxite.sakura.ne.jp/software/dos/freedos.htm">FreeDOS 方面</a>のページから拾う）</li>
+		<li>バイナリエディタ（<a href="https://www.vector.co.jp/soft/win95/util/se079072.html">Stirling</a>とか<a href="https://www.vector.co.jp/soft/win95/util/se032859.html">BZ</a>とか）</li>
+		<li>ディスクイメージエディタ（<a href="http://hp.vector.co.jp/authors/VA013937/editdisk/">DiskExplorer</a>とか<a href="http://euee.web.fc2.com/tool/nd.html">ND</a>とか）</li>
+	</ul>
+	<h3>手順1　1.2MBのFreeDOS IPLなディスクを用意</h3>
+	<p>
+		ダウンロードしたFreeDOS(98) FDイメージから1.2MBの方をコピーしてwinbootdisk.hdmみたいな名前にリネームしてください。
+		リネームしたファイルをディスクイメージエディタで開き、中にあるファイルを全消去してください。
+		消去したら一旦ディスクイメージエディタを終了します。
+	</p>
+	<p>
+		他、FreeDOSのFDFORMATで空のディスクイメージをフォーマットして作成しても構いません。
+	</p>
+	<h3>手順2　Win9xのCDから必要なファイルを確保</h3>
+	<p>
+		Win9xのCDからCOMMAND.COMとWINBOOT.SYSとSYS.COMを抜いてきます。
+		WINBOOT.SYSはIO.SYSにリネームします。
+	</p>
+	<h4>Windows 95の場合</h4>
+	<p>
+		WIN95\PRECOPY1.CABの中にCOMMAND.COMとWINBOOT.SYSが、WIN95_03.CABの中にSYS.COMが入っています。
+	</p>
+	<h4>Windows 98の場合</h4>
+	<p>
+		WIN98N\PRECOPY1.CABの中にCOMMAND.COMが、WIN98N\PRECOPY2.CABの中にWINBOOT.SYSが、WIN98N\BASE4.CABの中のEBD.CABの中にSYS.COMが入っています。
+	</p>
+	<h4>その他の場合</h4>
+	<p>
+		COMMAND.COMとWINBOOT.SYS（またはIO.SYS）とSYS.COMを頑張って探してきてください。
+	</p>
+	<h3>手順3　FDイメージのIPLを書き換える</h3>
+	<p>
+		FreeDOSのIPLではWin9xのDOSは起動できませんので、これを書き換える必要があります。
+	</p>
+	<p>
+		SYS.COMをバイナリエディタで開き、SWINという文字列を探します。
+		複数ありますが、ファイルの先頭から探したときに最初に見つかったものを使用してください。
+	</p>
+	<p>
+		SWINの4バイトほど手前に0xEBのデータがあり、それより前は0x00が続いていると思います。
+		この0xEBがIPLの開始位置です。
+		IPLの終了位置はそこから0x200くらいアドレスを進めた位置にある0x55 0xAAです。
+	</p>
+	<p>
+		先ほど用意したwinbootdisk.hdmもバイナリエディタで開き、アドレス000h～1FFhの範囲を先に見つけたSYS.COMにあるデータに置き換えます。
+		ただし、ディスクイメージのアドレス00Bh～03Dhの範囲だけは元の内容のままにしてください（なお、この範囲はSYS.COMではほぼ0で埋まっています）。
+		開始の0xEBと終了の0x55 0xAAはFreeDOSでも同じようにありますので、これを目印にしてズレないように注意してください。
+	</p>
+	<p>
+		作業が完了したら、winbootdisk.hdmを保存します。
+	</p>
+	<h3>手順4　起動に必要なファイルを書き込む</h3>
+	<p>
+		手順3の書き換えをした後のディスクイメージをディスクイメージエディタで開きます。
+		ここでエラーが出る場合は手順3の書き換えで失敗していますので、手順3に間違いがないか再確認してください。
+	</p>
+	<p>
+		ディスクイメージが開けたら、その中にCOMMAND.COMとIO.SYSを書き込みます。
+		作業が完了したらディスクイメージエディタを終了します。
+	</p>
+	<p>
+		Win9xのDOSではMSDOS.SYSはダミーですので必要ありませんが、互換性の観点で必要であれば1024バイト以上のダミーデータを入れたMSDOS.SYSというファイルを置いておくと良いと思います。
+		中身はINI的な書き方ですので、コメントアウトの「;」を先頭に付けた1024バイト以上のテキストを書いたファイルを作り、MSDOS.SYSに名前を変えて入れておけばOKです。
+	</p>
+	<h3>手順5　起動テスト</h3>
+	<p>
+		エミュレータ（Neko Project 21/Wでもなんでもいいです）にwinbootdisk.hdmをマウントしてリセットします。
+		上手く出来ていれば、Win9xのDOSが起動するはずです。
+	</p>
+	<h3>手順6　最低限必要な物を入れる</h3>
+	<p>
+		上の状態でWin9xのDOSが起動できる状態ですが、FDやHDDのフォーマットが出来ませんのでそのためのファイルを準備します。
+	</p>
+	<p>
+		Win9xのCDからFORMAT.COM（FDフォーマット用）とFDISK.EXE（HDDフォーマット用）を抜いてきます。
+		抜いてきたファイルをディスクイメージエディタで書き込めばFDやHDDのフォーマットやシステム転送が出来るようになります。
+	</p>
+	<p>
+		FORMATやFDISKの使い方については割愛します。
+		なお、起動可能なHDDにしたい場合は、FDISKで領域確保した後で状態を変更→BOOT可に設定してFORMAT /Sでシステム転送するのを忘れずに。
+	</p>
+	<h4>Windows 95の場合</h4>
+	<p>
+		WIN95\WIN95_03.CABの中にFDISK.EXEとFORMAT.COMが入っています。
+	</p>
+	<h4>Windows 98の場合</h4>
+	<p>
+		WIN98N\BASE4.CABの中のEBD.CABの中にFORMAT.COMが、WIN98N\BASE5.CABの中にFDISK.EXEが入っています。
+	</p>
+	<h4>その他の場合</h4>
+	<p>
+		どこかに入っていると思うので頑張って探してきてください。
+	</p>
+	
+	<h3>完成！</h3>
+	<p>
+		以上でエミュレータで起動可能なWin9x DOSのディスクが手に入りました。
+		後は煮るなり焼くなり好きにしてください。
+	</p>
+	<p>
+		出来た起動ディスクを使ってHDDをフォーマットし、Win9xをセットアップしてそこから起動ディスクを作ればもっと完全なものも作れます。
+		ただし、DOSでCDを使うための設定は結構大変ですので、CDの中身を丸ごとHDDイメージ内にコピーしてそこからセットアップを始めるのがおすすめです。
+		今時のPCであればCD1枚のサイズなんて気にする必要もないでしょう（セットアップにはWIN95やWIN98Nディレクトリだけあれば良いので実質はもっと少ない）。
+	</p>
+	
+	<h2>その他情報</h2>
+	<p>
+		WindowsのCDからDOS関係の物を探しました。
+		発掘の際の参考にしてください。
+	</p>
+	<h4>Win95</h4>
+	<ul type="I" style="font-weight:bold;">
+		<li>edit.com　― win95_03.cab</li>
+		<li>himem.sys　― win95_04.cab</li>
+		<li>mscdex.exe　― win95_06.cab</li>
+		<li>diskcopy.com　― win95_15.cab</li>
+		<li>emm386.exe　― win95_15.cab</li>
+		<li>chkdsk.exe　― win95_03.cab</li>
+		<li>debug.exe　― win95_03.cab</li>
+	</ul>
+	<h4>Win98 (SEだと違うかも知れません)</h4>
+	<ul type="I" style="font-weight:bold;">
+		<li>edit.com　― win98_23.cab</li>
+		<li>himem.sys　― base5.cab</li>
+		<li>mscdex.exe　― base5.cab</li>
+		<li>neccd○.sys　― base5.cab</li>
+		<li>diskcopy.com　― win98_23.cab</li>
+		<li>emm386.exe　― win98_43.cab</li>
+		<li>chkdsk.exe　― win98_42.cab</li>
+		<li>debug.exe　― win98_42.cab</li>
+	</ul>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
