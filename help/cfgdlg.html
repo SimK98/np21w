@@ -42,6 +42,7 @@
 </tr>
 </thead>
 <tbody>
+<tr><td>Intel 80386</td><td>3</td><td>0</td><td>8</td><td>なし</td></tr>
 <tr><td>Intel i486SX</td><td>4</td><td>2</td><td>3</td><td>なし</td></tr>
 <tr><td>Intel i486DX</td><td>4</td><td>1</td><td>3</td><td>FPU</td></tr>
 <tr><td>Intel Pentium</td><td>5</td><td>2</td><td>5</td><td>FPU, RDTSC</td></tr>
@@ -51,26 +52,29 @@
 <tr><td>Intel Pentium III</td><td>6</td><td>7</td><td>2</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, FXSAVE/FXRSTOR, MMX, SSE</td></tr>
 <tr><td>Intel Pentium M</td><td>6</td><td>9</td><td>5</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, FXSAVE/FXRSTOR, MMX, SSE, SSE2</td></tr>
 <tr><td>Intel Pentium 4</td><td>15</td><td>2</td><td>4</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, FXSAVE/FXRSTOR, MMX, SSE, SSE2, SSE3</td></tr>
+<tr><td>Intel Core 2 Gen 1</td><td>6</td><td>15</td><td>13</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, FXSAVE/FXRSTOR, MMX, SSE, SSE2, SSE3, SSSE3</td></tr>
+<tr><td>Intel Core 2 Gen 2</td><td>6</td><td>23</td><td>6</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, FXSAVE/FXRSTOR, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1</td></tr>
+<tr><td>Intel Core i Gen 1</td><td>6</td><td>37</td><td>5</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, FXSAVE/FXRSTOR, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2</td></tr>
 <tr><td>AMD K6-2</td><td>5</td><td>8</td><td>12</td><td>FPU, RDTSC, FCOMI/FUCOMI/FCOMIP/FUCOMIP, MMX, 3DNow!</td></tr>
 <tr><td>AMD K6-III</td><td>5</td><td>9</td><td>1</td><td>FPU, RDTSC, FCOMI/FUCOMI/FCOMIP/FUCOMIP, MMX, 3DNow!</td></tr>
 <tr><td>AMD K7 Athlon</td><td>6</td><td>1</td><td>2</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, MMX, 3DNow!, Enhanced 3DNow!</td></tr>
-<tr><td>AMD K7 Athlon XP</td><td>6</td><td>6</td><td>2</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, MMX, 3DNow!, Enhanced 3DNow!, SSE</td></tr>
+<tr><td>AMD K7 Athlon XP</td><td>6</td><td>6</td><td>2</td><td>FPU, RDTSC, CMOV/FCMOV, FCOMI/FUCOMI/FCOMIP/FUCOMIP, FXSAVE/FXRSTOR, MMX, 3DNow!, Enhanced 3DNow!, SSE</td></tr>
 <tr><td>Neko Processor II</td><td>x</td><td>x</td><td>x</td><td>ねこープロジェクトでサポートされている全機能</td></tr>
 </tbody>
 </table>
 <P>※設定変更はリセット後に有効になります。</P>
 <P>※ファミリ・モデル・ステッピングは非公開機能で自由に変えられるので（動くかは別問題として）バージョンチェック回避なども可能です。</P>
 <P>※Neko Processor IIはベンダ名がIntelでもAMDでもないのでCPUチェックに引っかかるかもしれません。</P>
-<P>※現時点ではIntel Pentium III以前のCPUが安定しています</P></DD>
+<P>※現時点ではIntel Pentium 4以前のCPUが安定しています</P></DD>
 </DL>
 
 <DL>
 <DT><B>Base Architecture</B></DT>
-<DD><P>エミュレーションモデルを指定します。</P>
+<DD><P>エミュレーションモデルを指定します。なお、これらは基本となるアーキテクチャを選択するもので、その機種をエミュレーションするわけではありません。</P>
 <ul>
 <li>PC-9801VM … i286搭載前のPC-9801VM以前の機種をエミュレーションします。</li>
 <li>PC-9801VX … i286以降のCPUを搭載したPC-9801VX以降の機種をエミュレーションします。システム起動時にFM音源がリセットされます。</li>
-<li>PC-286 … EPSON互換機仕様となります。EPSON BIOSで使用されるRAM(アドレス: D4000〜DFFFF)が開放されます。</li>
+<li>PC-286 … EPSON互換機仕様となります。EPSON BIOSで使用されるRAM(アドレス: D4000～DFFFF)が開放されます。</li>
 </ul>
 <P>
 Always use 16bit I/O port addressing (PC-9821) にチェックを入れるとPC-9821中期以降相当のI/Oポートエミュレーションになります。I/Oポートアドレスの16bitフルデコードを前提としている場合（Windows2000等）は必須です。
@@ -88,8 +92,8 @@ Always use 16bit I/O port addressing (PC-9821) にチェックを入れるとPC-
 <A NAME="BUFFER"></A>
 <DL>
 <DT><B>Buffer</B></DT>
-<DD><P>サウンドエミュレートの出力バッファサイズをミリ秒で指定します。<BR>100〜1000msの間を指定してください。</P>
-<P>値が少ないほどサウンドの延滞が短くなりますが、CPUパワーが必要になります。<BR>通常は100ms〜500msを指定します。</P>
+<DD><P>サウンドエミュレートの出力バッファサイズをミリ秒で指定します。<BR>100～1000msの間を指定してください。</P>
+<P>値が少ないほどサウンドの延滞が短くなりますが、CPUパワーが必要になります。<BR>通常は100ms～500msを指定します。</P>
 <P>※設定変更はリセット後に有効になります。</P></DD>
 </DL>
 
@@ -111,6 +115,11 @@ Always use 16bit I/O port addressing (PC-9821) にチェックを入れるとPC-
 <DL>
 <DT><B>Save window size</B></DT>
 <DD><P>チェックすると 終了時のウィンドウサイズを記録します。</P></DD>
+</DL>
+
+<DL>
+<DT><B>Multi-thread mode</B></DT>
+<DD><P>チェックすると マルチスレッドモードを有効にします。ウィンドウ操作でエミュレーションが停止しなくなり、他のアプリケーションに起因するパフォーマンスの影響を受けにくくなります。</P></DD>
 </DL>
 
 </BODY>
