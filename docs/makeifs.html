@@ -76,6 +76,9 @@
 		標準コマンドで出来ないのは面倒に思われるかも知れませんが、net useに対応する方がはるかに面倒です。
 	</p>
 	<p>
+		<small>※決め打ちで問題なければIoCreateSymbolicLinkの際に\DosDevices\Z:（Zドライブの場合）のよう名前でリンクを作れば、DefineDosDeviceしないでドライブ文字を割り当てて使用もできます。</small>
+	</p>
+	<p>
 		<small>※ネットワークファイルシステムドライバ（FILE_DEVICE_NETWORK_FILE_SYSTEM）の振りをしたディスクファイルシステムドライバも作ろうと思えば作れます。
 		アイコンに常時×が付けられますが気にしなければ使えます。</small>
 	</p>
@@ -134,7 +137,7 @@
 
 // デバイス名
 #define SAMPLE_DEVNAME    L"\\Device\\SampleDevice"
-// DOS名からアクセス可能なデバイス名
+// DOS名からアクセス可能なデバイス名　CreateFile等で\\.\SampleDeviceでアクセスできるようになる
 #define SAMPLE_SYMNAME    L"\\DosDevices\\SampleDevice"
 
 // 関数定義
@@ -215,6 +218,9 @@ NTSTATUS DispatchDeviceControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
             // I/Oポート読み取り　ポート番号は本来ポインタではないがPUCHAR型の数値として指定
             ioData->data = READ_PORT_UCHAR((PUCHAR)SAMPLE_PORT);
             
+            // 戻すデータのサイズ
+            Irp->IoStatus.Information = sizeof(IOPORT_SAMPLE_DATA);
+            
             break;
         }
         case IOCTL_SAMPLE_WRITE:
@@ -231,6 +237,9 @@ NTSTATUS DispatchDeviceControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
             
             // I/Oポート書き込み　ポート番号は本来ポインタではないがPUCHAR型の数値として指定
             WRITE_PORT_UCHAR((PUCHAR)SAMPLE_PORT, (UCHAR)ioData->data);
+            
+            // 未使用
+            Irp->IoStatus.Information = 0;
             
             break;
         }
@@ -418,14 +427,14 @@ int main(int argc, char const *argv[])
 </code></pre>
 	
 	<h3>2.6. 詳細説明</h3>
-	<h4>2.6.1. 定数定義とヘッダー</h4>
+	<h4>2.6.1. 定数定義</h4>
 <pre><code class="language-c">
 #define SAMPLE_PORT    0x7E0
 #define SAMPLE_DEVNAME    L"\\Device\\SampleDevice"
 #define SAMPLE_SYMNAME    L"\\DosDevices\\SampleDevice"
 </code></pre>
 	<ul>
-		<li><strong>SAMPLE_PORT</strong>: アクセス対象のI/Oポートの番地（この場合 0x7E0）。</li>
+		<li><strong>SAMPLE_PORT</strong>: アクセス対象のI/Oポート番号（この場合 0x7E0）。</li>
 		<li><strong>SAMPLE_DEVNAME</strong>: カーネル内部で使用されるデバイス名。</li>
 		<li><strong>SAMPLE_SYMNAME</strong>: ユーザーモードアプリから \\.\SampleDevice としてアクセスできるようにするためのシンボリックリンク名。</li>
 	</ul>
@@ -500,7 +509,10 @@ WRITE_PORT_UCHAR(port, (UCHAR)ioData->data);
 	
 	<h4>2.6.6. CTL_CODE マクロによる IOCTL 定義</h4>
 <pre><code class="language-c">
-NTSTATUS DispatchDeviceControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+#define IOCTL_SAMPLE_READ \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_SAMPLE_WRITE \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
 </code></pre>
 	<p>
 		CTL_CODE マクロは、ユーザーモードアプリケーションとカーネルモードドライバ間の命令（IOCTLコード）を定義するためのものです。
@@ -534,10 +546,106 @@ typedef struct _IOPORT_SAMPLE_DATA {
 		すべての関数で IRP（I/O要求パケット）を処理し、IoCompleteRequest を呼んで完了させる必要があります。
 完了させ忘れた場合、ドライバ内で正常に完了していないIRPが溜まり、システムに不具合を起こします。
 	</p>
+	<p>
+		IRP_MJ_DEVICE_CONTROLの場合、Irp->IoStatus.Informationには出力データ（呼び出し元へ返すデータ）のサイズを入れます。
+		他の場合でも大体似たような感じですが、たまに違う意味の値（ステータスの補足情報等）を入れる場合もあります。
+		仕様を確認するようにしてください。
+	</p>
 <pre><code class="language-c">
     Irp->IoStatus.Status = status;
+    Irp->IoStatus.Information = dataLength;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 </code></pre>
+	
+	<h4>2.6.9. 入出力バッファ</h4>
+	<p>
+		ドライバとのデータのやりとりは原則としてバッファを経由して行います。
+		このバッファには以下の3方式があります。
+	</p>
+	<ul>
+		<li><strong>METHOD_BUFFERED</strong>: 入出力ともにIrp->AssociatedIrp.SystemBufferを使う。OSによるバッファのコピーが発生してやや遅いが、OSが仲介するので安全性が高い。</li>
+		<li><strong>METHOD_IN_DIRECT/METHOD_OUT_DIRECT</strong>: 主要な入出力先はMmGetSystemAddressForMdlで得た場所。Irp->AssociatedIrp.SystemBufferは補助的な扱い。OSがバッファを用意しないので比較的高速で、METHOD_NEITHERよりは安全。</li>
+		<li><strong>METHOD_NEITHER</strong>: Irp->UserBufferに書き込まれたアドレスに直接アクセス。このアドレスの妥当性（そもそもも有効かどうか、ページアウトしていないかなど）は自力で管理しないといけないのでハイリスク。</li>
+	</ul>
+	<p>
+		簡単にドライバを作りたい場合は、METHOD_BUFFERED一択です。
+		ただし、今回のテーマであるファイルシステムドライバのようにOSと連携する場合には、他の方法を求めてくることがあります。
+		対応できるようにはしておきましょう。
+	</p>
+	
+	<h4>2.6.10. 動的メモリ割り当て</h4>
+	<p>
+		上のサンプルにはありませんが、重要なのでこちらに記載しておきます。
+	</p>
+	<p>
+		カーネルモードでのメモリ割り当てはnewやmallocではなくExAllocatePoolを使用します。
+		これは以下のようにして使用します。
+	</p>
+<pre><code class="language-c">
+    // ページングしない領域にメモリ確保
+    LONG *lpTest = (LONG*)ExAllocatePool(NonPagedPool, 割り当てるサイズ);
+    if(!lpTest){
+        // 割り当て失敗
+        return;
+    }
+    
+    // 確保したメモリで何か処理
+    
+    // メモリ解放
+    ExFreePool(lpTest);
+</code></pre>
+	<p>
+		カーネルモードドライバの特異な点としては、割り当て時にどこにメモリを割り当てるかを指定できることがあります。
+		指定できるものは多数ありますが、主にNonPagedPoolかPagedPoolのどちらかになります。
+		どちらを使うべきかについては、割り当てが小サイズで面倒な目に遭いたくなければ<b>NonPagedPool</b>にしてください。
+	</p>
+	<p>
+		何故かが気になる方のために大雑把に解説すると、以下のようになります。
+	</p>
+	<ul>
+		<li><strong>NonPagedPool</strong>: ページアウトしない領域にメモリを確保します。つまり、常に物理メモリ上にデータがあることが保証されます。</li>
+		<li><strong>PagedPool</strong>: 必要に応じてページアウト可能なメモリを確保します。システムメモリが不足した場合にページアウトされる場合があります。この場合、使用時にページインされます。</li>
+	</ul>
+	<p>
+		問題の後者は、ユーザーモードで普通に使われるメモリ割り当て方法です。
+		いわゆる仮想メモリとして補助記憶装置をメインメモリの拡張として使うことができ、メモリが少ない環境でも大量のメモリを消費するプログラムを動かせます。
+	</p>
+	<p>
+		この方法はユーザーモードでは仮想メモリでHDDがゴリゴリ動いて遅くなるくらいの影響しかありませんが、カーネルモードではかなり面倒な問題を引き起こします。
+		それは、カーネルモードではページイン／ページアウト処理が出来ない実行状態（IRQLと呼ばれます）があるためです。
+		この状態で必要なデータがページアウトしていた場合（ページフォールトが発生した場合）、即ブルースクリーンになります。
+	</p>
+<pre><code class="language-c">
+// 例えばグローバル変数とする
+LONG *g_lpTest;
+
+VOID init(){
+    // ページング可能な領域に30byteメモリ確保
+    g_lpTest = (LONG*)ExAllocatePool(PagedPool, 30);
+}
+
+VOID process(){
+    // 様々な処理によって、どこかでg_lpTestのメモリがページアウトしたとする
+    // IRQLはページング不能な状態（IRQL==PASSIVE_LEVELではない）とする
+    g_lpTest[0] = 1; // ページフォールトでブルースクリーン発生！
+}
+</code></pre>
+	<p>
+		つまり、PagedPoolを使う場合は今の実行状態（IRQL）がどうなっているのかをきっちり把握しておかなければなりません。
+		また、自分だけが気をつけておけば良いのではなく、引数などでそれを渡された相手方がどのIRQLで処理するのかも把握しておく必要があります。
+		なお、ページアウトは常に発生するわけではないので、確率でブルースクリーンのようなデバッグが難しい嫌な挙動になります。
+	</p>
+	<p>
+		そういうわけで、特別メモリを節約したい状況でなければ、初級としては<b>NonPagedPool</b>にするのをおすすめします。
+	</p>
+	<p>
+		<small>※グローバル変数や関数内のローカル変数などはNonPagedPoolの場合と同じくページアウトしないので、安心してアクセスできます。</small>
+	</p>
+	<p>
+		<small>※ExAllocatePoolWithTagというものもあり、第3引数として4文字の任意のタグを受け取れます。
+		デバッグ時のメモリリークの特定などに活用できるそうです。
+		リリースビルドでは普通のExAllocatePoolに置き換えられます（恐らく）。</small>
+	</p>
 	
 	<h2>3. ファイルシステムドライバを作る</h2>
 	<p>作成中です・・・</p>
