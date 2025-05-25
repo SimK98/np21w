@@ -127,6 +127,9 @@
 	<p>
 		早速ですが、以下にI/Oポートを操作するカーネルモードドライバのテンプレートを示します。
 	</p>
+	<p>
+		サンプルファイル一式も用意しています。<a href="makeifs/sampleio1.zip">sampleio1.zip</a>
+	</p>
 	<div><strong>【sample.c】</strong></div>
 <pre><code class="language-c">
 #include &lt;ntddk.h>
@@ -153,8 +156,8 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
     PDEVICE_OBJECT DeviceObject;
 
     // UnicodeStringを初期化　ドライバ系では基本的にUNICODE_STRINGでやりとり
-    RtlInitUnicodeString(&amp;devName, NP2_DEVNAME);
-    RtlInitUnicodeString(&amp;symLink, NP2_SYMNAME);
+    RtlInitUnicodeString(&amp;devName, SAMPLE_DEVNAME);
+    RtlInitUnicodeString(&amp;symLink, SAMPLE_SYMNAME);
 
     // デバイスを作成
     IoCreateDevice(DriverObject, 0, &amp;devName, FILE_DEVICE_UNKNOWN, 0, FALSE, &amp;DeviceObject);
@@ -186,7 +189,7 @@ VOID DriverUnload(PDRIVER_OBJECT DriverObject)
     UNICODE_STRING symLink = {0};
     
     // UnicodeStringを初期化
-    RtlInitUnicodeString(&amp;symLink, NP2_SYMNAME);
+    RtlInitUnicodeString(&amp;symLink, SAMPLE_SYMNAME);
 
     // DOS名からアクセス可能なデバイス名を登録解除
     IoDeleteSymbolicLink(&amp;symLink);
@@ -296,6 +299,7 @@ SOURCES= \
 	</p>
 	<p>
 		Win2kDDKの場合、ビルドは上記ファイル群が入ったディレクトリでbuildコマンドを実行することで行えます。
+		結果はfreeビルド（デバッグ無しRelease用）なら通常はobjfre\i386に出力されると思います。
 	</p>
 	<p>
 		出力先ディレクトリがないというエラーが出るかも知れません。
@@ -305,6 +309,7 @@ SOURCES= \
 	<h3>2.4. カーネルモードドライバの登録</h3>
 	<p>
 		ドライバの登録は色々な方法で出来ますが、例えば次のようなレジストリキーを登録すれば可能です。
+		削除する場合はこのレジストリキーを丸ごと削除すればOKです。
 	</p>
 <pre><code class="language-ini">
 HKLM,"System\CurrentControlSet\Services\SampleDevice","Type",0x00010001,1
@@ -425,6 +430,14 @@ int main(int argc, char const *argv[])
     return 0;
 }
 </code></pre>
+	<p>
+		このサンプルは単純なので、cl usermode.cだけでコンパイルできます。
+	</p>
+	<p>
+		試す場合は先のドライバで指定したI/Oポートに何もいないことを確認してください。
+		何かいる場合、そのデバイスにI/Oを送ることになるので何が起こるか分かりません。
+		何もいない場合、READ時に常に全ビット1（今回の場合0xffつまり255）が返ってくるはずです。
+	</p>
 	
 	<h3>2.6. 詳細説明</h3>
 	<h4>2.6.1. 定数定義</h4>
@@ -543,7 +556,7 @@ typedef struct _IOPORT_SAMPLE_DATA {
 	
 	<h4>2.6.8. IRP処理</h4>
 	<p>
-		すべての関数で IRP（I/O要求パケット）を処理し、IoCompleteRequest を呼んで完了させる必要があります。
+		DriverObject->MajorFunctionに割り当てたすべての関数で IRP（I/O要求パケット）を処理し、IoCompleteRequest を呼んで完了させる必要があります。
 完了させ忘れた場合、ドライバ内で正常に完了していないIRPが溜まり、システムに不具合を起こします。
 	</p>
 	<p>
@@ -556,6 +569,15 @@ typedef struct _IOPORT_SAMPLE_DATA {
     Irp->IoStatus.Information = dataLength;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 </code></pre>
+	<p>
+		なお、IRPの処理中にIoMarkIrpPendingで保留状態にしてからSTATUS_PENDINGを返し、IoCompleteRequestを後のタイミングで行う場合もあります。
+		IoCompleteRequestを任意のタイミングで送ることで、OSへのイベント通知のような挙動が実現されます。
+		詳細はファイルシステムドライバの所で説明します。
+	</p>
+	<p>
+		<small>※IoCompleteRequestを呼んだ後のIrpは無効です。
+		IoCompleteRequestの後でうっかりreturn Irp->IoStatus.Status;等としないように注意。</small>
+	</p>
 	
 	<h4>2.6.9. 入出力バッファ</h4>
 	<p>
@@ -564,7 +586,7 @@ typedef struct _IOPORT_SAMPLE_DATA {
 	</p>
 	<ul>
 		<li><strong>METHOD_BUFFERED</strong>: 入出力ともにIrp->AssociatedIrp.SystemBufferを使う。OSによるバッファのコピーが発生してやや遅いが、OSが仲介するので安全性が高い。</li>
-		<li><strong>METHOD_IN_DIRECT/METHOD_OUT_DIRECT</strong>: 主要な入出力先はMmGetSystemAddressForMdlで得た場所。Irp->AssociatedIrp.SystemBufferは補助的な扱い。OSがバッファを用意しないので比較的高速で、METHOD_NEITHERよりは安全。</li>
+		<li><strong>METHOD_IN_DIRECT/METHOD_OUT_DIRECT</strong>: 主要な入出力先はMmGetSystemAddressForMdlで得た場所。Irp->AssociatedIrp.SystemBufferは補助的な扱い。OSがバッファを用意しないので比較的高速で、ある程度管理されているのでMETHOD_NEITHERよりは安全。</li>
 		<li><strong>METHOD_NEITHER</strong>: Irp->UserBufferに書き込まれたアドレスに直接アクセス。このアドレスの妥当性（そもそもも有効かどうか、ページアウトしていないかなど）は自力で管理しないといけないのでハイリスク。</li>
 	</ul>
 	<p>
@@ -596,14 +618,14 @@ typedef struct _IOPORT_SAMPLE_DATA {
 </code></pre>
 	<p>
 		カーネルモードドライバの特異な点としては、割り当て時にどこにメモリを割り当てるかを指定できることがあります。
-		指定できるものは多数ありますが、主にNonPagedPoolかPagedPoolのどちらかになります。
+		指定できるものは多数ありますが、主に<b>NonPagedPool</b>か<b>PagedPool</b>のどちらかになります。
 		どちらを使うべきかについては、割り当てが小サイズで面倒な目に遭いたくなければ<b>NonPagedPool</b>にしてください。
 	</p>
 	<p>
 		何故かが気になる方のために大雑把に解説すると、以下のようになります。
 	</p>
 	<ul>
-		<li><strong>NonPagedPool</strong>: ページアウトしない領域にメモリを確保します。つまり、常に物理メモリ上にデータがあることが保証されます。</li>
+		<li><strong>NonPagedPool</strong>: ページアウトしない領域にメモリを確保します。つまり、常に物理メモリ上にデータがあることが保証されます。ただし、物理メモリが不足していると確保できない場合があります。</li>
 		<li><strong>PagedPool</strong>: 必要に応じてページアウト可能なメモリを確保します。システムメモリが不足した場合にページアウトされる場合があります。この場合、使用時にページインされます。</li>
 	</ul>
 	<p>
@@ -611,12 +633,11 @@ typedef struct _IOPORT_SAMPLE_DATA {
 		いわゆる仮想メモリとして補助記憶装置をメインメモリの拡張として使うことができ、メモリが少ない環境でも大量のメモリを消費するプログラムを動かせます。
 	</p>
 	<p>
-		この方法はユーザーモードでは仮想メモリでHDDがゴリゴリ動いて遅くなるくらいの影響しかありませんが、カーネルモードではかなり面倒な問題を引き起こします。
-		それは、カーネルモードではページイン／ページアウト処理が出来ない実行状態（IRQLと呼ばれます）があるためです。
+		この方法はユーザーモードでは仮想メモリでディスクがゴリゴリ動いて遅くなるくらいの影響しかありませんが、カーネルモードではかなり面倒な問題を引き起こします。
+		それは、カーネルモードではページイン／ページアウト処理が出来ない実行状態（IRQL==PASSIVE_LEVELではない）があるためです。
 		この状態で必要なデータがページアウトしていた場合（ページフォールトが発生した場合）、即ブルースクリーンになります。
 	</p>
 <pre><code class="language-c">
-// 例えばグローバル変数とする
 LONG *g_lpTest;
 
 VOID init(){
@@ -625,18 +646,18 @@ VOID init(){
 }
 
 VOID process(){
-    // 様々な処理によって、どこかでg_lpTestのメモリがページアウトしたとする
+    // 様々な処理によって、どこかでg_lpTestが指すメモリ領域がページアウトしたとする
     // IRQLはページング不能な状態（IRQL==PASSIVE_LEVELではない）とする
     g_lpTest[0] = 1; // ページフォールトでブルースクリーン発生！
 }
 </code></pre>
 	<p>
-		つまり、PagedPoolを使う場合は今の実行状態（IRQL）がどうなっているのかをきっちり把握しておかなければなりません。
-		また、自分だけが気をつけておけば良いのではなく、引数などでそれを渡された相手方がどのIRQLで処理するのかも把握しておく必要があります。
+		つまり、<b>PagedPool</b>を使う場合は今の実行状態（IRQL）がどうなっているのかをきっちり把握しておかなければなりません。
+		また、自分だけが気をつけておけば良いのではなく、引数などでそれを渡す場合には、相手方がどのIRQLで処理するのかも把握しておく必要があります。
 		なお、ページアウトは常に発生するわけではないので、確率でブルースクリーンのようなデバッグが難しい嫌な挙動になります。
 	</p>
 	<p>
-		そういうわけで、特別メモリを節約したい状況でなければ、初級としては<b>NonPagedPool</b>にするのをおすすめします。
+		そういうわけで、特別メモリを節約したい状況でなければ<b>NonPagedPool</b>にするのをおすすめします。
 	</p>
 	<p>
 		<small>※グローバル変数や関数内のローカル変数などはNonPagedPoolの場合と同じくページアウトしないので、安心してアクセスできます。</small>
@@ -646,10 +667,216 @@ VOID process(){
 		デバッグ時のメモリリークの特定などに活用できるそうです。
 		リリースビルドでは普通のExAllocatePoolに置き換えられます（恐らく）。</small>
 	</p>
+	<h3>2.7. 【Coffee Break】バージョン情報を付ける</h3>
+	<p>
+		上記で作ったドライバはバージョン情報も何もついていない傍目には怪しげなファイルです。
+		別になくても害はないのですが、雰囲気が出ますのでバージョン情報を付けてみましょう。
+	</p>
+	<p>
+		サンプルファイル一式も用意しています。<a href="makeifs/sampleio2.zip">sampleio2.zip</a>
+	</p>
+	<p>
+		まずは以下のファイルを作成します。
+		普通のWin32リソースファイルです。
+	</p>
+	<div><strong>【sample.rc】</strong></div>
+<pre><code class="language-c">
+#include &lt;winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION    0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK  0x3fL
+ FILEFLAGS      0x0L
+ FILEOS         VOS_NT
+ FILETYPE       VFT_DRV
+ FILESUBTYPE    VFT2_DRV_SYSTEM
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041103a4"
+        BEGIN
+            VALUE "CompanyName",      "\0"
+            VALUE "FileDescription",  "サンプルドライバ（I/Oポートアクセス）\0"
+            VALUE "FileVersion",      "0.1.0.0\0"
+            VALUE "InternalName",     "sample.sys\0"
+            VALUE "OriginalFilename", "sample.sys\0"
+            VALUE "ProductName",      "Sample Driver\0"
+            VALUE "ProductVersion",   "0.1.0.0\0"
+            VALUE "LegalCopyright",   "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0411, 932
+    END
+END
+</code></pre>
+	<p>
+		作成できたら、sourcesに追加しましょう。
+	</p>
+	<div><strong>【sources】</strong></div>
+<pre><code class="language-makefile">
+TARGETNAME=sample
+TARGETTYPE=DRIVER
+TARGETPATH=obj
+SOURCES= \
+    sample.c \
+    sample.rc
+</code></pre>
+	<p>
+		これでビルドすればバージョン情報付きのsysファイルが出来上がります。
+	</p>
 	
 	<h2>3. ファイルシステムドライバを作る</h2>
-	<p>作成中です・・・</p>
+	<h3>3.1. 最小限のファイルシステムドライバに必要なもの</h3>
+	<p>
+		ファイルシステムドライバ製作の参考となる公式資料として、WinDDKに含まれるFastFatサンプルなどがあります。
+		しかし、このサンプルは実際のFastFatドライバのソースのようで、最小構成としては実際の所どこまで作ればよいのかが分かりにくいものです。
+	</p>
+	<p>
+		そこで、本記事では本当の意味での最小構成から出発していきます。
+		先のカーネルモードドライバのサンプルをベースにして考えたとき、最小限のファイルシステムドライバには以下の違いがあります。
+	</p>
+	<h4>3.1.1. デバイスの作成と設定</h4>
+	<p>
+		デバイスの作成時に、FILE_DEVICE_UNKNOWNではなくFILE_DEVICE_DISK_FILE_SYSTEMにして作成します。
+		net useができない見かけ倒しですが、FILE_DEVICE_NETWORK_FILE_SYSTEMでも可能です。
+	</p>
+<pre><code class="language-c">
+    status = IoCreateDevice(DriverObject, 0, &deviceNameUnicodeString, 
+                            FILE_DEVICE_DISK_FILE_SYSTEM, 0, FALSE, &deviceObject);
+    if (!NT_SUCCESS(status)) {
+        return status;
+    }
+</code></pre>
+	<p>
+		この際、デバイスの付加情報も設定する必要があります。
+		厳密には必須ではありませんが、リムーバブルディスクやネットワークドライブの振りをさせておくことで、Windowsがごみ箱を使おうとして面倒なことになるのを回避できます。
+	</p>
+<pre><code class="language-c">
+    // ごみ箱を使わせないためにリムーバブルディスクの振りをする
+    deviceObject->Characteristics |= FILE_REMOVABLE_MEDIA;
+    
+    // ↓FILE_DEVICE_NETWORK_FILE_SYSTEMにした場合はこちら
+    // ごみ箱を使わせないためにネットワークデバイスの振りをする
+    deviceObject->Characteristics |= FILE_REMOTE_DEVICE;
+</code></pre>
+	<p>
+		さらに、deviceObject->Flagsにも付加情報を設定する必要があります。
+		以下のようにしておけば基本的に問題は起こらないと想います。
+	</p>
+<pre><code class="language-c">
+    deviceObject->Flags |= DO_BUFFERED_IO; // データ受け渡しでSystemBufferを基本とする？指定しても他方式で来るときは来る気がする。
+    deviceObject->Flags |= DO_LOW_PRIORITY_FILESYSTEM; // 低優先度で処理
+</code></pre>
+	<h4>3.1.2. IRP処理関数の割り当て</h4>
+	<p>
+		独自仕様のカーネルモードドライバではIRP_MJ_CREATE、IRP_MJ_CLOSE、IRP_MJ_DEVICE_CONTROLの3つを処理すれば十分でしたが、ファイルシステムドライバでは他のIRPにも適切に応答する必要があります。
+	</p>
+	<p>
+		定義を見るとかなり沢山のIRPがありますが、最小限のファイルシステムドライバでは全てを真面目に実装する必要はありません。以下の表には実装すべき優先順で必要最低限のIRPを示しています。個別の具体的な実装方法については後述します。
+	</p>
+	<p>
+		とりあえず未実装のIRPに対しては、Irp->IoStatus.StatusとしてSTATUS_NOT_IMPLEMENTEDを、Irp->IoStatus.Informationとして0を返してください。
+	</p>
+	<div><strong>【Windowsシステムが使用する主なIRP】</strong></div>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>IRP</th><th>大雑把な意味</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>IRP_MJ_CREATE</td><td>ユーザーモードのCreateFile関数等から呼ばれる。Createとあるが、既存ファイルのオープンも管轄内。また、ディレクトリの作成とオープンもこれが担当する。</td></tr>
+			<tr><td>IRP_MJ_CLOSE</td><td>CreateFileで開いたハンドルを閉じる場合などに呼ばれる。開いたファイルの後片付けを行う。削除フラグが立っている場合、この段階で実際の削除を行う。</td></tr>
+			<tr><td>IRP_MJ_CLEANUP</td><td>ファイルをいつ閉じても良いように準備せよという指示。IRP_MJ_CLOSEの前に呼ばれる。実際にIRP_MJ_CLOSEが呼ばれるまでには時間差があるので、この段階でファイルロックの解除を行うこと。ただし、メモリマップトファイルの場合IRP_MJ_CLEANUPの後にIRP_MJ_READ等が来る場合があるので、それにも対処すること。</td></tr>
+			<tr><td>IRP_MJ_FILE_SYSTEM_CONTROL</td><td>ファイルシステムへの制御指示。最小限動かすために、一部のステータスとして非サポートや成功を返す必要がある。</td></tr>
+			<tr><td>IRP_MJ_LOCK_CONTROL</td><td>ファイルの排他ロックのための命令。最小限の構成なら無条件で成功を返せばよい。</td></tr>
+			<tr><td>IRP_MJ_FLUSH_BUFFERS</td><td>キャッシュからファイルへの即時書き込みの指示。最小限の構成なら無条件で成功を返せばよい。</td></tr>
+			<tr><td>IRP_MJ_QUERY_VOLUME_INFORMATION</td><td>ボリューム（マウントしたディスク）の情報を返す。ボリュームラベルや容量の情報等。</td></tr>
+			<tr><td>IRP_MJ_DIRECTORY_CONTROL</td><td>指定したディレクトリ内のファイルの列挙や監視を行う。列挙が出来れば監視はとりあえず未実装でもよい。</td></tr>
+			<tr><td>IRP_MJ_QUERY_INFORMATION</td><td>IRP_MJ_CREATEで開いたファイルの情報を取得する。多数あるがWindowsシステムで使用されるものは限られている。</td></tr>
+			<tr><td>IRP_MJ_SET_INFORMATION</td><td>IRP_MJ_CREATEで開いたファイルの情報を設定する。多数あるがWindowsシステムで使用されるものは限られている。ファイルサイズの変更やファイルの移動、削除フラグを立てるなどの特殊な操作もある。読み取り専用なら実装不要。</td></tr>
+			<tr><td>IRP_MJ_READ</td><td>IRP_MJ_CREATEで開いたファイルの読み込みを行う。開いたものがディレクトリの場合は呼ばれない（はず）。</td></tr>
+			<tr><td>IRP_MJ_WRITE</td><td>IRP_MJ_CREATEで開いたファイルの書き込みを行う。開いたものがディレクトリの場合は呼ばれない（はず）。読み取り専用なら実装不要。</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<h4>3.1.3. 割り当てるべきメモリ</h4>
+	<p>
+		ファイルシステムドライバでは、<strong>特定の場所にメモリを確保していることを前提にOS側がアクセスしてくる</strong>ことがあります。
+		必要なメモリを割り当てていない場合、カーネルモード例外でブルースクリーンになる場合があります。
+	</p>
+	<p>
+		IRP_MJ_CREATEで成功（STATUS_SUCCESS）を返す場合、以下のメモリをドライバで割り当てておく必要があります。
+		そして、ここで割り当てたメモリはIRP_MJ_CLOSEで解放する必要があります。
+	</p>
+	<div><strong>【Windowsシステムが使用する最低限のメモリ領域】</strong></div>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>場所</th><th>割り当てるもの</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>IrpSp->FileObject-> FsContext</td><td>先頭にFSRTL_COMMON_FCB_HEADER構造体を含むユーザー定義構造体へのポインタ（NonPagedPoolで割り当てたもの。ゼロクリアしておくこと）。FSRTL_COMMON_FCB_HEADER部分はOSが使うので触ってはいけない。ドライバが使う任意のデータはその後ろに配置する。<strong>OPENする度に割り当て、CLOSEで解放すること。</strong></td></tr>
+			<tr><td>IrpSp->FileObject-> SectionObjectPointer</td><td>SECTION_OBJECT_POINTERS構造体へのポインタ（NonPagedPoolで割り当てたもの。ゼロクリアしておくこと）。中身はOSが使うので触ってはいけない。<strong>同じファイルを開く場合は共通にすること。</strong></td></tr>
+		</tbody>
+	</table>
+	</div>
+	<p>
+		<small>※IrpSpはIoGetCurrentIrpStackLocation(Irp)によって得たIRPスタックへのポインタを表します。</small>
+	</p>
+	<p>
+		<small>※メモリの割り当てはExAllocatePoolを使って行います。必ずNonPagedPoolで割り当てること。</small>
+	</p>
+	<p>
+		<small>※MS公式ドキュメントを読むと、（翻訳が微妙なのか原文から駄目なのか分かりませんが）FsContextに設定すべきものがNULLでいいのか、そしてFSRTL_ADVANCED_FCB_HEADER構造体（FSRTL_COMMON_FCB_HEADER構造体の新OS用拡張）をどう含めればいいのかよく分かりません。色々試したところ、以下のようにFSRTL_COMMON_FCB_HEADER構造体をユーザー定義の構造体の先頭に置くというのが必須の要件です。これをしないとOS側が関係ないメモリにデータを書き込んで破壊して回ったり、範囲外メモリアクセスでブルースクリーンを頻発させたりします。</small>
+	</p>
+<pre><code class="language-c">typedef struct tagSAMPLEFS_FSCONTEXT {
+	FSRTL_COMMON_FCB_HEADER systemReserved; // OSが使うので触ってはいけない。32bit環境では40byte
+    ULONG userData; // これ以降、ファイルシステムドライバ独自のデータ
+    ULONG userDataArray[20]; // いちおう何byte使ってもよい（常識的な範囲で）
+    PVOID userDataPtr; // 型も自由でよい（PagedPoolのポインタに飛ばす場合はIRQLに注意）
+} SAMPLEFS_FSCONTEXT, *PSAMPLEFS_FSCONTEXT;
+</code></pre>
+	<p>
+		<small>※SectionObjectPointerをどうすべきかについてもMS公式ドキュメントから見つけるのが難しいですが、よく読むとファイルを開く毎にドライバ側がNonPagedPoolから割り当てる必要があると書いてあります。更に「同じファイルを開いたときは同じものを返し、誰も参照しなくなったら削除しなければならない」という要件も実はあります。これをしないとメモリマップトファイル関係やEXE実行（裏でメモリマップトファイル使用）が正しく動かなくなります。</small>
+	</p>
+	<h3>3.2. ファイルやディレクトリ操作の流れ</h3>
+	<p>
+		ファイルシステムドライバにおいて、ファイルやディレクトリは以下の流れで操作されます。
+		この流れで作ればよいということを念頭に置いておきましょう。
+	</p>
+	<p>
+		これらに適切に応答するようにすれば、エクスプローラで最小限操作可能な仮想ファイルシステムが作れます。
+	</p>
+	<ol>
+		<li>IRP_MJ_QUERY_VOLUME_INFORMATIONを用いてボリュームの情報を取得</li>
+		<li>IRP_MJ_DIRECTORY_CONTROLを用いてファイルやディレクトリを列挙</li>
+		<li>IRP_MJ_CREATEによってファイルやディレクトリを開く</li>
+		<li>IRP_MJ_QUERY_INFORMATIONによってファイルやディレクトリの情報を取得</li>
+		<li>IRP_MJ_SET_INFORMATIONでファイルやディレクトリの情報を操作したり、IRP_MJ_READ／IRP_MJ_WRITEでファイルを読み書きしたりする</li>
+		<li>IRP_MJ_CLEANUPによってファイルやディレクトリを閉じる準備をする（省略される場合もある）</li>
+		<li>IRP_MJ_CLOSEによってファイルやディレクトリを閉じる</li>
+	</ol>
+	<h3>3.3. ファイルシステムドライバにおけるファイルとディレクトリ</h3>
+	<p>
+		ファイルシステムドライバにおいて、ファイルもフォルダも同じくIRP_MJ_CREATEで開いてIRP_MJ_CLOSEで閉じます。
+		ディレクトリは「ディレクトリという属性のついた特殊なファイル」というくらいに考えておきましょう。
+	</p>
+	<p>
+		なお、ディレクトリの場合は普通のファイルではないのでIRP_MJ_READ／IRP_MJ_WRITEが来ることはありません。
+		少なくとも私が試した限りではやってきませんでした。
+	</p>
 	
+	<h3>3.3. 最小限のファイルシステムドライバのテンプレート</h3>
+	<p>
+		自作ファイルシステムドライバのテンプレートとして以下のものを使用します。
+		このテンプレートではXドライブとして自動割り当てされた空のディスクを表示させることが出来ます。
+	</p>
+	<p>
+		まだ執筆中・・・
+	</p>
 	
 	
 	<p>
