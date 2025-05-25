@@ -666,6 +666,19 @@ VOID process(){
 		<small>※ExAllocatePoolWithTagというものもあり、第3引数として4文字の任意のタグを受け取れます。
 		デバッグ時のメモリリークの特定などに活用できるそうです。</small>
 	</p>
+	
+	<h4>2.6.11. 排他制御</h4>
+	<p>
+		これも上のサンプルにはありませんが、やはり重要なのでこちらに記載しておきます。
+	</p>
+	<p>
+		WinAPIで排他制御といえばEnterCriticalSection／LeaveCriticalSectionが手軽ですが、カーネルモードではそうはいきません。
+		カーネルモードでの排他制御は何種類かありますが、少なくともWinNT3.5以降で使えるものとしてはSpinLock系とMutex系があります。
+	</p>
+	<p>
+		SpinLock系は無限ループ待機系でCPUを占有しますが、。
+	</p>
+	
 	<h3>2.7. 【Coffee Break】バージョン情報を付ける</h3>
 	<p>
 		上記で作ったドライバはバージョン情報も何もついていない傍目には怪しげなファイルです。
@@ -818,7 +831,7 @@ SOURCES= \
 		</thead>
 		<tbody>
 			<tr><td>IrpSp->FileObject-> FsContext</td><td>先頭にFSRTL_COMMON_FCB_HEADER構造体を含むユーザー定義構造体へのポインタ（NonPagedPoolで割り当てたもの。ゼロクリアしておくこと）。FSRTL_COMMON_FCB_HEADER部分はOSが使うので触ってはいけない。ドライバが使う任意のデータはその後ろに配置する。<strong>OPENする度に割り当て、CLOSEで解放すること。</strong></td></tr>
-			<tr><td>IrpSp->FileObject-> SectionObjectPointer</td><td>SECTION_OBJECT_POINTERS構造体へのポインタ（NonPagedPoolで割り当てたもの。ゼロクリアしておくこと）。中身はOSが使うので触ってはいけない。<strong>同じファイルを開く場合は共通にすること。</strong></td></tr>
+			<tr><td>IrpSp->FileObject-> SectionObjectPointer</td><td>SECTION_OBJECT_POINTERS構造体へのポインタ（NonPagedPoolで割り当てたもの。ゼロクリアしておくこと）。中身はOSが使うので触ってはいけない。<strong>同じファイルを開く場合は共通にし、SectionObjectPointerを参照している全てのファイルを閉じるまで解放しないこと。</strong></td></tr>
 		</tbody>
 	</table>
 	</div>
@@ -868,7 +881,7 @@ SOURCES= \
 		少なくとも私が試した限りではやってきませんでした。
 	</p>
 	
-	<h3>3.3. 最小限のファイルシステムドライバのテンプレート</h3>
+	<h3>3.4. 最小限のファイルシステムドライバのテンプレート</h3>
 	<p>
 		自作ファイルシステムドライバのテンプレートとして以下のものを使用します。
 		このテンプレートではXドライブとして自動割り当てされた空のディスクを表示させることが出来ます。
