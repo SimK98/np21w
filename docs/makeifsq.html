@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>最小構成の仮想ファイルシステムドライバの製作（ファイルシステムドライバ嵌まり所） - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+	<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-c.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-makefile.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-ini.min.js"></script>
+	<style type="text/css">
+	code{
+		font-size: smaller !important;
+		line-height: 110% !important;
+	}
+	pre{
+		line-height: 110% !important;
+	}
+	</style>
+</head>
+<body>
+	<h1>番外編 ファイルシステムドライバ嵌まり所</h1>
+	<p>
+		ファイルシステムドライバを作っていて嵌まったところを一覧にしておきます。
+	</p>
+	<h3>DIRコマンドファイル指定やのワイルドカードが効かない</h3>
+	<p>
+		IRP_MJ_DIRECTORY_CONTROL→IRP_MN_QUERY_DIRECTORYの時には、IRPスタックポインタにファイルパターンが入っています。
+		irpSp->Parameters.QueryDirectory.FileNameに入っています。
+	</p>
+	<h3>IRP_MJ_QUERY_VOLUME_INFORMATIONやIRP_MJ_QUERY_INFORMATIONで渡されたバッファサイズが小さい</h3>
+	<p>
+		ファイル名など使う気のない所のバッファを確保しないでコールされるのは仕様通りです。
+		この場合、バッファに書けるだけ書いてSTATUS_BUFFER_OVERFLOWを返し、Informationには書けたバイト数を入れるのが正解です。
+	</p>
+	<h3>ファイル検索が上手く行かない</h3>
+	<p>
+		複数返すモードと一つだけ返すモードがあります。
+		irpSp->FlagsにSL_RETURN_SINGLE_ENTRYが立っているときは1つだけ、そうでないときは複数を返してください。
+		また、バッファに入りきらない場合は入る範囲で返し、再度コールされたときに続きを送ります。
+		なお、irpSp->FlagsにSL_RESTART_SCANが立っているときは列挙を最初からやり直します。
+	</p>
+	<h3>NT3.xのファイル選択で該当拡張子のないディレクトリを選択するとツリーが消える</h3>
+	<p>
+		1つ以上のファイルがあるときに列挙が完了したときに返すべきステータスはSTATUS_NO_MORE_FILESですが、該当するファイルが1つもないときに返すべきステータスはSTATUS_OBJECT_NAME_NOT_FOUNDです。
+		これを間違えるとツリー自体の表示が消えることがあります。
+	</p>
+	<h3>メモ帳での表示やEXE実行を行うとCREATEしっぱなしになって溜まっていく</h3>
+	<p>
+		SectionObjectPointerの実装を間違えるとこのような挙動になります。
+		例えば、ファイル単位で共通なのにCREATE毎に毎回新規生成していると挙動がおかしくなります。
+		これを簡単に実装するminisop.c, minisop.hというものを作りました。よろしければご利用ください。
+	</p>
+	<h3>メモ帳でファイルが開けない・COPY CONが正しく動かない・EXEが実行できない・CREATEしっぱなしになる等</h3>
+	<p>
+		メモリマップトファイルとキャッシュが正しく動いていないとこのような状況になります。
+		キャッシュの実装は全然情報が無く正しい実装がよく分からない上に、下手に使うとむしろ状況が悪化します。
+		そこで極力キャッシュを有効にしないようにしつつ、メモリマップトファイルを正しく動かせるようにしたminisop.c, minisop.hというものを作りました。よろしければご利用ください。
+	</p>
+	<h3>ファイルの削除はどうやるのか</h3>
+	<p>
+		ファイルの削除はDeleteというコマンドがあるわけでは無く、Createで開いたファイルにIRP_MJ_SET_INFORMATIONで削除のマークを付け、CLOSEでファイルを閉じたときに削除という流れになります。
+	</p>
+	<h3>CLOSEしていないファイルを開きに来る</h3>
+	<p>
+		IRP_MJ_CLEANUPが来た段階で実質的にファイルは閉じてファイルロックは解除してください
+		ただし、IRP_MJ_CLEANUPの後でCLOSEせずにREAD／WRITE等が来ることもあります。
+		その場合は、一時的に開き直すなどして応答してください。
+	</p>
+	<h3>ファイルへのパスなのにディレクトリのつもりでCreateしてくる</h3>
+	<p>
+		Createの時、irpSp->FlagsにSL_OPEN_TARGET_DIRECTORYの指定がある場合は、パスからファイル名を除去したディレクトリを開いてください。例えば、SL_OPEN_TARGET_DIRECTORYフラグ付きでA:\AAA\BBB\CCC.TXTと指定されてきた場合は、A:\AAA\BBBを開いてください。
+	</p>
+	<h3>サブディレクトリなのにルートディレクトリのようにファイル名を指定してくる</h3>
+	<p>
+		Createの時、FileObject->RelatedFileObjectがNULLでない場合はFileObject->RelatedFileObjectで指定されたFileObjectのパスを起点にしてファイル名を指定します。
+	</p>
+	<h3>ファイル表示の自動更新が動かない</h3>
+	<p>
+		IRP_MJ_DIRECTORY_CONTROL→IRP_MN_NOTIFY_CHANGE_DIRECTORYを実装すれば更新されるようになります。
+		ただし、このIRPは使い方が特殊で、ファイル更新があったときにIRPを完了（IoCompleteRequest）させる仕組みになっています。
+		これを実装しようとするとコードの複雑化は避けられないと思います。
+		いっそ手動更新を前提にして実装しないというのも選択肢です。
+	</p>
+	
+	<p>
+		<a href="./makeifs.html">最小構成の仮想ファイルシステムドライバの製作に戻る</a>
+	</p>
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>

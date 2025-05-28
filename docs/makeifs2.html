@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>最小構成の仮想ファイルシステムドライバの製作（カーネルモードドライバ基礎編） - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+	<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-c.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-makefile.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-ini.min.js"></script>
+	<style type="text/css">
+	code{
+		font-size: smaller !important;
+		line-height: 110% !important;
+	}
+	pre{
+		line-height: 110% !important;
+	}
+	</style>
+</head>
+<body>
+	<h1>第2章 カーネルモードドライバ基礎編</h1>
+	
+	<h2>2. まずはカーネルモードドライバを作る</h2>
+	<h3>2.1. カーネルモードドライバとは</h3>
+	<p>
+		カーネルモードドライバはWindowsのカーネル側で動作するドライバのことです。
+		使用できるAPIはユーザーモードのアプリケーションのように豊富ではなく、メモリ周辺の扱いも難しくなります（ページング可能かどうか、IRQLがどうなっているか等を考えないといけない）。
+		一方で、ハードウェアに関係するところをかなり自由に触れます。典型的なものとしてI/Oポートの操作が挙げられます。
+		WinNT系はハードウェアアクセスが厳しく制限されているイメージがあるかも知れませんが、カーネルドライバに限ってはやりたい放題出来ます。
+		特に事前申告することもなくI/Oポートへアクセスできます。
+	</p>
+	
+	<h3>2.2. カーネルモードドライバのビルド環境</h3>
+	<p>
+		カーネルモードドライバのビルドにはWindows DDKが必要です。
+		また、基本的にVisual StudioのIDEを使わずにbuildコマンドでビルドするのが推奨のようです。
+		なお、ドライバを旧OSで使いたい場合は、旧OSに対応したDDKとVisual Studioが必要です。
+		特に旧OSのDDK（Win2kDDK等）はかつては無償配布されていましたが、今では入手に苦労するかも知れません。
+	</p>
+	<p>
+		このページではVisual Studio 6.0とWin2kDDKを使用することにします。
+		そんな古いもの動かないという時はエミュレータ環境を活用しましょう。
+	</p>
+
+	<h3>2.3. カーネルモードドライバのテンプレート</h3>
+	<p>
+		早速ですが、以下にI/Oポートを操作するカーネルモードドライバのテンプレートを示します。
+	</p>
+	<p>
+		サンプルファイル一式も用意しています。<a href="makeifs/sampleio1.zip">sampleio1.zip</a>
+	</p>
+	<div><strong>【sample.c】</strong></div>
+<pre><code class="language-c">
+#include &lt;ntddk.h>
+#include "sample.h"
+
+// アクセスするI/Oポート
+#define SAMPLE_PORT    0x7E0
+
+// デバイス名
+#define SAMPLE_DEVNAME    L"\\Device\\SampleDevice"
+// DOS名からアクセス可能なデバイス名　CreateFile等で\\.\SampleDeviceでアクセスできるようになる
+#define SAMPLE_SYMNAME    L"\\DosDevices\\SampleDevice"
+
+// 関数定義
+NTSTATUS DispatchDeviceControl(PDEVICE_OBJECT, PIRP);
+VOID     DriverUnload(PDRIVER_OBJECT);
+NTSTATUS CreateClose(PDEVICE_OBJECT, PIRP);
+
+// ドライバのエントリポイント
+NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
+{
+    UNICODE_STRING devName;
+    UNICODE_STRING symLink;
+    PDEVICE_OBJECT DeviceObject;
+
+    // UnicodeStringを初期化　ドライバ系では基本的にUNICODE_STRINGでやりとり
+    RtlInitUnicodeString(&amp;devName, SAMPLE_DEVNAME);
+    RtlInitUnicodeString(&amp;symLink, SAMPLE_SYMNAME);
+
+    // デバイスを作成
+    IoCreateDevice(DriverObject, 0, &amp;devName, FILE_DEVICE_UNKNOWN, 0, FALSE, &amp;DeviceObject);
+    
+    // DOS名からアクセス可能なデバイス名を登録（例：\DosDevices\AAAなら\\.\AAAで開けます）
+    IoCreateSymbolicLink(&amp;symLink, &amp;devName);
+
+    // ドライバへのリクエストを処理する関数を登録
+    DriverObject->MajorFunction[IRP_MJ_CREATE] = CreateClose; // CreateFileで作成したとき
+    DriverObject->MajorFunction[IRP_MJ_CLOSE] = CreateClose; // ファイルを閉じたとき
+    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = DispatchDeviceControl; // DeviceIoControlを呼ばれたとき
+    DriverObject->DriverUnload = DriverUnload; // ドライバのアンロード時に呼ばれる
+
+    return STATUS_SUCCESS;
+}
+
+NTSTATUS CreateClose(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+{
+    // ファイル単位で動作を変える必要はないので、何もせずに成功とする
+    Irp->IoStatus.Status = STATUS_SUCCESS;
+    Irp->IoStatus.Information = 0;
+    IoCompleteRequest(Irp, IO_NO_INCREMENT);
+
+    return STATUS_SUCCESS;
+}
+
+VOID DriverUnload(PDRIVER_OBJECT DriverObject)
+{
+    UNICODE_STRING symLink = {0};
+    
+    // UnicodeStringを初期化
+    RtlInitUnicodeString(&amp;symLink, SAMPLE_SYMNAME);
+
+    // DOS名からアクセス可能なデバイス名を登録解除
+    IoDeleteSymbolicLink(&amp;symLink);
+    
+    // デバイスを削除
+    IoDeleteDevice(DriverObject->DeviceObject);
+}
+
+NTSTATUS DispatchDeviceControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+{
+    PIO_STACK_LOCATION irpSp = IoGetCurrentIrpStackLocation(Irp); // IRPに付属する情報取得
+    NTSTATUS status = STATUS_SUCCESS;
+
+    // DeviceIoControlに渡されるIoControlCodeで分岐
+    switch (irpSp->Parameters.DeviceIoControl.IoControlCode)
+    {
+        case IOCTL_SAMPLE_READ:
+        {
+            // I/Oポート読み取り
+            ULONG bufferLen = irpSp->Parameters.DeviceIoControl.InputBufferLength;
+            PIOPORT_SAMPLE_DATA ioData = (PIOPORT_SAMPLE_DATA)Irp->AssociatedIrp.SystemBuffer;
+            
+            // バッファ長さが想定された長さでないときはエラー
+            if (bufferLen != sizeof(IOPORT_SAMPLE_DATA)) {
+                status = STATUS_INVALID_DEVICE_REQUEST;
+                break;
+            }
+            
+            // I/Oポート読み取り　ポート番号は本来ポインタではないがPUCHAR型の数値として指定
+            ioData->data = READ_PORT_UCHAR((PUCHAR)SAMPLE_PORT);
+            
+            // 戻すデータのサイズ
+            Irp->IoStatus.Information = sizeof(IOPORT_SAMPLE_DATA);
+            
+            break;
+        }
+        case IOCTL_SAMPLE_WRITE:
+        {
+            // I/Oポート書き込み
+            ULONG bufferLen = irpSp->Parameters.DeviceIoControl.InputBufferLength;
+            PIOPORT_SAMPLE_DATA ioData = (PIOPORT_SAMPLE_DATA)Irp->AssociatedIrp.SystemBuffer;
+            
+            // バッファ長さが想定された長さでないときはエラー
+            if (bufferLen != sizeof(IOPORT_SAMPLE_DATA)) {
+                status = STATUS_INVALID_DEVICE_REQUEST;
+                break;
+            }
+            
+            // I/Oポート書き込み　ポート番号は本来ポインタではないがPUCHAR型の数値として指定
+            WRITE_PORT_UCHAR((PUCHAR)SAMPLE_PORT, (UCHAR)ioData->data);
+            
+            // 未使用
+            Irp->IoStatus.Information = 0;
+            
+            break;
+        }
+        default:
+            // 無効なリクエスト
+            status = STATUS_INVALID_DEVICE_REQUEST;
+            break;
+    }
+
+    // ステータスを返す
+    Irp->IoStatus.Status = status;
+    IoCompleteRequest(Irp, IO_NO_INCREMENT);
+    return status;
+}
+</code></pre>
+
+	<div><strong>【sample.h】</strong></div>
+<pre><code class="language-c">
+#define IOCTL_SAMPLE_READ \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_SAMPLE_WRITE \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
+typedef struct _IOPORT_SAMPLE_DATA {
+    ULONG  data;
+} IOPORT_SAMPLE_DATA, *PIOPORT_SAMPLE_DATA;
+</code></pre>
+	
+	<p>
+		ビルドするためには以下の拡張子無しのファイルも必要ですが、ほぼテンプレートのままでOKです。
+	</p>
+	
+	<div><strong>【makefile】</strong></div>
+<pre><code class="language-makefile">
+!INCLUDE $(NTMAKEENV)\makefile.def
+</code></pre>
+	
+	<div><strong>【sources】</strong></div>
+<pre><code class="language-makefile">
+TARGETNAME=sample
+TARGETTYPE=DRIVER
+TARGETPATH=obj
+SOURCES= \
+    sample.c
+</code></pre>
+	
+	<p>
+		makefileについては共通ですので、あえて変更する必要はありません。
+		このまま使用してください。
+	</p>
+	<p>
+		sourcesについてはTARGETNAMEに出力するsysファイルの名前を、TARGETTYPEにDRIVERを、TARGETPATHにobjを指定します。
+		SOURCESにはソースファイルを指定します。改行するときは行の最後に"\"を付けてください。
+	</p>
+	<p>
+		Win2kDDKの場合、ビルドは上記ファイル群が入ったディレクトリでbuildコマンドを実行することで行えます。
+		結果はfreeビルド（デバッグ無しRelease用）なら通常はobjfre\i386に出力されると思います。
+	</p>
+	<p>
+		出力先ディレクトリがないというエラーが出るかも知れません。
+		その場合は出力先ディレクトリ（例えばobjfre\i386）を手動で作成してください。
+	</p>
+	
+	<h3>2.4. カーネルモードドライバの登録</h3>
+	<p>
+		ドライバの登録は色々な方法で出来ますが、例えば次のようなレジストリキーを登録すれば可能です。
+		削除する場合はこのレジストリキーを丸ごと削除すればOKです。
+	</p>
+<pre><code class="language-ini">
+HKLM,"System\CurrentControlSet\Services\SampleDevice","Type",0x00010001,1
+HKLM,"System\CurrentControlSet\Services\SampleDevice","Start",0x00010001,3
+HKLM,"System\CurrentControlSet\Services\SampleDevice","ErrorControl",0x00010001,1
+HKLM,"System\CurrentControlSet\Services\SampleDevice","ImagePath",0x00020000,"system32\drivers\sample.sys"
+HKLM,"System\CurrentControlSet\Services\SampleDevice","DisplayName",0x00000000,"Sample Driver"
+</code></pre>
+	<p>
+		登録したドライバを動かすには、ビルドしたドライバファイル「sample.sys」をsystem32\drivers\へコピーし、システムを再起動して下さい。
+		再起動した後、net start SampleDevice（レジストリキーの名前）で起動できます。
+	</p>
+	<p>
+		自動起動にしたい場合はレジストリの"Start"を2にすれば可能ですが、カーネルモードで例外が出るとブルースクリーンのリスクがあるので、十分にテストしてからにしてください。
+	</p>
+	<p>
+		infファイルで登録したい場合は以下のような記述になります。
+		レガシードライバのため、インストールはデバイスの追加ウィザードではなく、infファイル右クリック→インストールで行う必要があります。
+	</p>
+<pre><code class="language-ini">
+[Version]
+Signature="$Windows NT$"
+Class=LegacyDriver
+Provider=%ProviderName%
+DriverVer=05/20/2025,1.0.0.0
+
+[DestinationDirs]
+DefaultDestDir = 12 ; system32\drivers
+
+[DefaultInstall]
+CopyFiles=Sample.Copy
+AddReg=Sample.AddReg
+
+[Sample.Copy]
+sample.sys
+
+[Sample.AddReg]
+HKLM,"System\CurrentControlSet\Services\SampleDevice","Type",0x00010001,1
+HKLM,"System\CurrentControlSet\Services\SampleDevice","Start",0x00010001,3
+HKLM,"System\CurrentControlSet\Services\SampleDevice","ErrorControl",0x00010001,1
+HKLM,"System\CurrentControlSet\Services\SampleDevice","ImagePath",0x00020000,"system32\drivers\sample.sys"
+HKLM,"System\CurrentControlSet\Services\SampleDevice","DisplayName",0x00000000,"Sample Driver"
+
+[SourceDisksNames]
+1=%DiskName%,,,
+
+[SourceDisksFiles]
+sample.sys=1
+
+[Strings]
+ProviderName="My Driver"
+MfgName="My Driver"
+NP2HostDrive.DeviceDesc="サンプルデバイスドライバ"
+DiskName="サンプルデバイスドライバ インストールディスク"
+</code></pre>
+
+	<h3>2.5. カーネルモードドライバとの通信</h3>
+	<p>
+		先に紹介したサンプルドライバは以下のようなプログラムでユーザーモードアプリケーションと通信できます。
+	</p>
+	<p>
+		CreateFileでドライバのIRP_MJ_CREATEが、CloseHandleでドライバのIRP_MJ_CLOSEが呼ばれます。
+		つまりCreateFile毎にドライバは個別の処理を走らせることが可能ですが、ここではまだ扱いません。
+	</p>
+	<p>
+		DeviceIoControlでドライバのIRP_MJ_DEVICE_CONTROLが呼ばれます。
+		自作の汎用ドライバでは基本的にDeviceIoControlを使用して通信することになります。
+	</p>
+	<div><strong>【usermode.c】</strong></div>
+<pre><code class="language-c">
+#include &lt;windows.h>
+#include &lt;stdio.h>
+#include &lt;stdlib.h>
+#include "sample.h"
+
+int main(int argc, char const *argv[]) 
+{
+    IOPORT_SAMPLE_DATA ioData = {0};
+    DWORD returned;
+    HANDLE hDevice;
+
+    // パラメータセット
+    ioData.data = 39; // 出力する値
+
+    // デバイスオープン
+    hDevice = CreateFile("\\\\.\\SampleDevice", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    if (hDevice == INVALID_HANDLE_VALUE) 
+    {
+        printf("Error: ドライバに接続できません。\n");
+        return 1;
+    }
+
+    // コマンド送信
+    // Write
+    if (DeviceIoControl(hDevice, IOCTL_SAMPLE_WRITE, &amp;ioData, sizeof(ioData), &amp;ioData, sizeof(ioData), &amp;returned, NULL))
+    {
+        printf("WRITE SUCCESS: %d\n", ioData.data);
+    }
+    else
+    {
+        printf("Error: ポートWRITEアクセスに失敗しました。\n");
+        CloseHandle(hDevice);
+        return 1;
+    }
+    // Read
+    if (DeviceIoControl(hDevice, IOCTL_SAMPLE_READ, &amp;ioData, sizeof(ioData), &amp;ioData, sizeof(ioData), &amp;returned, NULL))
+    {
+        printf("READ SUCCESS: %d\n", ioData.data);
+    }
+    else
+    {
+        printf("Error: ポートREADアクセスに失敗しました。\n");
+        CloseHandle(hDevice);
+        return 1;
+    }
+    CloseHandle(hDevice);
+    
+    return 0;
+}
+</code></pre>
+	<p>
+		このサンプルは単純なので、cl usermode.cだけでコンパイルできます。
+	</p>
+	<p>
+		試す場合は先のドライバで指定したI/Oポートに何もいないことを確認してください。
+		何かいる場合、そのデバイスにI/Oを送ることになるので何が起こるか分かりません。
+		何もいない場合、READ時に常に全ビット1（今回の場合0xffつまり255）が返ってくるはずです。
+	</p>
+	
+	<h3>2.6. 詳細説明</h3>
+	<h4>2.6.1. 定数定義</h4>
+<pre><code class="language-c">
+#define SAMPLE_PORT    0x7E0
+#define SAMPLE_DEVNAME    L"\\Device\\SampleDevice"
+#define SAMPLE_SYMNAME    L"\\DosDevices\\SampleDevice"
+</code></pre>
+	<ul>
+		<li><strong>SAMPLE_PORT</strong>: アクセス対象のI/Oポート番号（この場合 0x7E0）。</li>
+		<li><strong>SAMPLE_DEVNAME</strong>: カーネル内部で使用されるデバイス名。</li>
+		<li><strong>SAMPLE_SYMNAME</strong>: ユーザーモードアプリから \\.\SampleDevice としてアクセスできるようにするためのシンボリックリンク名。</li>
+	</ul>
+	
+	<h4>2.6.2. DriverEntry 関数（ドライバの初期化）</h4>
+<pre><code class="language-c">
+NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
+</code></pre>
+	<p>
+		ドライバが読み込まれると最初に呼ばれる関数です。
+	</p>
+	<p>
+		デバイスを IoCreateDevice で作成し、シンボリックリンクを張ります。
+		また、IRP_MJ_CREATE、IRP_MJ_CLOSE、IRP_MJ_DEVICE_CONTROL に対して処理関数を設定しています。
+		ドライバのアンロード処理（DriverUnload）もここで登録します。
+	</p>
+	
+	<h4>2.6.3. CreateClose 関数（ファイルオープン／クローズ処理）</h4>
+<pre><code class="language-c">
+NTSTATUS CreateClose(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+</code></pre>
+	<p>
+		デバイスファイルが開かれたとき（CreateFile）や閉じられたとき（CloseHandle）に呼ばれます。今回は特にファイル毎の処理が必要ないため、成功を返すだけにしています。
+	</p>
+	
+	<h4>2.6.4. DriverUnload 関数（ドライバのアンロード）</h4>
+<pre><code class="language-c">
+VOID DriverUnload(PDRIVER_OBJECT DriverObject)
+</code></pre>
+	<p>
+		ドライバがアンロードされるときに呼ばれます。
+シンボリックリンクとデバイスオブジェクトの削除を行います。
+	</p>
+	
+	<h4>2.6.5. DispatchDeviceControl 関数（I/O制御コード処理）</h4>
+<pre><code class="language-c">
+NTSTATUS DispatchDeviceControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+</code></pre>
+	<p>
+		ユーザーモードアプリが DeviceIoControl を呼んだときに実行されます。
+		IoControlCode に応じて処理を分岐しています。
+	</p>
+	<p>
+		IOCTL_SAMPLE_READはI/Oポートから1バイト読み取ります。
+	</p>
+<pre><code class="language-c">
+ioData->data = READ_PORT_UCHAR((PUCHAR)SAMPLE_PORT);
+</code></pre>
+	<p>
+		IOCTL_SAMPLE_WRITEはI/Oポートへ1バイト書き込みます。
+	</p>
+<pre><code class="language-c">
+WRITE_PORT_UCHAR((PUCHAR)SAMPLE_PORT, (UCHAR)ioData->data);
+</code></pre>
+	<p>
+		【注意】ポート番号は本来ポインタではありませんが、PUCHAR型の数値として指定する必要があります。
+		つまり、UCHAR型変数のポインタという意味ではないので、以下のような書き方は間違いです。
+		このように書くと、UCHAR型変数のアドレスをI/Oポート番号扱いしてアクセスしてしまいます（そこに何もいなければ暴走しませんがロシアンルーレット状態です）。
+	</p>
+<pre><code class="language-c">
+// アクセスするI/Oポート
+#define SAMPLE_PORT    0x7E0
+
+// 間違った書き方！！　変数portが指すアドレスをI/Oポート番号としてアクセスしてしまう。
+UCHAR port = SAMPLE_PORT;
+WRITE_PORT_UCHAR(&port, (UCHAR)ioData->data);
+
+// 正しい書き方　変数のポインタとしては異常だがこれが正解
+PUCHAR port = (PUCHAR)SAMPLE_PORT;
+WRITE_PORT_UCHAR(port, (UCHAR)ioData->data);
+</code></pre>
+	
+	<h4>2.6.6. CTL_CODE マクロによる IOCTL 定義</h4>
+<pre><code class="language-c">
+#define IOCTL_SAMPLE_READ \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_SAMPLE_WRITE \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
+</code></pre>
+	<p>
+		CTL_CODE マクロは、ユーザーモードアプリケーションとカーネルモードドライバ間の命令（IOCTLコード）を定義するためのものです。
+	</p>
+	<p>
+		パラメータ構成：CTL_CODE(DeviceType, Function, Method, Access)
+	</p>
+	<ul>
+		<li><strong>DeviceType</strong>: デバイスの種類。FILE_DEVICE_UNKNOWN はユーザーが任意に仕様決定可能な汎用のデバイス。</li>
+		<li><strong>Function</strong>: 関数コード。独自定義は0x800以降を使うのが推奨です。</li>
+		<li><strong>Method</strong>: I/O のデータ転送方法。METHOD_BUFFERED は中間バッファを使う安全な転送方法です。</li>
+		<li><strong>Access</strong>: アクセス権の設定。FILE_ANY_ACCESS は誰でもアクセス可。</li>
+	</ul>
+	<p>
+		このIOCTLコードは DeviceIoControl API に渡され、ドライバ側の DispatchDeviceControl() で処理されます。
+	</p>
+	
+	<h4>2.6.7. 通信のためのIOPORT_SAMPLE_DATA構造体</h4>
+<pre><code class="language-c">
+typedef struct _IOPORT_SAMPLE_DATA {
+    ULONG data;
+} IOPORT_SAMPLE_DATA, *PIOPORT_SAMPLE_DATA;
+</code></pre>
+	<p>
+		I/Oポートへの読み書き対象のデータ（1個）を保持する構造体です。
+		ULONG は 32ビット整数ですが、実際には READ_PORT_UCHAR / WRITE_PORT_UCHAR は 8ビット（UCHAR）のみ扱うため、上位ビットは無視されます。
+	</p>
+	
+	<h4>2.6.8. IRP処理</h4>
+	<p>
+		DriverObject->MajorFunctionに割り当てたすべての関数で IRP（I/O要求パケット）を処理し、IoCompleteRequest を呼んで完了させる必要があります。
+完了させ忘れた場合、ドライバ内で正常に完了していないIRPが溜まり、システムに不具合を起こします。
+	</p>
+	<p>
+		IRP_MJ_DEVICE_CONTROLの場合、Irp->IoStatus.Informationには出力データ（呼び出し元へ返すデータ）のサイズを入れます。
+		他の場合でも大体似たような感じですが、たまに違う意味の値（ステータスの補足情報等）を入れる場合もあります。
+		仕様を確認するようにしてください。
+	</p>
+<pre><code class="language-c">
+    Irp->IoStatus.Status = status;
+    Irp->IoStatus.Information = dataLength;
+    IoCompleteRequest(Irp, IO_NO_INCREMENT);
+</code></pre>
+	<p>
+		なお、IRPの処理中にIoMarkIrpPendingで保留状態にしてからSTATUS_PENDINGを返し、IoCompleteRequestを後のタイミングで行う場合もあります。
+		IoCompleteRequestを任意のタイミングで送ることで、OSへのイベント通知のような挙動が実現されます。
+		詳細はファイルシステムドライバの所で説明します。
+	</p>
+	<p>
+		<small>※IoCompleteRequestを呼んだ後のIrpは無効です。
+		IoCompleteRequestの後でうっかりreturn Irp->IoStatus.Status;等としないように注意。</small>
+	</p>
+	
+	<h4>2.6.9. 入出力バッファ</h4>
+	<p>
+		ドライバとのデータのやりとりは原則としてバッファを経由して行います。
+		このバッファには以下の3方式があります。
+	</p>
+	<ul>
+		<li><strong>METHOD_BUFFERED</strong>: 入出力ともにIrp->AssociatedIrp.SystemBufferを使う。OSによるバッファのコピーが発生してやや遅いが、OSが仲介するので安全性が高い。</li>
+		<li><strong>METHOD_IN_DIRECT/METHOD_OUT_DIRECT</strong>: 主要な入出力先はMmGetSystemAddressForMdlで得た場所。Irp->AssociatedIrp.SystemBufferは補助的な扱い。OSがバッファを用意しないので比較的高速で、ある程度管理されているのでMETHOD_NEITHERよりは安全。</li>
+		<li><strong>METHOD_NEITHER</strong>: Irp->UserBufferに書き込まれたアドレスに直接アクセス。このアドレスの妥当性（そもそもも有効かどうか、ページアウトしていないかなど）は自力で管理しないといけないのでハイリスク。</li>
+	</ul>
+	<p>
+		簡単にドライバを作りたい場合は、METHOD_BUFFERED一択です。
+		ただし、今回のテーマであるファイルシステムドライバのようにOSと連携する場合には、他の方法を求めてくることがあります。
+		対応できるようにはしておきましょう。
+	</p>
+	
+	<h4>2.6.10. 動的メモリ割り当て</h4>
+	<p>
+		上のサンプルにはありませんが、重要なのでこちらに記載しておきます。
+	</p>
+	<p>
+		カーネルモードでのメモリ割り当てはnewやmallocではなくExAllocatePoolを使用します。
+		これは以下のようにして使用します。
+	</p>
+<pre><code class="language-c">
+    // ページングしない領域にメモリ確保
+    LONG *lpTest = (LONG*)ExAllocatePool(NonPagedPool, 割り当てるサイズ);
+    if(!lpTest){
+        // 割り当て失敗
+        return;
+    }
+    
+    // 確保したメモリで何か処理
+    
+    // メモリ解放
+    ExFreePool(lpTest);
+</code></pre>
+	<p>
+		カーネルモードドライバの特異な点としては、割り当て時にどこにメモリを割り当てるかを指定できることがあります。
+		指定できるものは多数ありますが、主に<b>NonPagedPool</b>か<b>PagedPool</b>のどちらかになります。
+		どちらを使うべきかについては、割り当てが小サイズで面倒な目に遭いたくなければ<b>NonPagedPool</b>にしてください。
+	</p>
+	<p>
+		何故かが気になる方のために大雑把に解説すると、以下のようになります。
+	</p>
+	<ul>
+		<li><strong>NonPagedPool</strong>: ページアウトしない領域にメモリを確保します。つまり、常に物理メモリ上にデータがあることが保証されます。ただし、物理メモリが不足していると確保できない場合があります。</li>
+		<li><strong>PagedPool</strong>: 必要に応じてページアウト可能なメモリを確保します。システムメモリが不足した場合にページアウトされる場合があります。この場合、使用時にページインされます。</li>
+	</ul>
+	<p>
+		問題の後者は、ユーザーモードで普通に使われるメモリ割り当て方法です。
+		いわゆる仮想メモリとして補助記憶装置をメインメモリの拡張として使うことができ、メモリが少ない環境でも大量のメモリを消費するプログラムを動かせます。
+	</p>
+	<p>
+		この方法はユーザーモードでは仮想メモリでディスクがゴリゴリ動いて遅くなるくらいの影響しかありませんが、カーネルモードではかなり面倒な問題を引き起こします。
+		それは、カーネルモードではページイン／ページアウト処理が出来ない実行状態（IRQL==PASSIVE_LEVELではない）があるためです。
+		この状態で必要なデータがページアウトしていた場合（ページフォールトが発生した場合）、即ブルースクリーンになります。
+	</p>
+<pre><code class="language-c">
+LONG *g_lpTest;
+
+VOID init(){
+    // ページング可能な領域に30byteメモリ確保
+    g_lpTest = (LONG*)ExAllocatePool(PagedPool, 30);
+}
+
+VOID process(){
+    // 様々な処理によって、どこかでg_lpTestが指すメモリ領域がページアウトしたとする
+    // IRQLはページング不能な状態（IRQL==PASSIVE_LEVELではない）とする
+    g_lpTest[0] = 1; // ページフォールトでブルースクリーン発生！
+}
+</code></pre>
+	<p>
+		つまり、<b>PagedPool</b>を使う場合は今の実行状態（IRQL）がどうなっているのかをきっちり把握しておかなければなりません。
+		また、自分だけが気をつけておけば良いのではなく、引数などでそれを渡す場合には、相手方がどのIRQLで処理するのかも把握しておく必要があります。
+		なお、ページアウトは常に発生するわけではないので、確率でブルースクリーンのようなデバッグが難しい嫌な挙動になります。
+	</p>
+	<p>
+		そういうわけで、特別メモリを節約したい状況でなければ<b>NonPagedPool</b>にするのをおすすめします。
+	</p>
+	<p>
+		<small>※グローバル変数や関数内のローカル変数などはNonPagedPoolの場合と同じくページアウトしないので、安心してアクセスできます。</small>
+	</p>
+	<p>
+		<small>※ExAllocatePoolWithTagというものもあり、第3引数として4文字の任意のタグを受け取れます。
+		デバッグ時のメモリリークの特定などに活用できるそうです。</small>
+	</p>
+	
+	<h4>2.6.11. 排他制御</h4>
+	<p>
+		これも上のサンプルにはありませんが、やはり重要なのでこちらに記載しておきます。
+	</p>
+	<p>
+		WinAPIで排他制御といえばEnterCriticalSection／LeaveCriticalSectionが手軽ですが、カーネルモードではそうはいきません。
+		特にややこしいのは、先に紹介した割り込み要求レベル（IRQL）の値によって利用可能なものが変わってくることです。
+		一般にはIRQLが高くなると制約が大きくなっていきます。
+		そのあたりも含めて解説していきます。
+	</p>
+	<p>
+		カーネルモードでの排他制御は何種類かありますが、少なくともWinNT3.5以降で使えるものとしてはSpinLock系とMutex系があります。
+	</p>
+	<h5>SpinLock系</h5>
+	<p>
+		SpinLock系（KeAcquireSpinLock, KeReleaseSpinLock等）は無限ループ待機系でCPUを占有しますが、IRQL=DISPATCH_LEVEL,APC_LEVEL,PASSIVE_LEVELの3つで使用できます。ただし、排他領域内はIRQL=DISPATCH_LEVELで動作することになるため、注意が必要です。
+	</p>
+	<p>
+		まず、IRQL=DISPATCH_LEVELではスレッドの切り替えやページング処理が出来ません。
+		仮想メモリでページアウトされている領域にアクセスするとブルースクリーンになります。
+		つまり、PagedPoolで確保されたメモリへのアクセスは地雷原です。
+	</p>
+	<p>
+		また、IRQL=DISPATCH_LEVELでは実行できない関数も多数あります。
+		関数がIRQL=DISPATCH_LEVELで実行可能かを確かめておく必要があります。
+	</p>
+	<p>
+		さらに、EnterCriticalSection／LeaveCriticalSectionでは可能なロックへの再入が出来ません。
+		つまり、SpinLockをReleaseせずに2回連続で呼ぶとアウトです。
+	</p>
+	<h5>Mutex系</h5>
+	<p>
+		Mutex系（Mutex, FastMutex等）は基本的にユーザーモードと同じく、スレッドの停止で待機を行います。
+		したがって、スレッドの切り替えができるIRQL=PASSIVE_LEVEL,APC_LEVELで使用可能です。
+	</p>
+	<p>
+		排他処理実行中はIRQL=PASSIVE_LEVELなのかAPC_LEVELなのかよく分かっていません（おいっ）。
+	</p>
+	<p>
+		なおMutex系もロックへの再入が出来ません。
+		つまり、排他領域へReleaseせずに2回連続入ろうとするとアウトです。
+	</p>
+	
+	<h3>2.7. デバッグログを確認する</h3>
+	<p>
+		デバッグ時には何らかのログを出力して動作を追うというのが一般的です。
+		カーネルモードドライバでも同じようにデバッグログの出力を行うことが出来ます。
+	</p>
+	<h3>2.7.1. デバッグログの出力方法</h3>
+	<p>
+		カーネルモードドライバではログ出力のためにKdPrintというマクロが用意されています。
+		なお、このマクロはcheckedビルド（デバッグ用ビルド）の場合のみ有効です。
+		freeビルド（リリース用ビルド）では何も出力されませんので注意してください。
+	</p>
+	<p>
+		KdPrintの使い方は簡単です。
+		以下のようにすると「Debug Log!!!!」というテキストをログ出力します。
+		なお、二重括弧になっているのはKdPrintの仕様です。
+		要らないと思って間違って消さないようにしてください。
+	</p>
+<pre><code class="language-c">
+KdPrint(("Debug Log!!!!\n"));
+</code></pre>
+	<p>
+		KdPrintマクロはC言語のprintf関数のように書式指定が可能です。
+		例えば、次のようにすると、変数statusの内容を表示できます。
+	</p>
+<pre><code class="language-c">
+KdPrint(("IoCreateSymbolicLink failed: STATUS=0x%08x\n", status));
+</code></pre>
+	<p>
+		追加の注意事項として、現在の割り込み要求レベル（IRQL）によっては使えない書式があります。
+		具体的には、数値の表示程度なら大抵の場合出来ますが、文字列の表示系にはIRQL制限があったりします。
+	</p>
+	<p>
+		<small>※freeビルド（リリース用ビルド）でもログを出力したい場合、KdPrintマクロが呼び出しているDbgPrint関数を直接呼び出すと出力できます。</small>
+	</p>
+	<h3>2.7.1. デバッグログの表示方法</h3>
+	<p>
+		カーネルモードドライバで出力されたログは通常の方法では見えないため、それ用の特別な準備が要ります。
+		大きく分けると以下の2つの方法があります。
+	</p>
+	<ol>
+		<li>WinDbgを使用してシリアルポートを経由して別PCでログ確認する方法</li>
+		<li>DebugViewを使用してドライバを動かしているOS上でログを確認する方法</li>
+	</ol>
+	<p>
+		1の方法はブート時から使用可能でカーネルモードデバッグとしては正統な気もしますが、今更シリアルポートが使える環境を用意するのが大変な点、他の代替の方法が上手く動かなくて苦労する、等があるのでやや敷居が高いです。
+	</p>
+	<p>
+		2の方法は先にOSを起動しないといけない点でブートデバイスなどのデバッグは難しくなります。
+		しかし、今回作成しようとしているファイルシステムドライバはnet start／net stopでOS起動後に開始と停止が出来ますので、実質的には困りません。使い方は簡単で、DebugViewを起動してCaptureメニュー→Capture KernelをONにしておくだけです。
+	</p>
+	<p>
+		そういうことですので、今回のファイルシステムドライバ製作にあたっては2の方法を推奨します。
+		なお、旧OSで動かしたい場合は古いバージョンのDebugViewが必要です。
+		今となっては正式に配布されていませんが、かつてはhttp://www.sysinternals.com/ntw2k/freeware/debugview.shtmlで配布されていたとだけ書いておきます。
+	</p>
+	
+	<h3>2.8. 【Coffee Break】バージョン情報を付ける</h3>
+	<p>
+		上記で作ったドライバはバージョン情報も何もついていない傍目には怪しげなファイルです。
+		別になくても害はないのですが、雰囲気が出ますのでバージョン情報を付けてみましょう。
+	</p>
+	<p>
+		サンプルファイル一式も用意しています。<a href="makeifs/sampleio2.zip">sampleio2.zip</a>
+	</p>
+	<p>
+		まずは以下のファイルを作成します。
+		普通のWin32リソースファイルです。
+	</p>
+	<div><strong>【sample.rc】</strong></div>
+<pre><code class="language-c">
+#include &lt;winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION    0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK  0x3fL
+ FILEFLAGS      0x0L
+ FILEOS         VOS_NT
+ FILETYPE       VFT_DRV
+ FILESUBTYPE    VFT2_DRV_SYSTEM
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041103a4"
+        BEGIN
+            VALUE "CompanyName",      "\0"
+            VALUE "FileDescription",  "サンプルドライバ（I/Oポートアクセス）\0"
+            VALUE "FileVersion",      "0.1.0.0\0"
+            VALUE "InternalName",     "sample.sys\0"
+            VALUE "OriginalFilename", "sample.sys\0"
+            VALUE "ProductName",      "Sample Driver\0"
+            VALUE "ProductVersion",   "0.1.0.0\0"
+            VALUE "LegalCopyright",   "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0411, 932
+    END
+END
+</code></pre>
+	<p>
+		作成できたら、sourcesに追加しましょう。
+	</p>
+	<div><strong>【sources】</strong></div>
+<pre><code class="language-makefile">
+TARGETNAME=sample
+TARGETTYPE=DRIVER
+TARGETPATH=obj
+SOURCES= \
+    sample.c \
+    sample.rc
+</code></pre>
+	<p>
+		これでビルドすればバージョン情報付きのsysファイルが出来上がります。
+	</p>
+	
+	<p>
+		<a href="makeifs3.html">第3章 ファイルシステムドライバ製作編① へ移動</a>
+	</p>
+	<p>
+		<a href="./makeifs.html">最小構成の仮想ファイルシステムドライバの製作に戻る</a>
+	</p>
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
