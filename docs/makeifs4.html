@@ -1056,7 +1056,7 @@ typedef struct tagSAMPLEFS_FSCONTEXT {
 		SAMPLEFS_FSCONTEXTはFileObject->FsContextに割り当てる構造体の定義です。
 	</p>
 	<p>
-		第3章で軽く言及したように、ファイルシステムドライバでFsContextに割り当てる構造体は、必ず先頭にFSRTL_COMMON_FCB_HEADER構造体を含む必要があります。
+		第3章で軽く言及したように、ファイルシステムドライバでFsContextに割り当てる構造体は、<strong>必ず先頭にFSRTL_COMMON_FCB_HEADER構造体を含む必要があります。</strong>
 		これが含まれない場合でもしばらくの間は動きますが、何かの拍子に不正なメモリアクセスが起こってブルースクリーンになります。
 	</p>
 	<p>
