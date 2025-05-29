@@ -43,6 +43,7 @@
 	<p>
 		上記の仕様を満たすファイルシステムドライバのサンプルコードは以下のようになります。
 		このテンプレートではWドライブとして自動割り当てされた空のディスクを表示させることが出来ます。
+		なお、実際のネットワークと連携しませんが、見た目はネットワークドライブのように見せかけています。
 	</p>
 	<p>
 		サンプルファイル一式も用意しています。<a href="makeifs/samplefs1.zip">samplefs1.zip</a>
@@ -73,7 +74,7 @@ typedef struct tagSAMPLEFS_FSCONTEXT {
 } SAMPLEFS_FSCONTEXT, *PSAMPLEFS_FSCONTEXT;
 
 // グローバルに管理する変数群
-static FAST_MUTEX g_Mutex; // I/Oの排他ロック用
+static FAST_MUTEX g_Mutex; // 排他ロック用
 
 // 関数定義
 NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING RegistryPath);
@@ -1007,6 +1008,271 @@ SOURCES= \
     minisop.c \
     samplefs.c
 </code></pre>
+	<p>
+		出来上がったドライバの登録は第二章のカーネルモードドライバの登録と同じ方法で行えます。
+		レジストリに登録した後システムを再起動し、net start samplefs（samplefsというレジストリキーにした場合）を実行すると、Wドライブが出現します。
+	</p>
+	<h3>4.2. 詳細説明</h3>
+	<h4>4.2.1. ヘッダのインクルードと定数定義</h4>
+<pre><code class="language-c">
+#include &lt;ntddk.h>
+#include "miniifs.h"
+#include "minisop.h"
+
+// このデバイスドライバのデバイス名
+#define DEVICE_NAME     L"\\Device\\SAMPLEFS"
+#define DOS_DEVICE_NAME L"\\DosDevices\\SAMPLEFS"
+#define DOS_DRIVE_NAME  L"\\DosDevices\\W:"
+
+#define SAMPLEFS_VOLUMELABEL	L"SAMPLEDRV"
+#define SAMPLEFS_FILESYSTEM		L"SAMPLEFS"
+</code></pre>
+	<p>
+		miniifs.hはntifs.hの代替として機能するものです。
+		ntifs.hを持っているならそれをインクルードしても構いません。
+	</p>
+	<p>
+		minisop.hはSectionObjectPointerとメモリマップトファイルを簡単に実装するためのものです。
+	</p>
+	<p>
+		その他定数の意味は以下の通りです。
+	</p>
+	<ul>
+		<li><strong>DEVICE_NAME</strong>: カーネル内部で使用されるデバイス名。</li>
+		<li><strong>DOS_DEVICE_NAME</strong>: ユーザーモードアプリから \\.\SampleDevice としてアクセスできるようにするためのシンボリックリンク名。</li>
+		<li><strong>DOS_DRIVE_NAME</strong>: 割り当てるドライブ文字。</li>
+		<li><strong>SAMPLEFS_VOLUMELABEL</strong>: ファイルシステムのボリュームラベル。</li>
+		<li><strong>SAMPLEFS_FILESYSTEM</strong>: 割り当てるドライブ文字。</li>
+	</ul>
+	
+	<h4>4.2.2. FsContextのための構造体定義</h4>
+<pre><code class="language-c">
+typedef struct tagSAMPLEFS_FSCONTEXT {
+	FSRTL_COMMON_FCB_HEADER header; // OSが使うので触ってはいけない。32bit環境では40byte
+    ULONG reserved[6]; // 予約
+} SAMPLEFS_FSCONTEXT, *PSAMPLEFS_FSCONTEXT;
+</code></pre>
+	<p>
+		SAMPLEFS_FSCONTEXTはFileObject->FsContextに割り当てる構造体の定義です。
+	</p>
+	<p>
+		第3章で軽く言及したように、ファイルシステムドライバでFsContextに割り当てる構造体は、必ず先頭にFSRTL_COMMON_FCB_HEADER構造体を含む必要があります。
+		これが含まれない場合でもしばらくの間は動きますが、何かの拍子に不正なメモリアクセスが起こってブルースクリーンになります。
+	</p>
+	<p>
+		なお、FSRTL_COMMON_FCB_HEADER構造体の中には何か意味ありげな値が多数定義されていますが、ドライバが勝手に触るのは危ないので触ってはいけません。
+		最初にゼロクリアした後は全部OSに任せて見なかったことにしましょう。
+	</p>
+	
+	<h4>4.2.3. グローバル変数</h4>
+<pre><code class="language-c">
+static FAST_MUTEX g_Mutex;
+</code></pre>
+	<p>
+		先のSectionObjectPointerのリストへのアクセスの排他ロック用にFAST_MUTEXを定義しています。
+		FAST_MUTEXを使用する場合は最初にExInitializeFastMutexでの初期化が必要です。
+	</p>
+	<p>
+		なお、グローバル変数はページングされない領域に確保されますので、どのIRQLからでも安全にアクセスできます。
+	</p>
+	
+	<h4>2.6.2. DriverEntry 関数（ドライバの初期化）</h4>
+<pre><code class="language-c">
+NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
+</code></pre>
+	<p>
+		ファイルシステムドライバはカーネルモードドライバの一種ですので、それと同じく存在します。
+	</p>
+	<p>
+		まずはIoCreateDeviceでデバイスを作成します。
+		この例ではFILE_DEVICE_NETWORK_FILE_SYSTEMとして見かけ上ネットワークドライブに擬態しています。
+		実質的な中身はローカルのディスクファイルシステムです。
+	</p>
+<pre><code class="language-c">
+    // デバイスを作成
+    RtlInitUnicodeString(&deviceNameUnicodeString, DEVICE_NAME);
+    status = IoCreateDevice(DriverObject, 0, &deviceNameUnicodeString,
+                            FILE_DEVICE_NETWORK_FILE_SYSTEM, FILE_REMOTE_DEVICE, FALSE, &deviceObject);
+    if (!NT_SUCCESS(status)) {
+    	KdPrint(("IoCreateDevice failed: STATUS=0x%08x\n", status));
+        return status;
+    }
+</code></pre>
+	<p>
+		IoCreateSymbolicLinkではDOS名とドライブレターの登録を行います。
+		ファイルシステムドライバとしてはIoRegisterFileSystemを使う方が上品だと思いますが、面倒なのでIoCreateSymbolicLinkで直接登録してしまいましょう。
+	</p>
+<pre><code class="language-c">
+    // デバイスのDOS名を登録　\\.\SAMPLEFSのようにアクセスできる
+    RtlInitUnicodeString(&dosDeviceNameUnicodeString, DOS_DEVICE_NAME);
+    status = IoCreateSymbolicLink(&dosDeviceNameUnicodeString, &deviceNameUnicodeString);
+    if (!NT_SUCCESS(status)) {
+        IoDeleteDevice(deviceObject);
+    	KdPrint(("IoCreateSymbolicLink failed: STATUS=0x%08x\n", status));
+        return status;
+    }
+    
+    // デバイスのドライブレターを登録　DOS_DRIVE_NAMEで指定したドライブでアクセスできる
+    RtlInitUnicodeString(&dosDriveNameUnicodeString, DOS_DRIVE_NAME);
+	status = IoCreateSymbolicLink(&dosDriveNameUnicodeString, &deviceNameUnicodeString);
+    if (!NT_SUCCESS(status)) {
+        IoDeleteDevice(deviceObject);
+    	KdPrint(("IoCreateSymbolicLink(Drive) failed: STATUS=0x%08x\n", status));
+        return status;
+    }
+</code></pre>
+	<p>
+		DriverObject->MajorFunctionにはIRPの処理関数を登録します。
+		とりあえず全部捕まえて処理するために、SampleFSDispatchを全てのMajorFunctionに登録しています。
+	</p>
+<pre><code class="language-c">
+    // デバイスのIRP処理関数を登録　要素番号が各IRP_MJ_～の番号に対応。
+    // 個別に割り当ててもよいが、面倒なので全部に同じ関数を割り当て
+    for (i = 0; i &lt; IRP_MJ_MAXIMUM_FUNCTION; i++) {
+        DriverObject->MajorFunction[i] = SampleFSDispatch;
+    }
+</code></pre>
+	<p>
+		DriverObject->DriverUnloadには通常のカーネルモードドライバと同じくドライバのアンロード処理を登録します。
+		アンロード処理においては、待機中のIRP等があれば全て中止・完了させる必要があります。
+	</p>
+<pre><code class="language-c">
+    // ドライバの終了処理を登録
+    DriverObject->DriverUnload = SampleFSUnload;
+</code></pre>
+	<p>
+		MiniSOP_InitializeCacheはキャッシュ未実装でもメモリマップトファイルが正常に使えるようにするWORKAROUNDキャッシュを初期化するものです。
+		キャッシュの実装を省略する場合、これを使わないと恐らく色々と苦労します。
+		逆に、キャッシュを真面目に実装したい場合は使わないでください。
+		キャッシュの正しい実装が正直なところ分からないのですが・・・。
+	</p>
+<pre><code class="language-c">
+    // キャッシュ未実装でもメモリマップトファイルが使えるようにするWORKAROUNDキャッシュを初期化
+    MiniSOP_InitializeCache(DriverObject);
+</code></pre>
+	<p>
+		deviceObject->FlagsへのDO_BUFFERED_IOの登録は意味が無いかも知れませんがお願いベースで登録してあります。
+	</p>
+	
+	<h4>2.6.3. IRPの処理</h4>
+<pre><code class="language-c">
+NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
+</code></pre>
+	<p>
+		通常のカーネルモードドライバと同じく処理を行い、最後はStatusとInformationをセットしてIoCompleteRequestを呼んで完了させます。
+		IoGetCurrentIrpStackLocationでIRPに付属する情報の取得が出来るのも同じです。
+	</p>
+	<p>
+		まず必要なのは、データを書き込むバッファがどこなのかを判定することです（方式の詳細は第2章 2.6.9. 入出力バッファを参照）。
+		公式のドライバのサンプルなどを見る限り、次のようにすると判定が出来そうです。
+	</p>
+<pre><code class="language-c">
+    if (Irp->MdlAddress != NULL) {
+        // MdlAddressを使った直接的な転送
+        systemBuffer = MmGetSystemAddressForMdl(Irp->MdlAddress); // 古いOS対応用
+        //systemBuffer = MmGetSystemAddressForMdlSafe(Irp->MdlAddress, NormalPagePriority); // 最近のOSならこれも可能（より安全？）
+    } else if (Irp->AssociatedIrp.SystemBuffer != NULL) {
+        // システムバッファ経由での間接的な転送
+        systemBuffer = Irp->AssociatedIrp.SystemBuffer;
+    } else {
+        // ユーザー指定バッファへの転送
+        systemBuffer = Irp->UserBuffer;
+    }
+</code></pre>
+	<p>
+		MmGetSystemAddressForMdlSafeはNT4.0以降を対象にするなら使えるようです。
+		安全性の観点ではこちらの方が推奨らしいです。
+	</p>
+	
+	<h4>2.6.4. IRP_MJ_CREATEの処理</h4>
+	<p>
+		IRP_MJ_CREATEはWinAPIでいうCreateFile関数に対応するものです。
+		ここでは指定されたファイルやディレクトリを作成したり開いたり上書きしたりする処理を行います。
+	</p>
+	<p>
+		まずは次の場所に情報があることだけ把握しておきましょう。
+	</p>
+	<ul>
+		<li><strong>irpSp->FileObject</strong>: IRP_MJ_CREATEで開いたファイルの管理情報。OSがIRP_MJ_CREATE毎に自動で割り当てる（つまり、同じファイルを開いても別々の内容が割り当てられる）。</li>
+		<li><strong>irpSp->FileObject->RelatedFileObject</strong>: ここに指定したFileObjectのパスを基準としてファイルやディレクトリのパスを指定する。大抵の場合はNULL（ルート基準のパス）。WinNT3.xが使ってくることがある。</li>
+		<li><strong>irpSp->FileObject->FileName</strong>: 開くファイルのパス。通常はルートからのパスだがRelatedFileObjectが指定されている場合だけ例外。</li>
+		<li><strong>irpSp->Parameters.Create</strong>: オープン方式（新規作成・上書き・既存ファイルオープンのどれなのか）、オープンするときの共有アクセスモード、新規作成時のファイル属性、セキュリティ情報等が格納されています。また、ファイルとして開こうとしているのか（FILE_NON_DIRECTORY_FILE）、ディレクトリとして開こうとしているのか（FILE_DIRECTORY_FILE）などの付加情報もあります。</li>
+	</ul>
+	<p>
+		サンプルではとりあえず既存ファイルオープンのみを許可するようにしています。
+	</p>
+	<p>
+		ファイルを開いたら、irpSp->FileObject->FsContextに先のSAMPLEFS_FSCONTEXT構造体へのポインタをセットする必要があります。
+		メモリ割り当ては必ずNonPagedPoolで行ってください。
+		また、必ず0で初期化してください。
+		ここで割り当てたメモリはIRP_MJ_CLOSEで解放します。
+	</p>
+<pre><code class="language-c">
+    // FsContextにExAllocatePoolWithTag(NonPagedPool,～でメモリ割り当て
+    // NULLのままだったり違う方法で割り当てると正常に動かないので注意
+    irpSp->FileObject->FsContext = ExAllocatePoolWithTag(NonPagedPool, sizeof(SAMPLEFS_FSCONTEXT), "HSFC");
+    if(irpSp->FileObject->FsContext == NULL){
+		KdPrint(("Cannot allocate FsContext\n"));
+    	
+	    Irp->IoStatus.Status = status = STATUS_INSUFFICIENT_RESOURCES;
+	    Irp->IoStatus.Information = 0;
+        IoCompleteRequest(Irp, IO_NO_INCREMENT);
+        return status;
+    }
+</code></pre>
+	<p>
+		さらに、irpSp->FileObject->SectionObjectPointerにSECTION_OBJECT_POINTERS構造体へのポインタをセットする必要があります。
+		第3章で述べたように、<strong>同じファイルを開く場合は共通にし、SectionObjectPointerを参照している全てのファイルを閉じるまで解放しないようにする</strong>必要があります。
+		そこで、これを簡単に行うためにMiniSOP_～系のユーティリティ関数を用意しています。
+	</p>
+<pre><code class="language-c">
+	// Section Object Pointer(SOP)取得
+	// Section Object Pointerは同じファイルの時は同じものを返さなければならない
+    ExAcquireFastMutex(&g_Mutex);
+	sopIndex = MiniSOP_GetSOPIndex(irpSp->FileObject->FileName);
+    ExReleaseFastMutex(&g_Mutex);
+	if(sopIndex == -1){
+		KdPrint(("Cannot allocate SOP\n"));
+    	
+    	ExFreePool(irpSp->FileObject->FsContext);
+	    Irp->IoStatus.Status = status = STATUS_INSUFFICIENT_RESOURCES;
+	    Irp->IoStatus.Information = 0;
+        IoCompleteRequest(Irp, IO_NO_INCREMENT);
+        return status;
+	}
+	irpSp->FileObject->SectionObjectPointer = MiniSOP_GetSOP(sopIndex);
+</code></pre>
+	<p>
+		MiniSOP_HandleMjCreateCacheはメモリマップトファイルを正常動作させるためのWORKAROUNDな処理です。
+		MiniSOP_Handle～系の関数を適切な箇所で呼んでおくだけで、メモリマップトファイル周辺の謎の挙動やファイル読み書き不具合などが解消されます。
+	</p>
+<pre><code class="language-c">
+	// メモリマップトファイルを正常動作させるためのWORKAROUND
+	MiniSOP_HandleMjCreateCache(irpSp);
+</code></pre>
+	<p>
+		処理を終えた後、IRP_MJ_CREATEで返すべきステータスは以下の通りです。
+	</p>
+	<div><strong>【RP_MJ_CREATEで返すべきステータス】</strong></div>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>ステータス</th><th>どんなときに返すか</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>STATUS_SUCCESS</td><td>オープンに成功したときに返す。Informationに追加情報（FILE_SUPERSEDED, FILE_OPENED, FILE_CREATED, FILE_OVERWRITTEN, FILE_EXISTS, FILE_DOES_NOT_EXISTを入れる。</td></tr>
+			<tr><td>STATUS_OBJECT_NAME_INVALID</td><td>渡されたファイルパスがパスとしてが異常なときに返す。IRP_MJ_CREATEではワイルドカード文字が含まれるパスも無効です。</td></tr>
+			<tr><td>STATUS_OBJECT_NAME_NOT_FOUND</td><td>渡されたファイルパスは形式的には正しいが、該当するファイルやディレクトリが存在しないとき。InformationにはFILE_DOES_NOT_EXISTをセットすべき？</td></tr>
+			<tr><td>STATUS_OBJECT_PATH_NOT_FOUND</td><td>ファイル作成先のディレクトリがない場合に返す。Win32エラーのERROR_PATH_NOT_FOUND相当。</td></tr>
+			<tr><td>STATUS_OBJECT_NAME_COLLISION</td><td>既にファイルがあるのに新規作成しようとした場合。</td></tr>
+			<tr><td>STATUS_FILE_IS_A_DIRECTORY</td><td>FILE_NON_DIRECTORY_FILEの指示でファイルを開こうとしたのに対象がディレクトリだったとき。</td></tr>
+			<tr><td>STATUS_NOT_A_DIRECTORY</td><td>FILE_DIRECTORY_FILEの指示でディレクトリを開こうとしたのに対象がファイルだったとき。</td></tr>
+			<tr><td>STATUS_SHARING_VIOLATION</td><td>現在のオープンアクセスに対してファイルロックされている。Win32エラーのERROR_SHARING_VIOLATION相当。</td></tr>
+			<tr><td>STATUS_ACCESS_DENIED</td><td>ファイルが書き込み禁止属性だった場合など、汎用的なアクセス拒否。</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
 	<p>
 		執筆中・・・
 	</p>
