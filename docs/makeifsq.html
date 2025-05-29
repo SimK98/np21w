@@ -28,10 +28,10 @@
 	<p>
 		ファイルシステムドライバを作っていて嵌まったところを一覧にしておきます。
 	</p>
-	<h3>DIRコマンドファイル指定やのワイルドカードが効かない</h3>
+	<h3>DIRコマンドのファイル指定やワイルドカードが効かない</h3>
 	<p>
-		IRP_MJ_DIRECTORY_CONTROL→IRP_MN_QUERY_DIRECTORYの時には、IRPスタックポインタにファイルパターンが入っています。
-		irpSp->Parameters.QueryDirectory.FileNameに入っています。
+		IRP_MJ_DIRECTORY_CONTROL→IRP_MN_QUERY_DIRECTORYの時には、IRPスタックポインタにファイルパターン（例えば*.txt等）が入っています。
+		場所はirpSp->Parameters.QueryDirectory.FileNameです。
 	</p>
 	<h3>IRP_MJ_QUERY_VOLUME_INFORMATIONやIRP_MJ_QUERY_INFORMATIONで渡されたバッファサイズが小さい</h3>
 	<p>
@@ -42,8 +42,14 @@
 	<p>
 		複数返すモードと一つだけ返すモードがあります。
 		irpSp->FlagsにSL_RETURN_SINGLE_ENTRYが立っているときは1つだけ、そうでないときは複数を返してください。
-		また、バッファに入りきらない場合は入る範囲で返し、再度コールされたときに続きを送ります。
+		また、バッファに入りきらない場合は入る範囲で書いてSTATUS_SUCCESS（STATUS_BUFFER_OVERFLOWではない）を返し、再度コールされたときに続きを送ります。
+		バッファが小さくて1つも返せないときはSTATUS_BUFFER_TOO_SMALLを返します。
+		最後まで列挙を終えたために1つも返せないときはSTATUS_NO_MORE_FILESを返します。
 		なお、irpSp->FlagsにSL_RESTART_SCANが立っているときは列挙を最初からやり直します。
+	</p>
+	<p>
+		複数返すモードの時にはNextEntryOffsetを入れてください。
+		また、今回のIRPで返す最後のファイルに対してはNextEntryOffsetを入れないでください（0にする）。
 	</p>
 	<h3>NT3.xのファイル選択で該当拡張子のないディレクトリを選択するとツリーが消える</h3>
 	<p>
@@ -56,7 +62,7 @@
 		例えば、ファイル単位で共通なのにCREATE毎に毎回新規生成していると挙動がおかしくなります。
 		これを簡単に実装するminisop.c, minisop.hというものを作りました。よろしければご利用ください。
 	</p>
-	<h3>メモ帳でファイルが開けない・COPY CONが正しく動かない・EXEが実行できない・CREATEしっぱなしになる等</h3>
+	<h3>メモ帳でファイルが開けない・保存されない・COPY CONが正しく動かない・EXEが実行できない・CREATEしっぱなしになる等</h3>
 	<p>
 		メモリマップトファイルとキャッシュが正しく動いていないとこのような状況になります。
 		キャッシュの実装は全然情報が無く正しい実装がよく分からない上に、下手に使うとむしろ状況が悪化します。
@@ -65,6 +71,7 @@
 	<h3>ファイルの削除はどうやるのか</h3>
 	<p>
 		ファイルの削除はDeleteというコマンドがあるわけでは無く、Createで開いたファイルにIRP_MJ_SET_INFORMATIONで削除のマークを付け、CLOSEでファイルを閉じたときに削除という流れになります。
+		なお、Createで開くときに「Close時に削除する」という属性もあります。
 	</p>
 	<h3>CLOSEしていないファイルを開きに来る</h3>
 	<p>
