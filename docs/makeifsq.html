@@ -83,7 +83,7 @@
 	<p>
 		Createの時、irpSp->FlagsにSL_OPEN_TARGET_DIRECTORYの指定がある場合は、パスからファイル名を除去したディレクトリを開いてください。例えば、SL_OPEN_TARGET_DIRECTORYフラグ付きでA:\AAA\BBB\CCC.TXTと指定されてきた場合は、A:\AAA\BBBを開いてください。
 	</p>
-	<h3>サブディレクトリなのにルートディレクトリのようにファイル名を指定してくる</h3>
+	<h3>サブディレクトリなのにルートディレクトリの時のようにファイル名を指定してくる</h3>
 	<p>
 		Createの時、FileObject->RelatedFileObjectがNULLでない場合はFileObject->RelatedFileObjectで指定されたFileObjectのパスを起点にしてファイル名を指定します。
 	</p>
@@ -97,7 +97,7 @@
 	<h3>仮想ファイルシステム上のパスを作業ディレクトリにしてプログラム起動すると変</h3>
 	<p>
 		IRP_MJ_CREATE時に異常なパスが渡されたときに返すステータスが不正確だとおかしくなることがあります。
-		ワイルドカードが含まれているなどパスとして異常な時はSTATUS_OBJECT_NAME_INVALID、パスとして正しいがファイルがないときにはNP2_STATUS_OBJECT_NAME_NOT_FOUNDを返してください。
+		ワイルドカードが含まれているなどパスとして異常な時はSTATUS_OBJECT_NAME_INVALID、パスとして正しいがファイルがないときにはSTATUS_OBJECT_NAME_NOT_FOUNDを返してください。
 		また、オープン成功時にはInformationの値も正確に返してください。
 	</p>
 	<h3>Officeでデータを保存しようとすると失敗する</h3>
