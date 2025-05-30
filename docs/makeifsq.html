@@ -100,6 +100,11 @@
 		ワイルドカードが含まれているなどパスとして異常な時はSTATUS_OBJECT_NAME_INVALID、パスとして正しいがファイルがないときにはNP2_STATUS_OBJECT_NAME_NOT_FOUNDを返してください。
 		また、オープン成功時にはInformationの値も正確に返してください。
 	</p>
+	<h3>Officeでデータを保存しようとすると失敗する</h3>
+	<p>
+		IRP_MJ_LOCK_CONTROLで未実装などのエラーを返すとファイル保存が機能しません。
+		とりあえず動けばいいということであれば、IRP_MJ_LOCK_CONTROLは常に成功したことにしましょう。
+	</p>
 	
 	<p>
 		<a href="./makeifs.html">最小構成の仮想ファイルシステムドライバの製作に戻る</a>

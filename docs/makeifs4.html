@@ -1154,7 +1154,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
 		deviceObject->FlagsへのDO_BUFFERED_IOの登録は意味が無いかも知れませんがお願いベースで登録してあります。
 	</p>
 	
-	<h4>2.6.3. IRPの処理</h4>
+	<h4>4.2.3. IRPの処理</h4>
 <pre><code class="language-c">
 NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 </code></pre>
@@ -1184,7 +1184,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 		安全性の観点ではこちらの方が推奨らしいです。
 	</p>
 	
-	<h4>2.6.4. IRP_MJ_CREATEの処理</h4>
+	<h4>4.2.4. IRP_MJ_CREATEの処理</h4>
 	<p>
 		IRP_MJ_CREATEはWinAPIでいうCreateFile関数に対応するものです。
 		ここでは指定されたファイルやディレクトリを作成したり開いたり上書きしたりする処理を行います。
@@ -1195,9 +1195,14 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 	<ul>
 		<li><strong>irpSp->FileObject</strong>: IRP_MJ_CREATEで開いたファイルの管理情報。OSがIRP_MJ_CREATE毎に自動で割り当てる（つまり、同じファイルを開いても別々の内容が割り当てられる）。</li>
 		<li><strong>irpSp->FileObject->RelatedFileObject</strong>: ここに指定したFileObjectのパスを基準としてファイルやディレクトリのパスを指定する。大抵の場合はNULL（ルート基準のパス）。WinNT3.xが使ってくることがある。</li>
-		<li><strong>irpSp->FileObject->FileName</strong>: 開くファイルのパス。通常はルートからのパスだがRelatedFileObjectが指定されている場合だけ例外。</li>
+		<li><strong>irpSp->FileObject->FileName</strong>: 開くファイルのパス。通常はルートからのパスだがRelatedFileObjectが指定されている場合はそこからの相対パス。</li>
 		<li><strong>irpSp->Parameters.Create</strong>: オープン方式（新規作成・上書き・既存ファイルオープンのどれなのか）、オープンするときの共有アクセスモード、新規作成時のファイル属性、セキュリティ情報等が格納されています。また、ファイルとして開こうとしているのか（FILE_NON_DIRECTORY_FILE）、ディレクトリとして開こうとしているのか（FILE_DIRECTORY_FILE）などの付加情報もあります。</li>
 	</ul>
+	<p>
+		注意事項として、IRP_MJ_CREATE以外ではirpSp->FileObject->FileNameは無効（NULL）です。
+		他のタイミングでirpSp->FileObject->FileNameが必要であれば、IRP_MJ_CREATEの時に自前のバッファに記憶しておく必要があります。
+		例えば、FsContextに設定する構造体あるいはSECTION_OBJECT_POINTERSを管理する構造体に保持させるなどの方法があり得ます。
+	</p>
 	<p>
 		サンプルではとりあえず既存ファイルオープンのみを許可するようにしています。
 	</p>
@@ -1219,6 +1224,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
         IoCompleteRequest(Irp, IO_NO_INCREMENT);
         return status;
     }
+    RtlZeroMemory(irpSp->FileObject->FsContext, sizeof(SAMPLEFS_FSCONTEXT));
 </code></pre>
 	<p>
 		さらに、irpSp->FileObject->SectionObjectPointerにSECTION_OBJECT_POINTERS構造体へのポインタをセットする必要があります。
@@ -1252,31 +1258,264 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 </code></pre>
 	<p>
 		処理を終えた後、IRP_MJ_CREATEで返すべきステータスは以下の通りです。
+		Information値はSTATUS_SUCCESSの場合のみ返します。
+		Information値は結構いいかげんに返しても問題なさそうです。
 	</p>
-	<div><strong>【RP_MJ_CREATEで返すべきステータス】</strong></div>
-	<div  style="margin:16px;" class="tablediv">
-	<table style="width:auto;" border=1>
+	<div><strong>【IRP_MJ_CREATEで返すべきステータス】</strong></div>
+	<div  style="margin:8px;" class="tablediv">
+	<table style="width:auto;font-size:smaller;" border=1>
 		<thead>
 			<tr><th>ステータス</th><th>どんなときに返すか</th></tr>
 		</thead>
 		<tbody>
 			<tr><td>STATUS_SUCCESS</td><td>オープンに成功したときに返す。Informationに追加情報（FILE_SUPERSEDED, FILE_OPENED, FILE_CREATED, FILE_OVERWRITTEN, FILE_EXISTS, FILE_DOES_NOT_EXISTを入れる。</td></tr>
 			<tr><td>STATUS_OBJECT_NAME_INVALID</td><td>渡されたファイルパスがパスとしてが異常なときに返す。IRP_MJ_CREATEではワイルドカード文字が含まれるパスも無効です。</td></tr>
-			<tr><td>STATUS_OBJECT_NAME_NOT_FOUND</td><td>渡されたファイルパスは形式的には正しいが、該当するファイルやディレクトリが存在しないとき。InformationにはFILE_DOES_NOT_EXISTをセットすべき？</td></tr>
+			<tr><td>STATUS_OBJECT_NAME_NOT_FOUND</td><td>渡されたファイルパスは形式的には正しいが、該当するファイルやディレクトリが存在しないとき。</td></tr>
 			<tr><td>STATUS_OBJECT_PATH_NOT_FOUND</td><td>ファイル作成先のディレクトリがない場合に返す。Win32エラーのERROR_PATH_NOT_FOUND相当。</td></tr>
 			<tr><td>STATUS_OBJECT_NAME_COLLISION</td><td>既にファイルがあるのに新規作成しようとした場合。</td></tr>
 			<tr><td>STATUS_FILE_IS_A_DIRECTORY</td><td>FILE_NON_DIRECTORY_FILEの指示でファイルを開こうとしたのに対象がディレクトリだったとき。</td></tr>
 			<tr><td>STATUS_NOT_A_DIRECTORY</td><td>FILE_DIRECTORY_FILEの指示でディレクトリを開こうとしたのに対象がファイルだったとき。</td></tr>
-			<tr><td>STATUS_SHARING_VIOLATION</td><td>現在のオープンアクセスに対してファイルロックされている。Win32エラーのERROR_SHARING_VIOLATION相当。</td></tr>
+			<tr><td>STATUS_SHARING_VIOLATION</td><td>現在のオープンアクセス要求に対してファイルロックされている。Win32エラーのERROR_SHARING_VIOLATION相当。</td></tr>
 			<tr><td>STATUS_ACCESS_DENIED</td><td>ファイルが書き込み禁止属性だった場合など、汎用的なアクセス拒否。</td></tr>
 		</tbody>
 	</table>
 	</div>
+	<div><strong>【STATUS_SUCCESS時のInformationの値】</strong></div>
+	<div  style="margin:8px;" class="tablediv">
+	<table style="width:auto;font-size:smaller;" border=1>
+		<thead>
+			<tr><th>Information値</th><th>どんなときに返すか</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>FILE_SUPERSEDED</td><td>CreateDisposition=FILE_SUPERSEDEのときに、既存ファイルを削除して上書きされた場合。</td></tr>
+			<tr><td>FILE_OPENED</td><td>CreateDisposition=FILE_OPENまたはFILE_OPEN_IFのときに、既存ファイルが開かれた場合。</td></tr>
+			<tr><td>FILE_CREATED</td><td>CreateDisposition=FILE_CREATEまたはFILE_SUPERSEDEのときに、ファイルが新規作成された場合。</td></tr>
+			<tr><td>FILE_OVERWRITTEN</td><td>CreateDisposition=FILE_OVERWRITEまたはFILE_OVERWRITE_IFのときに、ファイルが上書きされた場合。</td></tr>
+			<tr><td>FILE_EXISTS</td><td>CreateDisposition=FILE_OPEN_IFのときに、既存ファイルが開かれた場合。</td></tr>
+			<tr><td>FILE_DOES_NOT_EXIST</td><td>CreateDisposition=FILE_OPEN_IFまたはFILE_OVERWRITE_IFのときに、ファイルが新規作成された場合。</td></tr>
+		</tbody>
+	</table>
+	</div>
 	
+	<h4>4.2.5. IRP_MJ_CLEANUPの処理</h4>
 	<p>
-		執筆中・・・
+		IRP_MJ_CLEANUPではIRP_MJ_CREATEで開いたファイルを閉じる準備を行います。
+		この際、共有アクセスモードによる排他ロックも解除します。
+		つまり、IRP_MJ_CLEANUPを呼ばれた後は、他のIRP要求がこのファイルを開こうとするのを妨げてはいけません。
+	</p>
+	<p>
+		なお、IRP_MJ_CLEANUPの後は大抵の場合すぐにIRP_MJ_CLOSEが来ますが、メモリマップトファイル（EXEの実行も含む）を使っている場合は、すぐにIRP_MJ_CLOSEがやってきません。
+		それどころか、IRP_MJ_CLEANUPの後にIRP_MJ_READ／IRP_MJ_WRITEが来る場合があります。
+		IRP_MJ_CLOSEされるまではこれらをエラーにせずに適切に応答するようにしてください。
+	</p>
+	<p>
+		MiniSOP_HandleMjCleanupCacheは先にも述べたように、メモリマップトファイルを正常動作させるためのWORKAROUNDな処理です。
+	</p>
+<pre><code class="language-c">
+	MiniSOP_HandleMjCleanupCache(irpSp);
+</code></pre>
+	<p>
+		このサンプルでは特に何もすることがないので、常に成功を返しています。
 	</p>
 	
+	<h4>2.6.6. IRP_MJ_CLOSEの処理</h4>
+	<p>
+		IRP_MJ_CLOSEではIRP_MJ_CREATEで開いたファイルを閉じる処理を行います。
+		これ以降、このファイルオブジェクトに対して他のIRPが来ることはありません。
+		完全に破棄してください。
+	</p>
+	<p>
+		なお、これに先立ってIRP_MJ_CLEANUPが来ることが多いですが、来ない場合もありますのでIRP_MJ_CLEANUPがなくても正しく処理できるようにしてください。
+	</p>
+	<p>
+		ここですべきことは、SectionObjectPointerとirpSp->FileObject->FsContextの解放です。
+		ただし、SectionObjectPointerは他に参照しているファイルがある場合は解放しないようにします。
+		MiniSOP_ReleaseSOPはこのあたりを考慮して解放処理を行うようになっています。
+	</p>
+<pre><code class="language-c">
+    if(irpSp->FileObject->SectionObjectPointer){
+    	PSECTION_OBJECT_POINTERS sop;
+    		
+	    // SOP解放
+	    ExAcquireFastMutex(&g_Mutex);
+		sop = irpSp->FileObject->SectionObjectPointer;
+        irpSp->FileObject->SectionObjectPointer = NULL;
+        MiniSOP_ReleaseSOP(sop);
+	    ExReleaseFastMutex(&g_Mutex);
+    }
+    if(irpSp->FileObject->FsContext){
+        ExFreePool(irpSp->FileObject->FsContext);
+        irpSp->FileObject->FsContext = NULL;
+    }
+</code></pre>
+	<p>
+		解放時に失敗はまずないですし、あってもどうしようもないということで、常に成功を返しています。
+	</p>
+	
+	<h4>4.2.7. IRP_MJ_FILE_SYSTEM_CONTROLの処理</h4>
+	<p>
+		IRP_MJ_FILE_SYSTEM_CONTROLではファイルシステムに対する特殊な要求を処理します。
+	</p>
+	<p>
+		最小構成であれば、IRP_MN_USER_FS_REQUESTにはSTATUS_NOT_SUPPORTEDを、それ以外にはSTATUS_NOT_IMPLEMENTEDを返しておけば大丈夫そうです。
+	</p>
+<pre><code class="language-c">
+	if (irpSp->MinorFunction == IRP_MN_USER_FS_REQUEST) {
+		// 未サポートを返す
+	    Irp->IoStatus.Status = STATUS_NOT_SUPPORTED;
+	    Irp->IoStatus.Information = 0;
+	}else{
+		// 未実装を返す
+	    Irp->IoStatus.Status = STATUS_NOT_IMPLEMENTED;
+	    Irp->IoStatus.Information = 0;
+	}
+</code></pre>
+	
+	<h4>4.2.8. IRP_MJ_LOCK_CONTROLの処理</h4>
+	<p>
+		IRP_MJ_LOCK_CONTROLではファイルロックについての制御を行います。
+		WinAPIのLockFileExやUnlockFileExで呼び出されます。
+	</p>
+	<p>
+		この機能は同じファイルに同時にアクセスして不整合が起こることを回避するためにあるものですが、最小構成であればロックは常に成功したことにしても大して問題ないでしょう。
+	</p>
+	<p>
+		本サンプルでは実際にロックはせずに常に成功を返します。
+	</p>
+	
+	<h4>4.2.9. IRP_MJ_FLUSH_BUFFERSの処理</h4>
+	<p>
+		IRP_MJ_FLUSH_BUFFERSではキャッシュにあるデータを即座にディスクに書き込みます。
+	</p>
+	<p>
+		最小構成ではキャッシュに絡むものは特にないので常に成功を返しておけばよいと思います。
+		（もしかすると、MiniSOP_HandleMjCleanupCacheを呼ぶ方が良いかもしれません）
+	</p>
+	
+	<h4>4.2.10. IRP_MJ_QUERY_VOLUME_INFORMATIONの処理</h4>
+	<p>
+		IRP_MJ_QUERY_VOLUME_INFORMATIONではボリューム（このファイルシステムドライバで作成したドライブ）に関する情報を返します。
+	</p>
+	<p>
+		11種類くらいありますが、Windowsシステムから呼ばれるものは限られています。
+		今回の最小構成ドライバでは最低限必要なものに対応しておき、必要に応じて足していくのが良いと思います。
+		
+	</p>
+	<div><strong>【Windowsシステムから頻繁に呼ばれるもの】</strong></div>
+	<div  style="margin:8px;" class="tablediv">
+	<table style="width:auto;font-size:smaller;" border=1>
+		<thead>
+			<tr><th>Information Class</th><th>何を返すか</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>FileFsVolumeInformation</td><td>ボリューム情報。作成日、シリアルナンバー、ボリュームラベルなど。</td></tr>
+			<tr><td>FileFsAttributeInformation</td><td>ファイルシステムの属性。大文字と小文字を区別するか、UNICODEのパスかどうか等のフラグと、ファイルパスの長さ上限、ファイルシステムの名称など。</td></tr>
+			<tr><td>FileFsSizeInformation</td><td>このファイルシステムのボリューム（ディスク）の容量に関する情報。擬似的な値を適当に返してもよい。</td></tr>
+			<tr><td>FileFsFullSizeInformation</td><td>FileFsSizeInformationとほぼ同じ。</td></tr>
+			<tr><td>FileFsDeviceInformation</td><td>デバイスの関する情報。少なくともFILE_DEVICE_NETWORK_FILE_SYSTEMの振りをした場合には呼ばれる。</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<p>
+		不明なものはSTATUS_NOT_IMPLEMENTEDでOKです。バッファへの書き込みに成功したら、書き込んだサイズをIrp->IoStatus.InformationにセットしてSTATUS_SUCCESSを返せばOKです。
+	</p>
+	<p>
+		ここで重要なのは、返す情報よりも用意されたバッファのサイズが小さい場合が頻繁にある点です。
+		この場合、<strong>バッファに入る範囲で情報を書き込んだ後、Informationに書き込んだサイズを書いてSTATUS_BUFFER_OVERFLOWを返してください。</strong>Windowsシステムはバッファが溢れる前提でこの要求を送ってきます。
+	</p>
+<pre><code class="language-c">	// 擬似コード
+	ULONG dataSize = sizeof(FILE_FS_～_INFORMATION);
+	ULONG bufferLength = irpSp->Parameters.QueryVolume.Length;
+	if(bufferLength &lt; dataSize){
+		// バッファが足りない場合、返せるだけ返してオーバーフローを立てる
+		dataSize = bufferLength;
+		Irp->IoStatus.Status = STATUS_BUFFER_OVERFLOW;
+	}
+</code></pre>
+	<p>
+		また、返すべきデータのための構造体の定義がありますが、これらの構造体は文字列のバッファがWCHAR 1つ分しか確保されていません。
+		つまり、通常の構造体として変数宣言し、CopyMemory等で文字列に書き込むと間違いなくバッファを溢れてシステムエラーかブルースクリーンになります。
+		したがって、面倒ですがExAllocatePoolで文字列の長さまで考慮したバッファを動的に確保してください。
+	</p>
+<pre><code class="language-c">	// 擬似コード
+	WCHAR fsName[] = L"SAMPLEFS";
+	PFILE_FS_ATTRIBUTE_INFORMATION pInfo = NULL;
+	ULONG dataSize = sizeof(FILE_FS_ATTRIBUTE_INFORMATION) + sizeof(fsName) - sizeof(WCHAR);
+    pInfo = (PFILE_FS_ATTRIBUTE_INFORMATION)ExAllocatePool(NonPagedPool, dataSize);
+    if(pInfo == NULL){
+	    Irp->IoStatus.Status = status = STATUS_INSUFFICIENT_RESOURCES;
+	    Irp->IoStatus.Information = 0;
+        IoCompleteRequest(Irp, IO_NO_INCREMENT);
+        return;
+    }
+    
+    // このあたりでpInfoに値をセットする処理
+    
+	// 返信用バッファへコピーし、返したデータサイズをInformationにセット
+	RtlCopyMemory(systemBuffer, pInfo, dataSize);
+    Irp->IoStatus.Information = dataSize;
+    
+    // 解放を忘れずに！
+    ExFreePool(pInfo);
+</code></pre>
+	<p>
+		追加の注意点として、この手の命令で登場する<strong>文字列バッファは終端のNULL文字</strong>を含みません。
+		バッファが大きい分には構いませんが、LengthにはNULL文字を含めないようにしてください。
+		また、<strong>Lengthは文字数ではなくByte数</strong>という点にも注意が必要です。
+	</p>
+	
+	<h4>4.2.11. IRP_MJ_DIRECTORY_CONTROLの処理</h4>
+	<p>
+		IRP_MJ_DIRECTORY_CONTROLではディレクトリ内のファイルを列挙したり、ディレクトリ内のファイルを監視したりします。
+	</p>
+	<p>
+		最小構成では前者のディレクトリ内のファイルの列挙さえ実装しておけば十分です。
+		後者は例えばエクスプローラでファイル一覧を表示している状態で、メモ帳でその場所にファイルを保存したときに、ファイル一覧が自動で更新されるようにするために使います。
+		手動更新する気であれば未実装でも全く問題ありません。
+	</p>
+	<p>
+		この章では空っぽのドライブを表示することにしていますので、問答無用でSTATUS_OBJECT_NAME_NOT_FOUNDを返せばOKです。
+	</p>
+<pre><code class="language-c">	// 擬似コード
+	// ファイルが1個も見つからない場合のステータスはSTATUS_OBJECT_NAME_NOT_FOUND
+    Irp->IoStatus.Status = STATUS_OBJECT_NAME_NOT_FOUND;
+    Irp->IoStatus.Information = 0;
+</code></pre>
+	<p>
+		詳細な実装については先の章で解説します。
+	</p>
+	
+	<h4>4.2.12. IRP_MJ_SET_INFORMATIONの処理</h4>
+	<p>
+		IRP_MJ_SET_INFORMATIONではファイルの属性やサイズなどを設定します。
+		特殊なものとして、ファイルの移動や削除フラグ（ファイルを閉じたときに削除する指示）のセットもここで行います。
+	</p>
+	<p>
+		最小構成ではメモリマップトファイルを正常動作させるためのWORKAROUNDの為だけに用意されています。
+		この章の段階では返すステータスは常にSTATUS_NOT_IMPLEMENTEDとしています。
+		詳細な実装については先の章で解説します。
+	</p>
+	
+	<h4>4.2.12. IRP_MJ_SET_INFORMATIONの処理</h4>
+	<p>
+		IRP_MJ_SET_INFORMATIONではファイルの属性やサイズなどを設定します。
+		特殊なものとして、ファイルの移動や削除フラグ（ファイルを閉じたときに削除する指示）のセットもここで行います。
+	</p>
+	<p>
+		最小構成ではメモリマップトファイルを正常動作させるためのWORKAROUNDの為だけに用意されています。
+		この章の段階では返すステータスは常にSTATUS_NOT_IMPLEMENTEDとしています。
+		詳細な実装については先の章で解説します。
+	</p>
+	
+	<h3>4.3. ここまでの実装の結果</h3>
+	<p>
+		ここまでの内容がうまく実装できていれば、以下のような容量情報だけがある中身のないドライブが作成されるはずです。
+	</p>
+	<img src="makeifs/makeifs4.png">
+	
+	<p>
+		<a href="makeifs5.html">第5章 ファイルシステムドライバ製作編③ へ移動</a>
+	</p>
 	<p>
 		<a href="./makeifs.html">最小構成の仮想ファイルシステムドライバの製作に戻る</a>
 	</p>
