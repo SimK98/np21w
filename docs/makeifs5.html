@@ -30,7 +30,16 @@
 	<p>
 		前回のファイルシステムドライバを拡張して、仮想的なファイルを表示するようにしてみましょう。
 		そのためには、前回に仮でファイル無しと返していたIRP_MJ_DIRECTORY_CONTROLの実装が必要です。
+		また、ファイルの情報取得が出来るようにIRP_MJ_QUERY_INFORMATIONの実装も必要です。
 	</p>
+	<p>
+		もう少し現実的なファイル管理は後々行うとして、まずは次のような構成に見せかけてみます。
+	</p>
+<pre style="font-size:larger;background-color:#eef;"><code>
+\ ┳ sample.txt
+　┗ longfilename.dat
+　
+</code></pre>
 	<p>
 		作成中・・・
 	</p>
