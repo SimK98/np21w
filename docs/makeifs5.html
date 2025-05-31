@@ -326,7 +326,11 @@ typedef struct tagSAMPLEFS_FSCONTEXT {
 				Irp->IoStatus.Status = STATUS_BUFFER_OVERFLOW;
 			}
 
-			info.EndOfFile.QuadPart = 100000; // 適当なサイズ
+			if(pFsContext->isDirectory){
+				info.EndOfFile.QuadPart = 0; // ゼロにする。0でない場合、ドライブがファイルアイコンとして表示される
+			}else{
+				info.EndOfFile.QuadPart = 100000; // 適当なサイズ
+			}
 			info.AllocationSize = info.EndOfFile;
 			info.NumberOfLinks = 1;
 			info.DeletePending = 0;
