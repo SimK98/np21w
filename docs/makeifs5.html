@@ -30,18 +30,455 @@
 	<p>
 		前回のファイルシステムドライバを拡張して、仮想的なファイルを表示するようにしてみましょう。
 		そのためには、前回に仮でファイル無しと返していたIRP_MJ_DIRECTORY_CONTROLの実装が必要です。
-		また、ファイルの情報取得が出来るようにIRP_MJ_QUERY_INFORMATIONの実装も必要です。
+		また、ファイルの情報取得が出来るようにIRP_MJ_QUERY_INFORMATIONやIRP_MJ_READの実装も必要です。
 	</p>
+	<h3>5.1. ベタ実装でファイルを表示させる方法</h3>
 	<p>
 		もう少し現実的なファイル管理は後々行うとして、まずは次のような構成に見せかけてみます。
 	</p>
 <pre style="font-size:larger;background-color:#eef;"><code>
-\ ┳ sample.txt
-　┗ longfilename.dat
+\ ━ longfilename.dat
 　
 </code></pre>
 	<p>
-		作成中・・・
+		IRP_MJ_DIRECTORY_CONTROLを用いたファイル列挙は、WindowsのFindFirstFile／FindNextFileの流れと同じです。
+	</p>
+	<p>
+		ひとまず、ファイルを返す順番は上記の通りとします。
+		この場合は、以下の仕様に従って列挙を行います。
+	</p>
+	<ul>
+		<li><b>順番にファイル情報を返す</b>
+			<ul>
+				<li>irpSp->FlagsにSL_RETURN_SINGLE_ENTRYが立っているときは1つだけ、そうでない場合はバッファに入る範囲で複数送ります。</li>
+				<li>バッファサイズがファイル1個分にも満たない場合は、STATUS_BUFFER_TOO_SMALLを返します。</li>
+			</ul>
+		</li>
+		<li><b>同時に全ファイルを返しきれない場合は返せる範囲で返す</b>
+			<ul>
+				<li>入りきらない場合でも少なくとも1つ返せればステータスはSTATUS_SUCCESSです</li>
+				<li>列挙が完了してバッファが余った場合でもSTATUS_SUCCESSです</li>
+			</ul>
+		</li>
+		<li><b>全ファイルを返しきっていない状態で再度IRP_MJ_DIRECTORY_CONTROLが来た場合は、続きから送る</b>
+			<ul>
+				<li>ただし、irpSp->FlagsにSL_RESTART_SCANが立ってるときは最初から列挙をやり直します。</li>
+			</ul>
+		</li>
+		<li><b>ファイルはあるが列挙が完了して1つも返すものがない場合は、STATUS_NO_MORE_FILESを返す</b></li>
+	</ul>
+	<p>
+		ひとまず、ファイルを返す順番は上記の通りとします。
+		この場合は、以下の仕様に従って列挙を行います。
+	</p>
+	
+	<h3>5.2. ベタ実装でファイルを表示させる</h3>
+	<p>
+		前回のソースを改造してlongfilename.datの1ファイルだけがある状態にしてみましょう。
+	</p>
+	<p>
+		サンプルファイル一式も用意しています。<a href="makeifs/samplefs2.zip">samplefs2.zip</a>
+	</p>
+	<p>
+		まず最初に、IRP_MJ_CREATEで開いたFileObjectに追加情報を保持しておく必要があります。
+		この情報の保持にはFsContextに格納しているSAMPLEFS_FSCONTEXT構造体を使用します。
+		前回の構造体定義を以下のように変更します。
+	</p>
+<pre><code class="language-c">
+typedef struct tagSAMPLEFS_FSCONTEXT {
+	FSRTL_COMMON_FCB_HEADER header; // OSが使うので触ってはいけない。32bit環境では40byte
+	ULONG isDirectory; // ディレクトリかどうか
+	ULONG findFileIndex; // ファイル列挙時の列挙位置
+    ULONG reserved[4]; // 64byte以上になるように予約 64byteを超えるのは構わない
+} SAMPLEFS_FSCONTEXT, *PSAMPLEFS_FSCONTEXT;
+</code></pre>
+	<p>
+		isDirectoryはこのFileObjectの対象が普通のファイルなのかディレクトリなのかを保持します。
+		findFileIndexはファイルを列挙する際に現在何番目のファイルを返しているかを記憶するための変数です。
+	</p>
+	<p>
+		続いて、IRP_MJ_CREATEの際に以下のようにしてこの情報を格納するようにします。
+		とりあえず、isDirectoryはルート（"\"）の場合のみTRUEを設定することにします。
+		findFileIndexは前回のコードで既にゼロクリアされているので、特にセットする必要はありません。
+	</p>
+<pre><code class="language-c">
+    PSAMPLEFS_FSCONTEXT pFsContext = (PSAMPLEFS_FSCONTEXT)irpSp->FileObject->FsContext;
+    if(irpSp->FileObject->FileName.Length > 0){
+		UNICODE_STRING rootPathUnicodeString;
+
+		KdPrint(("FileName: %wZ\n", &amp;irpSp->FileObject->FileName));
+		
+		RtlInitUnicodeString(&amp;rootPathUnicodeString, L"\\");
+		pFsContext->isDirectory = RtlEqualUnicodeString(&amp;irpSp->FileObject->FileName, &amp;rootPathUnicodeString, FALSE);
+		
+		KdPrint(("isDirectory: %d\n", pFsContext->isDirectory));
+    }
+</code></pre>
+	<p>
+		次に、IRP_MJ_DIRECTORY_CONTROLの実装を示します。
+		longfilename.datの1つだけがあるとして結果を返す仕組みになっています。
+	</p>
+<pre><code class="language-c">
+	...
+	}else if (irpSp->MajorFunction == IRP_MJ_DIRECTORY_CONTROL) {
+		KdPrint(("IRP_MJ_DIRECTORY_CONTROL\n"));
+    	
+		if (irpSp->MinorFunction == IRP_MN_QUERY_DIRECTORY){
+			ULONG bufferLength;
+			FILE_INFORMATION_CLASS fileInfoClass;
+			PUNICODE_STRING filePattern;
+			PUCHAR writeBuffer;
+			ULONG writeBufferRemain;
+	        PFILE_OBJECT pFileObject;
+	        PSAMPLEFS_FSCONTEXT pFsContext;
+			
+			bufferLength = (ULONG)irpSp->Parameters.Others.Argument1; // 今のMSDNには定義があるが古い環境は定義が無い
+			fileInfoClass = (FILE_INFORMATION_CLASS)irpSp->Parameters.Others.Argument3; // 今のMSDNには定義があるが古い環境は定義が無い
+			
+			// ファイル検索パターン取得
+			filePattern = (PUNICODE_STRING)irpSp->Parameters.Others.Argument2; // 今のMSDNには定義があるが古い環境は定義が無い
+	        if(filePattern &amp;&amp; filePattern->Length > 0){
+				KdPrint(("Search Pattern: %wZ\n", filePattern));
+	        }
+	        
+	        // FileObject取得
+	        pFileObject = irpSp->FileObject;
+	        if(!pFileObject){
+			    Irp->IoStatus.Status = status = STATUS_INVALID_PARAMETER;
+			    Irp->IoStatus.Information = 0;
+	            IoCompleteRequest(Irp, IO_NO_INCREMENT);
+	            return status;
+	        }
+	        
+	        // FsContext取得
+	        pFsContext = (PSAMPLEFS_FSCONTEXT)pFileObject->FsContext;
+	        if(!pFsContext){
+			    Irp->IoStatus.Status = status = STATUS_INVALID_PARAMETER;
+			    Irp->IoStatus.Information = 0;
+	            IoCompleteRequest(Irp, IO_NO_INCREMENT);
+	            return status;
+	        }
+	        
+	        // スキャン位置リセットなら列挙位置を戻す
+	        if(irpSp->Flags &amp; SL_RESTART_SCAN){
+	        	pFsContext->findFileIndex = 0;
+				KdPrint(("Restart Scan"));
+	        }
+	        
+	        // ディレクトリ内のファイルを返す
+			writeBuffer = systemBuffer;
+			writeBufferRemain = bufferLength;
+	        if (fileInfoClass == FileBothDirectoryInformation){ // Windowsシステムはこれしか使わない
+	        	PFILE_BOTH_DIR_INFORMATION pBeforeInfo = NULL; // 現在の書き込み位置の前のデータ
+				WCHAR fileNameTmp[] = L"longfilename.dat";
+			    Irp->IoStatus.Status = STATUS_NO_MORE_FILES;
+			    Irp->IoStatus.Information = 0;
+				KdPrint(("Start Find File\n"));
+	        	while(1){
+	        		PFILE_BOTH_DIR_INFORMATION pInfo = (PFILE_BOTH_DIR_INFORMATION)writeBuffer;
+	        		FILE_BOTH_DIR_INFORMATION curInfo = {0};
+	        		ULONG writeSize; // 書き込むサイズ
+					PWCHAR fileName = NULL;
+					ULONG fileNameLength = 0;
+	        		if(pFsContext->findFileIndex == 0){
+	        			// サンプルファイル　longfilename.dat
+						fileName = fileNameTmp;
+						fileNameLength = wcslen(fileName) * sizeof(WCHAR);
+						curInfo.FileAttributes = FILE_ATTRIBUTE_NORMAL; // 属性無し
+						curInfo.AllocationSize.QuadPart = curInfo.EndOfFile.QuadPart = 100000; // 適当なサイズ
+						curInfo.CreationTime.HighPart = 0x01C3F8D6; // 適当な日付
+						curInfo.CreationTime.LowPart  = 0x88000000; // 適当な日付
+						curInfo.LastAccessTime = curInfo.LastWriteTime = curInfo.ChangeTime = curInfo.CreationTime; // 全部同じとする
+	        		}
+	        		if(fileName == NULL){
+	        			// もうファイルがない
+						KdPrint(("Find Complete.\n"));
+	        			break; 
+	        		}
+					writeSize = sizeof(curInfo) - sizeof(WCHAR) + fileNameLength; // 書き込みサイズ計算
+	        		if(writeBufferRemain &lt; writeSize){
+	        			// もう書き込めない
+						if(Irp->IoStatus.Status == STATUS_NO_MORE_FILES){
+							// 一個も返せていない場合はBUFFER_TOO_SMALL
+							Irp->IoStatus.Status = STATUS_BUFFER_TOO_SMALL;
+							KdPrint(("Buffer too small.\n"));
+						}
+	        			break; 
+	        		}
+	        		// 書き込みOK
+					curInfo.NextEntryOffset = writeSize; // 次エントリオフセットを仮で書いておく
+					curInfo.FileNameLength = fileNameLength;
+					RtlCopyMemory(writeBuffer, &amp;curInfo, sizeof(curInfo) - sizeof(WCHAR));
+					RtlCopyMemory(writeBuffer + sizeof(curInfo) - sizeof(WCHAR), fileName, fileNameLength);
+					pBeforeInfo = (PFILE_BOTH_DIR_INFORMATION)writeBuffer;
+					KdPrint(("Find: %ws\n", fileName));
+					
+					// 少なくとも1つ書き込んだらSTATUS_SUCCESS
+			    	Irp->IoStatus.Status = STATUS_SUCCESS;
+			    	
+			    	writeBuffer += writeSize; // 書き込み位置を進める
+			    	writeBufferRemain -= writeSize; // バッファ残りサイズを減らす
+			    	Irp->IoStatus.Information += writeSize; // 書き込んだバイト数を加算
+			    	pFsContext->findFileIndex++; // 列挙位置更新
+			    	
+			    	if(irpSp->Flags &amp; SL_RETURN_SINGLE_ENTRY){
+			    		break; // 1つだけ返すモードなら抜ける
+			    	}
+	        	}
+	        	if(pBeforeInfo){
+	        		pBeforeInfo->NextEntryOffset = 0; // 最終データにある次エントリオフセットを消しておく
+	        	}
+	        }else{
+				KdPrint(("Unimplemented FILE_INFORMATION_CLASS: %d\n", fileInfoClass));
+		    	// 未実装
+			    Irp->IoStatus.Status = STATUS_NOT_IMPLEMENTED;
+			    Irp->IoStatus.Information = 0;
+	        }
+		}else{
+			KdPrint(("Unimplemented MinorFunction: %d\n", irpSp->MinorFunction));
+    		
+	    	// 未実装
+		    Irp->IoStatus.Status = STATUS_NOT_IMPLEMENTED;
+		    Irp->IoStatus.Information = 0;
+		}
+		
+	}else if( ...
+</code></pre>
+	<p>
+		次に、IRP_MJ_QUERY_INFORMATIONの実装を示します。
+		このIRPは現在開いているファイルの情報を取得するものです。
+		とりあえず必須で使用されているものだけの実装となります。
+	</p>
+	<p>
+		miniifs.hを使用している場合、前回のままだとFILE_BOTH_DIR_INFORMATION構造体が定義されていません。
+		上の新しいサンプルをダウンロードするか、MSDNを調査してminiifs.hに定義を追加してください。
+		今後も似たようなことがあれば適宜MSDNを調査してminiifs.hに定義を追加してください。
+	</p>
+<pre><code class="language-c">
+	...
+	}else if (irpSp->MajorFunction == IRP_MJ_QUERY_INFORMATION) {
+        PFILE_OBJECT pFileObject;
+        PSAMPLEFS_FSCONTEXT pFsContext;
+		FILE_INFORMATION_CLASS fileInfoClass;
+		ULONG bufferLength;
+	        
+		KdPrint(("IRP_MJ_QUERY_INFORMATION\n"));
+		
+        // FileObject取得
+        pFileObject = irpSp->FileObject;
+        if(!pFileObject){
+		    Irp->IoStatus.Status = status = STATUS_INVALID_PARAMETER;
+		    Irp->IoStatus.Information = 0;
+            IoCompleteRequest(Irp, IO_NO_INCREMENT);
+            return status;
+        }
+        
+        // FsContext取得
+        pFsContext = (PSAMPLEFS_FSCONTEXT)pFileObject->FsContext;
+        if(!pFsContext){
+		    Irp->IoStatus.Status = status = STATUS_INVALID_PARAMETER;
+		    Irp->IoStatus.Information = 0;
+            IoCompleteRequest(Irp, IO_NO_INCREMENT);
+            return status;
+        }
+        
+		fileInfoClass = irpSp->Parameters.QueryFile.FileInformationClass;
+		bufferLength = irpSp->Parameters.QueryFile.Length;
+		if (fileInfoClass == FileBasicInformation){
+			FILE_BASIC_INFORMATION info = { 0 };
+			ULONG dataSize = sizeof(info);
+			
+			KdPrint(("FileBasicInformation\n"));
+			
+			// とりあえずSUCCESSをセット
+			Irp->IoStatus.Status = STATUS_SUCCESS;
+			
+			if(bufferLength &lt; dataSize){
+				// バッファが足りない場合、返せるだけ返してオーバーフローを立てる
+				dataSize = bufferLength;
+				Irp->IoStatus.Status = STATUS_BUFFER_OVERFLOW;
+			}
+
+			if(pFsContext->isDirectory){
+				info.FileAttributes = FILE_ATTRIBUTE_DIRECTORY;
+			}else{
+				info.FileAttributes = FILE_ATTRIBUTE_NORMAL;
+			}
+			info.CreationTime.HighPart = 0x01C3F8D6; // 適当な日付
+			info.CreationTime.LowPart  = 0x88000000; // 適当な日付
+			info.LastAccessTime = info.LastWriteTime = info.ChangeTime = info.CreationTime; // 全部同じとする
+			
+			// 返信用バッファへコピーし、返したデータサイズをInformationにセット
+			RtlCopyMemory(systemBuffer, &amp;info, dataSize);
+		    Irp->IoStatus.Information = dataSize;
+		}else if (fileInfoClass == FileStandardInformation){
+			FILE_STANDARD_INFORMATION info = { 0 };
+			ULONG dataSize = sizeof(info);
+			
+			KdPrint(("FileStandardInformation\n"));
+			
+			// とりあえずSUCCESSをセット
+			Irp->IoStatus.Status = STATUS_SUCCESS;
+			
+			if(bufferLength &lt; dataSize){
+				// バッファが足りない場合、返せるだけ返してオーバーフローを立てる
+				dataSize = bufferLength;
+				Irp->IoStatus.Status = STATUS_BUFFER_OVERFLOW;
+			}
+
+			info.EndOfFile.QuadPart = 100000; // 適当なサイズ
+			info.AllocationSize = info.EndOfFile;
+			info.NumberOfLinks = 1;
+			info.DeletePending = 0;
+			info.Directory = pFsContext->isDirectory ? 1 : 0;
+			
+			// 返信用バッファへコピーし、返したデータサイズをInformationにセット
+			RtlCopyMemory(systemBuffer, &amp;info, dataSize);
+		    Irp->IoStatus.Information = dataSize;
+		}else if (fileInfoClass == FileNameInformation) {
+			WCHAR dirNameTmp[] = L"\\";
+			WCHAR fileNameTmp[] = L"longfilename.dat";
+			WCHAR *fileName = NULL;
+			PFILE_NAME_INFORMATION pInfo = NULL;
+			ULONG fileNameLength = 0;
+			ULONG dataSize;
+			
+			KdPrint(("FileNameInformation\n"));
+			
+			if(pFsContext->isDirectory){
+				fileName = dirNameTmp;
+			}else{
+				fileName = fileNameTmp;
+			}
+    		
+    		fileNameLength = wcslen(fileName) * sizeof(WCHAR); // ファイル名のバイト数（NULL文字含まず）
+			dataSize = sizeof(FILE_NAME_INFORMATION) - sizeof(WCHAR) + fileNameLength;
+			
+	        pInfo = (PFILE_NAME_INFORMATION)ExAllocatePool(NonPagedPool, dataSize);
+	        if(pInfo == NULL){
+			    Irp->IoStatus.Status = status = STATUS_INSUFFICIENT_RESOURCES;
+			    Irp->IoStatus.Information = 0;
+	            IoCompleteRequest(Irp, IO_NO_INCREMENT);
+	            return status;
+	        }
+    		
+			// とりあえずSUCCESSをセット
+			Irp->IoStatus.Status = STATUS_SUCCESS;
+			
+			if(bufferLength &lt; dataSize){
+				// バッファが足りない場合、返せるだけ返してオーバーフローを立てる
+				dataSize = bufferLength;
+				Irp->IoStatus.Status = STATUS_BUFFER_OVERFLOW;
+			}
+			
+			KdPrint(("Name: %ws\n", fileName));
+
+			// 返す値を用意
+			pInfo->FileNameLength = fileNameLength; // ファイル名のバイト数（NULL文字含まず）
+			RtlCopyMemory(pInfo->FileName, fileName, pInfo->FileNameLength);
+
+			// 返信用バッファへコピーし、返したデータサイズをInformationにセット
+			RtlCopyMemory(systemBuffer, pInfo, dataSize);
+		    Irp->IoStatus.Information = dataSize;
+		    
+            ExFreePool(pInfo);
+		}else{
+			KdPrint(("Unimplemented fileInfoClass: %d\n", fileInfoClass));
+    		
+	    	// 未実装
+		    Irp->IoStatus.Status = STATUS_NOT_IMPLEMENTED;
+		    Irp->IoStatus.Information = 0;
+		}
+		
+	}else if( ...
+</code></pre>
+	<p>
+		次に、IRP_MJ_READの実装を示します。
+		とりあえず常時STATUS_END_OF_FILEを返すことで、空の内容を返すようになっています。
+	</p>
+	<p>
+		なお、ディレクトリの場合のIRP_MJ_READは多分無効と想定しています。
+		私が試した範囲ではその命令が来たことはないと思います。
+	</p>
+<pre><code class="language-c">
+	...
+	}else if (irpSp->MajorFunction == IRP_MJ_READ) {
+        PFILE_OBJECT pFileObject;
+        PSAMPLEFS_FSCONTEXT pFsContext;
+	        
+		KdPrint(("IRP_MJ_READ\n"));
+		
+        // FileObject取得
+        pFileObject = irpSp->FileObject;
+        if(!pFileObject){
+		    Irp->IoStatus.Status = status = STATUS_INVALID_PARAMETER;
+		    Irp->IoStatus.Information = 0;
+            IoCompleteRequest(Irp, IO_NO_INCREMENT);
+            return status;
+        }
+        
+        // FsContext取得
+        pFsContext = (PSAMPLEFS_FSCONTEXT)pFileObject->FsContext;
+        if(!pFsContext){
+		    Irp->IoStatus.Status = status = STATUS_INVALID_PARAMETER;
+		    Irp->IoStatus.Information = 0;
+            IoCompleteRequest(Irp, IO_NO_INCREMENT);
+            return status;
+        }
+        
+        if(pFsContext->isDirectory){
+	    	// ディレクトリに対しては無効
+		    Irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
+		    Irp->IoStatus.Information = 0;
+        }else{
+	    	// ファイル終端とする
+		    Irp->IoStatus.Status = STATUS_END_OF_FILE;
+		    Irp->IoStatus.Information = 0;
+        }
+		
+	}else if( ...
+</code></pre>
+	<p>
+		以上を実装すれば、コマンドプロンプトのDIRコマンドやエクスプローラでlongfilename.datというファイルが表示されるはずです。
+	</p>
+
+	<h3>5.3. うまく動かないときは・・・</h3>
+	<p>
+		OSのバージョンによっては上記のように書いても動かないケースがあるかも知れません。
+		この場合にどのように対処すればよいか簡単に書いておきます。
+	</p>
+	<p>
+		動かない原因の多くは実装すべきものが未実装になっているパターンです。
+		上記のサンプルはログを比較的丁寧に出力するようになっていますので、ログから「Unimplemented」という文字列を探せば何が未実装かが簡単に分かります。
+	</p>
+	<p>
+		優先順位という観点では、ログの最後の方に近いUnimplementedほど優先的に実装すべきです。
+		なぜなら、エラーで止まる場合は大抵最後のUnimplementedが問題になっていることが多いためです。
+	</p>
+	<p>
+		また、別の動かない原因の見つけ方として「-> Status: 」が0以外になっているものを探すという方法もあります。
+		0がSTATUS_SUCCESSですので、そうでないときは作成したドライバが何らかのエラーを返している（OSが処理を中断する原因になり得る）ということになるからです。
+		本当にそのステータスを返すのが正しいかどうか入念にチェックしましょう。
+	</p>
+	<p>
+		それでもよく分からない時には、KdPrintをどんどん足していきましょう。
+	</p>
+
+	<h3>5.4. 改良の方針</h3>
+	<p>
+		ここまで実装して分かると思いますが、そろそろ仮想的なファイルシステム構造を保持するような仕組みが必要です。
+	</p>
+	<p>
+		大まかには、ファイルやディレクトリを表す構造体を作成し、共通するファイル名や属性データの他に、ファイルの場合はファイルの内容を、ディレクトリの場合はディレクトリ内のファイル一覧と列挙位置を保持できるようにすべきでしょう。ルートディレクトリからぶら下げていくことを考えると、データはツリー構造になると思います。
+	</p>
+	<p>
+		そこで、これ以降はまずファイルシステム構造を保持する部分を作成していきましょう。
+	</p>
+
+	<hr>
+	<p>
+		作成に流石に疲れたので一旦中断します。
+		気が向いたら続きを追加していきます。
 	</p>
 	
 	<p>

@@ -364,7 +364,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp) {
 		{
 			WCHAR volumeLabel[] = SAMPLEFS_VOLUMELABEL;
 			PFILE_FS_VOLUME_INFORMATION pInfo = NULL;
-			ULONG dataSize = sizeof(FILE_FS_VOLUME_INFORMATION) + sizeof(volumeLabel) - sizeof(WCHAR);
+			ULONG dataSize = sizeof(FILE_FS_VOLUME_INFORMATION) - sizeof(WCHAR) + sizeof(volumeLabel) - sizeof(WCHAR);
 			
 			KdPrint(("FileFsVolumeInformation\n"));
 			
@@ -390,7 +390,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp) {
 			pInfo->VolumeCreationTime.LowPart = 0x88000000; // ボリューム作成日
 			pInfo->VolumeSerialNumber = 0x12345678; // ボリュームシリアルNo.
 			pInfo->SupportsObjects = 0; // 0でよい
-			pInfo->VolumeLabelLength = sizeof(volumeLabel); // ボリュームラベル文字列のバイト数（NULL文字は含まない）
+			pInfo->VolumeLabelLength = sizeof(volumeLabel) - sizeof(WCHAR); // ボリュームラベル文字列のバイト数（NULL文字は含まない）
 			RtlCopyMemory(pInfo->VolumeLabel, volumeLabel, pInfo->VolumeLabelLength);
 			
 			// 返信用バッファへコピーし、返したデータサイズをInformationにセット
@@ -401,7 +401,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp) {
 		}else if (fsInfoClass == FileFsAttributeInformation) {
 			WCHAR fsName[] = SAMPLEFS_FILESYSTEM;
 			PFILE_FS_ATTRIBUTE_INFORMATION pInfo = NULL;
-			ULONG dataSize = sizeof(FILE_FS_ATTRIBUTE_INFORMATION) + sizeof(fsName) - sizeof(WCHAR);
+			ULONG dataSize = sizeof(FILE_FS_ATTRIBUTE_INFORMATION) - sizeof(WCHAR) + sizeof(fsName) - sizeof(WCHAR);
 			
 			KdPrint(("FileFsAttributeInformation\n"));
     		
@@ -425,7 +425,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp) {
 			// 返す値を用意
 			pInfo->FileSystemAttributes = FILE_CASE_PRESERVED_NAMES | FILE_CASE_SENSITIVE_SEARCH | FILE_UNICODE_ON_DISK; // 大文字小文字保存、大文字小文字区別、UNICODEファイル名保存
 			pInfo->MaximumComponentNameLength = 255; // ファイルパスの長さ上限
-			pInfo->FileSystemNameLength = sizeof(fsName); // ファイルシステム名文字列のバイト数（NULL文字は含まない）
+			pInfo->FileSystemNameLength = sizeof(fsName) - sizeof(WCHAR); // ファイルシステム名文字列のバイト数（NULL文字は含まない）
 			RtlCopyMemory(pInfo->FileSystemName, fsName, pInfo->FileSystemNameLength);
 
 			// 返信用バッファへコピーし、返したデータサイズをInformationにセット
