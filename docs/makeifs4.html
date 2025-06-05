@@ -1498,7 +1498,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 	
 	<h3>4.3. ファイルは同時にいくつ開けるようにすべきか</h3>
 	<p>
-		上記の実装ではMiniSOPの制限でファイルの同時オープン数上限が4096になっています。
+		上記の実装ではMiniSOPの制限（PENDING_SOP_MAX）でファイルの同時オープン数上限が4096になっています。
 		これは普通に使う分には十分にも思えますが、実用的なファイルシステムではキャッシュのために相当な数のファイルを同時に開きます。
 	</p>
 	<p>
@@ -1510,7 +1510,7 @@ NTSTATUS SampleFSDispatch(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 		それが難しい場合は、とりあえずは30000ファイルくらい同時に開ければ安全圏だと思います。
 	</p>
 	<p>
-		そういうわけで、実用を目指すならMiniSOPの制限も30000くらいに設定しておきましょう。
+		そういうわけで、実用を目指すならMiniSOPの制限（PENDING_SOP_MAX）を30000くらいに設定しておきましょう。
 		いっそ思い切って65535くらいでも良いと思います。
 	</p>
 	
