@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=5">
+</head>
+<body>
+	<h1><span style="font-size:medium;">PC-9800 Series Emulator</span><br> Neko Project 21/W</h1>
+	<img src="img/np21w_topimg.png" style="clear:both;">
+	<img src="img/pc9821np2_emu4_21w.png">
+	<div id="contents_menu" style="border:2px solid black;padding:8px;margin:8px;">
+	<h2>メインコンテンツ</h2>
+	<ul>
+		<li><a href="./98emulators.html">前置き</a></li>
+		<li><a href="./download.html">なんかくれ</a></li>
+		<li><a href="./faq.html">よくある質問</a></li>
+		<li><a href="./freedos98.html">簡単な使い方</a></li>
+		<li><a href="./lan.html">LAN設定</a></li>
+		<li><a href="./gallery.html">ギャラリー</a></li>
+		<li><a href="./docs.html">資料集</a></li>
+		<li><a href="./help/index.html">ヘルプ</a></li>
+		<li><a href="./link.html">リンク集</a></li>
+	</ul>
+	</div>
+	<div>
+	<p style="min-width:10em;">
+		Neko Project 21/W（np21w, ねこープロジェクト21/W）はPC-98エミュレータ Neko Project IIおよびNeko Project 21（ねこープロジェクトII、ねこープロジェクト21）をベースに、ニッチなハードウェアのエミュレーションやPC-98後期モデル（1993～2000頃）の再現に耐えうる改造を施したものです。
+	</p>
+	<p style="min-width:10em;">
+		また、ニッチなハードウェアのエミュレーションに限定してNeko Project II相当まで簡略化したNeko Project II/W（np2w, ねこープロジェクトII/W）も配布しています。CPUが80286（プロテクトモードなし）相当ですが比較的軽量に動きます。
+	</p>
+	<p style="min-width:10em;font-weight:bold;">
+		本家猫: <a href="http://www.yui.ne.jp/np2/" target="_blank">http://www.yui.ne.jp/np2/</a><br>
+		Twitter: <a href="https://twitter.com/simk98l" target="_blank">https://twitter.com/simk98l</a><br>
+		mail: simk98lfo@gmail.com<br>
+	</p>
+	<p style="min-width:10em;">
+		<a href="./faq.html">問い合わせについて</a>
+	</p>
+	</div>
+	<div style="display:inline-block;">
+	<h3 style="margin-top:0;">注意</h3>
+	<p style="font-size:smaller;min-width:10em;">
+		本エミュレータの機能追加の多くは98らしさが失われていった後期モデル相当ですので、開発者の腕試し的な要素が強く、一般ユーザーにはあまり役に立たないニッチなものです。
+	</p>
+	<p style="font-size:smaller;min-width:10em;">
+		本家のNeko Project II/21で動く物は基本的にそのまま動きますが、特別良くなるわけでもありません。
+		PC-98前期～中期（1993頃迄）のエミュレーションは例えば<a href="http://nenecchi.kirara.st/" target="_blank">Neko Project II fmgen版</a>などをおすすめします。
+	</p>
+	</div>
+	<h2 style="clear:both;">NEWS</h2>
+	<div style="margin:4px; padding: 4px; border: 3px groove gray">
+		<p>
+<pre>
+【2025/06/21】
+Neko Project 21/W ver0.86 rev95β1を公開しました。
+・WABで16bitカラー以上にすると無変更でも常時描画されるようになってしまう不具合を修正
+　・GPU使用率が下がるはずです
+・HAXMの命令フックをデバッグ命令からHLT命令に変更して安定化
+
+【2025/06/19】
+Neko Project 21/W ver0.86 rev94を公開しました。
+・BEEP PCMにオフセットを除去するオプションを足してみました
+　・Deice->Sound->Fix beep PCM offset
+　・音の鳴り始めと終わりにブツブツ音がするのが緩和されるかも知れません
+・Other->CalendarのVirtual calendarの設定がリセットしたり終了したりしても保持されるようになりました
+　・ホスト時刻とのオフセットが一定になるように動きます
+　・仮想マシン内でカレンダを変えた場合もそのオフセットが保持されます
+・CPUのかなり攻めた高速化を試みました
+　・CPUクロックを適当な大きな値（例えば300MHzくらい）にしてから動的CPUクロック調整（Screen->Dynamic CPU clock adjustment）をONにすると処理時間は最速になります
+・メインのビルド環境をVisual Studio 2019に変更しました
+　・旧ビルド環境よりもパフォーマンスが向上します
+　・ただし旧OSでは動かなくなります
+　・しばらくはvs2010版も併せてリリースします
+・タイミング周りの見直しで可能な限り無駄にCPU使用率を上げないようにしました
+・ネットワーク周りのポーリングをやめて負荷を低減しました
+・コピー＆ペースト機能でメモリ破壊していた不具合を修正しました
+・SB16/118ゲームポートの有効無効を設定画面に追加しました
+・SB16/118ゲームポートでアナログ入力が出来るようにしました
+・Windows NT系向けのHOSTDRVを実装しました
+　・Windows NT系からHOSTDRVへアクセス出来ます（ロングファイルネーム対応）
+　・詳細は別途配布している「Neko Project 21/W ホスト共有ドライブドライバ＆ユーティリティ for Windows NT」を参照のこと
+・np2システムポートでマウス絶対座標を取得出来るようにしました
+　・Windows 3.1, NT3.51, NT4.0, 2000用のシームレスマウスドライバを試作しました
+　・ドライバはnp21/wと同じ場所で配布しています
+　・np2システムポートの仕様は https://simk98.github.io/np21w/docs/npcngcfg.html で公開しています
+・特定のソフトウェアMIDIシンセサイザーを使用しているときCPU負荷が過剰に上がる問題の対策
+　・何も送らないと異常になるようなので定期的にActive Sensingメッセージを送れるようにしました
+　・INFにmidiasns=trueを書いてmidiaintに送信間隔をミリ秒で書いて下さい
+
+【2025/04/06】
+Neko Project 21/W ver0.86 rev93を公開しました。
+・86PCM周りを大改修しました（ポリスノーツとかがちゃんと動きます）
+・CD交換時の挙動を改善しました
+・CS4231(WSS)とSB16の排他漏れを修正しました
+・CS4231(WSS)のタイミングを修正しました
+・CS4231(WSS)とSB16のPIO再生を修正しました
+・Load VM Configでアクセス違反が発生する可能性がある問題を修正しました
+・Async CPUあらため動的CPUクロック調整（Screen->Dynamic CPU clock adjustment）を実験版から正式版にしました
+　・設定されているクロック数を上限として可能な限り高速に動かし、処理落ちする場合は動的にクロック数を落とします
+　・PC-98系のソフトはCPUクロックが途中で変わることを想定していないと思いますので、基本は固定がよいと思います
+　・np2wの方でも使えるようにしました（が、タイミングの方が重要だと思いますのでベンチマーク用ですね）
+・動的CPUクロック調整使用時にタイミングがおかしくなる問題を修正しました
+・マルチスレッドモード有効の時、フルスクリーン切り替え時などにたまにウィンドウが変になる問題を修正
+・マルチスレッドモードを非公開機能から昇格（設定画面）に追加しました
+　・Emulate→Configureの下側にあります
+　・ウィンドウ操作でエミュレーションが停止しなくなり、他のアプリケーションに起因するパフォーマンスの影響を受けにくくなります
+</pre>
+		</p>
+		<p><a href="./history.html">更に前の更新履歴</a></p>
+	</div>
+	<h2>本家からの変更点</h2>
+	<p>
+		本家から変更されている点は以下の通りです。
+	</p>
+	<h3>CPU／メモリ周辺</h3>
+	<ul>
+		<li>CPUクロック倍率制限の緩和</li>
+		<li>i486DX以降のCPUを追加（実機であり得ない物も含む）</li>
+		<li>CPU拡張命令の実装（FPU, MMX, SSE, 3DNow! など）</li>
+		<li>大容量メモリに対応</li>
+		<li>高速メモリチェック</li>
+		<li>CPUの非同期的動作＋動的なCPUクロック変更</li>
+	</ul>
+	<h3>ハードウェア（音源・MIDI）</h3>
+	<ul>
+		<li>fmgenの部分的サポート</li>
+		<li>MAME OPL音源（118音源とSB16で使用）</li>
+		<li>118音源の修正</li>
+		<li>Mate-X PCMの追加</li>
+		<li>Sound Blaster 16（PCM可）の追加</li>
+		<li>Super MPU（2ポート32ch MIDI）の追加</li>
+		<li>Q-Vision Wave Starの追加</li>
+	</ul>
+	<h3>ハードウェア（グラフィック周辺・ウィンドウアクセラレータ）</h3>
+	<ul>
+		<li>PEGCプレーンモードの一部</li>
+		<li>PC-9821内蔵 CL-GD54xx ウィンドウアクセラレータ</li>
+		<li>PC-9801-96拡張ボード CL-GD54xx ウィンドウアクセラレータ</li>
+		<li>MELCO WAB-S，WSN-A2F, WSN-A4F ウィンドウアクセラレータ</li>
+		<li>I-O DATA GA-98NBI/C, II, IV ウィンドウアクセラレータ</li>
+	</ul>
+	<h3>ハードウェア（その他）</h3>
+	<ul>
+		<li>大容量HDDのサポート（4GB未満推奨、最大2TB）</li>
+		<li>IDE 4ポート（HDD または 光学ドライブを任意に選択可）</li>
+		<li>CD-DAの再生</li>
+		<li>実CD/DVDイメージのマウント（EDC/ECCエミュレーション付き）</li>
+		<li>PCIバス</li>
+		<li>WACOMペンタブレットエミュレーション</li>
+		<li>名前付きパイプでのRS-232Cエミュレーション</li>
+	</ul>
+	<h3>UI周辺／その他</h3>
+	<ul>
+		<li>追加のディスクイメージサポート（NVL.DLLで更に追加可能）</li>
+		<li>メニューにマウント中のHDDイメージを表示</li>
+		<li>マウスキャプチャしないでマウス操作（シームレス風味）</li>
+		<li>マウス挙動の修正、マウス速度の指定</li>
+		<li>マスタボリュームの指定</li>
+		<li>Direct3D描画</li>
+		<li>画面の整数倍拡大、整数倍風拡大（疑似）</li>
+		<li>メニューにマウント中のHDDイメージを表示</li>
+	</ul>
+	<h3>バグ修正(本家ver.0.86 基準)</h3>
+	<ul>
+		<li>CD-ROM認識とCD-DA再生正常化</li>
+		<li>IDE I/Oポートの割り込みタイミング修正</li>
+		<li>HOSTDRVのパーミッションがおかしい不具合を修正</li>
+		<li>EGC周辺の修正</li>
+		<li>RS-232C周辺の大幅修正</li>
+	</ul>
+</body>
+</html>
