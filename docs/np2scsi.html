@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>Neko Project 21/W 専用SCSIの仕様 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+	<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-c.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-makefile.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-ini.min.js"></script>
+	<style type="text/css">
+	code{
+		font-size: smaller !important;
+		line-height: 110% !important;
+	}
+	pre{
+		line-height: 110% !important;
+	}
+	</style>
+</head>
+<body>
+	<h1>Neko Project 21/W 専用SCSIの仕様</h1>
+	<p>
+		Neko Project 21/W ver0.86 rev95β3以降は、PIO転送でとてつもなく遅いIDEの代替としてNeko Project 21/W 専用SCSIを実装しています。
+		既存のSCSIドライバを使用出来るようにするという方法は正統な気もしますがかなり大変ですので、いっそのこと独自にドライバを書いて最速を目指すことにしました。
+	</p>
+	<p>
+		Neko Project 21/W 専用SCSIということなので当然ながら実機では使えません。
+		エミュレータ専用の高速ストレージとお考えください。
+	</p>
+	<p>
+		使いたいだけであれば、なんかくれページから「Neko Project 21/W 専用SCSIドライバ for Windows NT」としてドライバをダウンロード出来ます。
+	</p>
+	<p>
+		これ以降はNeko Project 21/W 専用SCSIの仕様について説明します。
+	</p>
+	<p>
+		np21wソースのcbus\scsiio.cやnp2tool\npstor\npstor.cも参照してください。
+	</p>
+	
+	<h2>BIOSレベルでの処理</h2>
+	<p>
+		Neko Project 21/W 専用SCSIはBIOSレベルでは従来通り普通の33C93なSCSIデバイスのように見えます。
+	</p>
+	<p>
+		したがってBIOSレベルでは高速化の恩恵は受けられません。
+		I/Oポートベースの処理に切り替わった後から効果が得られます。
+	</p>
+	
+	<h2>I/Oポート</h2>
+	<p>
+		Neko Project 21/W 専用SCSIは以下の専用のI/Oポートを使用します。
+		33C93関係のI/Oポートはアクセス出来ますが全て無意味です。
+	</p>
+	<p>
+		普通のDMA転送ではなく処理乗っ取りで実装されているため、IRQやDMAは使用しません。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>I/Oポート</th><th>役割</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>7EAh</td><td>猫本体へ読み書きさせるメモリへのアドレス（仮想メモリアドレス・Non Paged Pool）を書き込む。読み取りは常時98（10進数）</td></tr>
+			<tr><td>7EBh</td><td>猫本体に処理を実行させるためのポート。読み取りは常時21（10進数）</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<p>
+		これらのポートから読み取られる値は98と21（いずれも10進数）ですので、簡易的な存在確認に用いることができます。
+		厳密に判定したい場合はNeko Project IIシステムポートのNP2コマンドもご利用ください。
+	</p>
+	
+	<h2>Neko Project 21/W 専用SCSIの処理の実行方法</h2>
+	<p>
+		Neko Project 21/W 専用SCSIは完全にエミュレータを前提とした方法で動作します。
+	</p>
+	<p>
+		Neko Project 21/W 専用SCSIは完全にエミュレータを前提とした方法で動作します。
+		以下の手順で入出力データを用意し、特定のI/Oポートに値を書き込むと、np2本体が仮想マシンの処理を奪い取って代わりにデータを読み書きし、再度仮想マシンに制御を戻します。
+		したがって、仮想マシン内からはI/Oポートに書き込んだ瞬間にデータが処理されたように見えます。
+	</p>
+	<p>
+		Neko Project 21/W 専用SCSIでの処理実行は以下の手順で行います。
+	</p>
+	<ol>
+		<li>NP2STOR_INVOKEINFO構造体を用意し、Neko Project 21/W 専用SCSIの呼び出しパラメータを書き込みます。</li>
+		<li>I/Oポート7EAhにNP2STOR_INVOKEINFO構造体のアドレスを1byteずつ書き込みます。</li>
+		<li>I/Oポート7EBhに0x98→0x01の順で書き込みます。書き込みが終わった瞬間に処理が実行され結果が返ります。</li>
+		<li>渡したNP2STOR_INVOKEINFO構造体の中身に基づいて成否判定などを行います。</li>
+	</ol>
+	
+	<h2>データ入出力に使用する構造体の中身</h2>
+	<h3>NP2STOR_INVOKEINFO構造体の中身</h3>
+	<p>
+		NP2STOR_INVOKEINFO構造体は次のような内容です。
+	</p>
+<pre><code class="language-c">
+typedef struct
+{
+	ULONG version; // Neko Project 21/W 専用SCSIバージョン番号 現在は1のみ
+	ULONG cmd; // Neko Project 21/W 専用SCSIコマンド番号NP2STOR_INVOKECMD_xxx
+	PSCSI_REQUEST_BLOCK srbAddr; // SCSI_REQUEST_BLOCK構造体へのポインタ（仮想メモリアドレス）
+} NP2STOR_INVOKEINFO;
+</code></pre>
+	<p>
+		cmdフィールドは実行するコマンドの種類を表しますが、現在のところ次の2種類のみが存在します。
+	</p>
+<pre><code class="language-c">
+#define NP2STOR_INVOKECMD_DEFAULT	0x00 // 20MB書き込む毎にSRB_STATUS_BUSYを返す
+#define NP2STOR_INVOKECMD_NOBUSY	0x01 // SRB_STATUS_BUSYを返さない
+</code></pre>
+	<p>
+		NP2STOR_INVOKECMD_DEFAULTはWin2000においてEDB*.logが大量に生成されてディスクを埋める問題を回避するために、定期的にSRB_STATUS_BUSYを返します。
+		SRB_STATUS_BUSYが来た場合はリトライする必要があります。
+	</p>
+	<p>
+		NP2STOR_INVOKECMD_NOBUSYは上記の動作をせずに素直に書き込みができます。
+		ただし、プレリリース版Neko Project 21/W ver0.86 rev95β3では動作しません（気にしなくていいと思いますが）。
+	</p>
+	<p>
+		PSCSI_REQUEST_BLOCKはWindows NTのSCSIミニポートドライバで使用されるSCSI_REQUEST_BLOCK構造体へのポインタです。
+		こちらも仮想メモリアドレス・Non Paged Poolである必要があります。
+	</p>
+	<h3>SCSI_REQUEST_BLOCK構造体の中身</h3>
+	<p>
+		SCSI_REQUEST_BLOCK構造体はWindows 2000 DDKのそれと同じものです。
+		MSDNで見られますのでここには書きません。
+	</p>
+	<p>
+		たくさんフィールドがありますが、Neko Project 21/W 専用SCSIで使用されているのはごく一部です。
+		以下のフィールドのみをセットすれば残りは0で問題ありません。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>フィールド</th><th>中身の意味</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>Function</td><td>ミニポート機能番号。SRB_FUNCTION_EXECUTE_SCSI(0x00)でOK。</td></tr>
+			<tr><td>SrbStatus</td><td>ここに処理結果のステータスが返される。自分で設定する必要はない。SRB_STATUS_SUCCESS(0x01)で成功。SRB_STATUS_BUSYが返ってきたときはリトライする。</td></tr>
+			<tr><td>PathId</td><td>対象デバイスの指定。0しかないので0に設定する（デバイスがない場合はSrbStatusにSRB_STATUS_NO_DEVICEが返る）</td></tr>
+			<tr><td>TargetId</td><td>対象デバイスの指定。0～3がnp2メニューのSCSI#に対応する（デバイスがない場合はSrbStatusにSRB_STATUS_NO_DEVICEが返る）</td></tr>
+			<tr><td>Lun</td><td>対象デバイスの指定。0しかないので0に設定する（デバイスがない場合はSrbStatusにSRB_STATUS_NO_DEVICEが返る）</td></tr>
+			<tr><td>DataTransferLength</td><td>DataBufferのサイズをバイト単位で書き込む。猫本体の処理が完了した後はDataBufferへ書き込まれたのデータサイズが格納される。</td></tr>
+			<tr><td>DataBuffer</td><td>猫本体とデータをやりとりするためのバッファへのポインタ。仮想メモリアドレス・Non Paged Poolである必要があります。</td></tr>
+			<tr><td>Cdb</td><td>SCSIコマンドのCommand Descriptor Block。</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<p>
+		Neko Project 21/W ver0.86 rev95β3時点で対応しているSCSIコマンドは以下のもののみです。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>コマンド</th><th>備考</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>SCSIOP_TEST_UNIT_READY</td><td>常時成功</td></tr>
+			<tr><td>SCSIOP_INQUIRY</td><td>一部のフィールドのみ結果を返す（np21/wソース参照）</td></tr>
+			<tr><td>SCSIOP_READ_CAPACITY</td><td></td></tr>
+			<tr><td>SCSIOP_READ</td><td></td></tr>
+			<tr><td>SCSIOP_WRITE</td><td></td></tr>
+			<tr><td>SCSIOP_READ6</td><td></td></tr>
+			<tr><td>SCSIOP_WRITE6</td><td></td></tr>
+			<tr><td>SCSIOP_SEEK</td><td>常時成功</td></tr>
+			<tr><td>SCSIOP_VERIFY</td><td>LBA範囲外チェックのみ実施</td></tr>
+			<tr><td>SCSIOP_MODE_SENSE</td><td>全ページを返すモードのみ実装　ページ指定不可</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h3>具体的なSCSI_REQUEST_BLOCK構造体の中身の例 ～SCSIOP_INQUIRYの場合～</h3>
+	<p>
+		例としてSCSIOP_INQUIRYを送る場合の中身を以下に示します。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>フィールド</th><th>中身の意味</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>Function</td><td>SRB_FUNCTION_EXECUTE_SCSI(0x00)</td></tr>
+			<tr><td>SrbStatus</td><td>処理結果がSRB_STATUS_SUCCESS(0x01)なことを確認</td></tr>
+			<tr><td>PathId</td><td>0</td></tr>
+			<tr><td>TargetId</td><td>0（np2メニューのSCSI #0）</td></tr>
+			<tr><td>Lun</td><td>0</td></tr>
+			<tr><td>DataTransferLength</td><td>INQUIRYDATA構造体のサイズ。バッファが足りない場合は途中までしか格納されない。</td></tr>
+			<tr><td>DataBuffer</td><td>INQUIRYDATA構造体へのポインタ</td></tr>
+			<tr><td>Cdb[0]</td><td>SCSIOP_INQUIRY(0x12)</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h3>具体的なSCSI_REQUEST_BLOCK構造体の中身の例 ～SCSIOP_READ_CAPACITYの場合～</h3>
+	<p>
+		例としてSCSIOP_READ_CAPACITYを送る場合の中身を以下に示します。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>フィールド</th><th>中身の意味</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>Function</td><td>SRB_FUNCTION_EXECUTE_SCSI(0x00)</td></tr>
+			<tr><td>SrbStatus</td><td>処理結果がSRB_STATUS_SUCCESS(0x01)なことを確認</td></tr>
+			<tr><td>PathId</td><td>0</td></tr>
+			<tr><td>TargetId</td><td>0（np2メニューのSCSI #0）</td></tr>
+			<tr><td>Lun</td><td>0</td></tr>
+			<tr><td>DataTransferLength</td><td>READ_CAPACITY_DATA構造体のサイズ</td></tr>
+			<tr><td>DataBuffer</td><td>READ_CAPACITY_DATA構造体へのポインタ</td></tr>
+			<tr><td>Cdb[0]</td><td>SCSIOP_READ_CAPACITY(0x25)</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h3>具体的なSCSI_REQUEST_BLOCK構造体の中身の例 ～SCSIOP_WRITEの場合～</h3>
+	<p>
+		例としてSCSIOP_WRITEを送る場合の中身を以下に示します。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>フィールド</th><th>中身の意味</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>Function</td><td>SRB_FUNCTION_EXECUTE_SCSI(0x00)</td></tr>
+			<tr><td>SrbStatus</td><td>処理結果がSRB_STATUS_SUCCESS(0x01)なことを確認　SRB_STATUS_BUSY(0x05)の場合は同じコマンドをリトライする</td></tr>
+			<tr><td>PathId</td><td>0</td></tr>
+			<tr><td>TargetId</td><td>0（np2メニューのSCSI #0）</td></tr>
+			<tr><td>Lun</td><td>0</td></tr>
+			<tr><td>DataTransferLength</td><td>書き込むデータのサイズ</td></tr>
+			<tr><td>DataBuffer</td><td>書き込むデータへのポインタ</td></tr>
+			<tr><td>Cdb[0]</td><td>SCSIOP_WRITE(0x2A)</td></tr>
+			<tr><td>Cdb[2], Cdb[3], Cdb[4], Cdb[5]</td><td>書き込み先セクタLBA（ビッグエンディアン）</td></tr>
+			<tr><td>Cdb[7], Cdb[8]</td><td>書き込むセクタ数（ビッグエンディアン）</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
