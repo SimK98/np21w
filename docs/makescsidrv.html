@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>Win9x系とNT系で共用出来るストレージドライバの製作 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=5">
+	<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-c.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-makefile.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-ini.min.js"></script>
+	<style type="text/css">
+	code{
+		font-size: smaller !important;
+		line-height: 110% !important;
+	}
+	pre{
+		line-height: 110% !important;
+	}
+	</style>
+</head>
+<body>
+	<h1>Win9x系とNT系で共用出来るストレージドライバの製作</h1>
+	<p>
+		Win9x系とNT系はドライバモデルが異なっており、基本的には共有出来ません。
+		しかし、特定の様式に従うドライバに限り、共用出来るような仕組みが用意されています。
+		このような共用が出来るドライバとしてWDMが有名ですが、実はWDM登場前にも限定的にドライバを共有可能な仕組みが用意されています。
+	</p>
+	<p>
+		本稿ではWin9xに搭載されているNT互換機能を用いてWin9x系とNT系で共用出来るストレージドライバを製作するための情報を掲載します。このドライバはWDM登場前のWindows 95でも使用出来ます。
+	</p>
+	<p>
+		実装の詳細については、Neko Project 21/Wのソース内のnp2tool\npstorが参考になります。
+	</p>
+	
+	<h2>ドライバの作成方法</h2>
+	<p>
+		まず、ドライバはWindowsNTのSCSIミニポートドライバ（SCSIPORT）に準拠した形で作る必要があります。
+		こうして作成されたドライバはSYS形式のWinNT系用のものになりますが、ある条件を満たしていればWin9xでも共用出来るものになります。
+	</p>
+	<p>
+		条件だけを先に書くと以下の通りです。
+	</p>
+	<ol>
+		<li>WindowsNT互換のSCSIミニポートドライバであること</li>
+		<li>SCSIPORT.PDRで定義されている関数だけを使用すること</a></li>
+		<li>拡張子をMPDにすること（必須ではないかもしれません）</a></li>
+	</ol>
+	<p>
+		1. はWin9x系のVxD形式ではなくNT系のドライバとして作成しなければならないという条件です。
+		原則アセンブラのVxDと比べると、NT系のドライバとして作成する方が一般に難易度は低いという観点ではあまり困らないと思います。
+	</p>
+	<p>
+		2. はWinNT系の関数を自由に使うことはできず、SCSIPORT.PDR（WinNTのSCSIPORT.SYS互換）で定義されている関数のみ使用可能という条件です。
+		具体的には以下の関数のみ使用出来ます。
+	</p>
+	<ul>
+		<li>ScsiPortCompleteRequest</li>
+		<li>ScsiPortConvertPhysicalAddressToUlong</li>
+		<li>ScsiPortConvertUlongToPhysicalAddress</li>
+		<li>ScsiPortFreeDeviceBase</li>
+		<li>ScsiPortGetDeviceBase</li>
+		<li>ScsiPortGetLogicalUnit</li>
+		<li>ScsiPortGetPhysicalAddress</li>
+		<li>ScsiPortGetUncachedExtension</li>
+		<li>ScsiPortGetVirtualAddress</li>
+		<li>ScsiPortInitialize</li>
+		<li>ScsiPortLogError</li>
+		<li>ScsiPortMoveMemory</li>
+		<li>ScsiPortNotification</li>
+		<li>ScsiPortGetSrb</li>
+		<li>ScsiPortReadPortUchar（READ_PORT_UCHAR相当）</li>
+		<li>ScsiPortReadPortUshort（READ_PORT_USHORT相当）</li>
+		<li>ScsiPortReadPortUlong（READ_PORT_ULONG相当）</li>
+		<li>ScsiPortStallExecution</li>
+		<li>ScsiPortWritePortUchar（WRITE_PORT_UCHAR相当）</li>
+		<li>ScsiPortWritePortUshort（WRITE_PORT_USHORT相当）</li>
+		<li>ScsiPortWritePortUlong（WRITE_PORTULONG相当）</li>
+		<li>ScsiPortReadPortBufferUchar</li>
+		<li>ScsiPortWritePortBufferUchar</li>
+		<li>ScsiPortReadPortBufferUshort</li>
+		<li>ScsiPortWritePortBufferUshort</li>
+		<li>ScsiPortReadPortBufferUlong</li>
+		<li>ScsiPortWritePortBufferUlong</li>
+		<li>ScsiPortReadRegisterBufferUchar</li>
+		<li>ScsiPortWriteRegisterBufferUchar</li>
+		<li>ScsiPortReadRegisterBufferUshort</li>
+		<li>ScsiPortWriteRegisterBufferUshort</li>
+		<li>ScsiPortReadRegisterBufferUlong</li>
+		<li>ScsiPortWriteRegisterBufferUlong</li>
+		<li>ScsiPortReadRegisterUchar</li>
+		<li>ScsiPortWriteRegisterUchar</li>
+		<li>ScsiPortReadRegisterUshort</li>
+		<li>ScsiPortWriteRegisterUshort</li>
+		<li>ScsiPortReadRegisterUlong</li>
+		<li>ScsiPortWriteRegisterUlong</li>
+		<li>ScsiPortIoMapTransfer</li>
+		<li>ScsiPortFlushDma</li>
+		<li>ScsiPortGetBusData</li>
+		<li>ScsiPortSetBusDataByOffset</li>
+        <li>ScsiPortValidateRange</li>
+        <li>ScsiDebugPrint</li>
+    </ul>
+	<p>
+		上記以外の関数をインポートしている場合、WinNTでは動きますがWin9xでは動きません。
+		作成したドライバが実際にどの関数をインポートしているかは、DLLの関数エクスポートを覗く系のソフトで簡単にチェック出来ます。
+	</p>
+	<p>
+		3. はWinNT系ドライバの拡張子は通常SYSですが、これをMPDにしなければならないというものです。
+		拡張子が違うだけで中身は同じですから、単に拡張子を変えるだけでOKです。
+	</p>
+	
+	<h2>ドライバのインストール方法</h2>
+	<p>
+		Win9xとWin2000は共通のINFファイルでインストール出来ます。
+	</p>
+	<p>
+		以下はNeko Project II SCSI Host Controllerという名前のSCSIミニポートドライバをインストールする例です。
+		WinNT用のドライバはnpstor.sys、Win9x用のドライバはnpstor.mpdです。
+		先に述べた通り、この2つのファイルは拡張子が異なるだけで全く同じものです。
+	</p>
+<pre><code class="language-ini">
+[Version]
+signature="$CHICAGO$"
+Class=SCSIAdapter
+ClassGUID={4D36E97B-E325-11CE-BFC1-08002BE10318}
+Provider=%INF_PROVIDER%
+LayoutFile=layout.inf
+DriverVer=06/21/2025
+
+[SourceDisksNames]
+1 = %FLOPPY_DESCRIPTION%,,,.
+
+[SourceDisksFiles]
+npstor.sys = 1
+npstor.mpd = 1
+SCSIPORT.PDR = 2
+
+[Manufacturer]
+%NP2%=NP2
+
+[NP2]
+%*NPSTOR.DeviceDesc%= NPSTOR,*NPSTOR
+
+[NPSTOR]
+CopyFiles=@npstor.mpd,@SCSIPORT.PDR
+LogConfig=*NPSTOR.LogConfig
+AddReg = ios, win98.reg
+
+[NPSTOR.NTx86]
+CopyFiles=@npstor.sys
+LogConfig=*NPSTOR.LogConfig
+
+[NPSTOR.NTx86.Services]
+AddService = npstor, 2, npstor_Service_Inst, Miniport_EventLog_Inst
+
+[npstor_Service_Inst]
+ServiceType    = 1      ; SERVICE_KERNEL_DRIVER
+StartType      = 0      ; SERVICE_BOOT_START
+ErrorControl   = 1      ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\npstor.sys
+LoadOrderGroup = SCSI Miniport
+AddReg         = pnpsafe_isa_addreg
+
+[pnpsafe_isa_addreg]
+HKR, "Parameters\PnpInterface", "1", 0x00010001, 0x00000001
+
+[*NPSTOR.LogConfig]
+ConfigPriority = HARDRECONFIG
+IOConfig       = 7EA-7EB
+
+[Miniport_EventLog_Inst]
+AddReg = Miniport_EventLog_AddReg
+
+[Miniport_EventLog_AddReg]
+HKR,,EventMessageFile,0x00020000,"%%SystemRoot%%\System32\IoLogMsg.dll"
+HKR,,TypesSupported,0x00010001,7
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[IOS]
+HKR,,DevLoader,,*IOS
+HKR,,DontLoadIfConflict,,"Y"
+
+[WIN98.REG]
+HKR,,PortDriver,,npstor.mpd
+
+[Strings]
+INF_PROVIDER="ねこさん開発ちーむ"
+NP2="Neko Project II"
+FLOPPY_DESCRIPTION="Neko Project II ユーティリティディスク"
+*NPSTOR.DeviceDesc="Neko Project II SCSI Host Controller"
+</code></pre>
+	<p>
+		ポイントとして、Win9xではSCSIPORT.PDRを同時にインストールするように指示している点があります。
+		SCSIPORT.PDRはWinNTにおけるSCSIPORT.SYSをエミュレーションするためのVxDです。
+		SCSIPORT.PDRは通常初めからインストールされているはずですが、依存ファイルではあるので明示的にインストールする方が丁寧だと思います。
+	</p>
+	<p>
+		なお、WinNT4.0以前は上記のINIファイルでインストールしようとするとうまく動きません。
+		レガシーなOEMSETUP.INFを使用する必要があります。
+		詳細については、Neko Project 21/Wのソース内のnp2tool\npstor\wntが参考になります。
+	</p>
+	
+	<h2>ドライバ作成時の注意</h2>
+	<p>
+		Windows 2000以降はHW_INITIALIZATION_DATA構造体のサイズが4byte増えています。
+		このため、Windows 2000以降のHW_INITIALIZATION_DATA構造体でScsiPortInitializeを呼ぶと、それより前のバージョンのWindowsでエラーになります。
+	</p>
+	<p>
+		これを回避してドライバを共通にするには、以下のようにScsiPortInitialize失敗時に構造体サイズを4byte減らして再試行する方法が使えます。
+	</p>
+<pre><code class="language-c">
+status = ScsiPortInitialize(DriverObject, RegistryPath, &hwInit, NULL);
+if(status != STATUS_SUCCESS){
+	g_isNT4 = TRUE;
+	hwInit.HwInitializationDataSize -= 4;
+	status = ScsiPortInitialize(DriverObject, RegistryPath, &hwInit, NULL);
+}
+</code></pre>
+	<p>
+		他に、HwFindAdapterで渡されるPORT_CONFIGURATION_INFORMATION構造体のメンバなども違いがあったりしますので、上記のg_isNT4のような互換フラグを用意して処理を分岐させるのをおすすめします。
+	</p>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
