@@ -291,6 +291,10 @@
 		コードにSetWindowsHookExを使ったグローバルキーフックが含まれているため、デバッガで停止中にキー入力をすると数秒フリーズします。
 		これを避けたい場合はHOOK_SYSKEYをプリプロセッサ定義から削除してください。
 	</p>
+	<p>
+		ビルドする際、VST 2 SDKが必要です。古めのVST 3 SDKにも含まれています。
+		VSTが不要な場合は、win9x\compiler.hにある#define SUPPORT_VSTiをコメントアウトして下さい。
+	</p>
 	
 	
 	<h3 id="texthook">テキストフック用の機能について</h3>
