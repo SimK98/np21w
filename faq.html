@@ -151,11 +151,11 @@
 		<dd>A2. やや裏技的な方法として、システムメニュー（タイトルバー左のねこアイコンクリック）でSoft keyboardを表示し、実キーボードの修飾キーを押しながらSoft keyboardのキーをクリックするとエミュレータにその組み合わせのキーを送れます。</dd>
 		
 		<dt>Q. ホストPCのCPUをフル活用したい</dt>
-		<dd>A. Screen→Dynamic CPU clock adjustmentを使うと、設定で指定したクロック倍率を上限として動的にCPUクロック倍率を変えます。ただし、PC-98のソフトでCPUクロックが変わることを想定しているものはないと思いますので、タイミングなどは不安定になりがちです。</dd>
+		<dd>A. Screen→Dynamic CPU clock adjustmentを使うと、設定で指定したクロック倍率を上限としてホストCPUをフル活用できるように動的にCPUクロック倍率を変えます。ただし、PC-98のソフトで動作中にCPUクロックが変わることを想定しているものはないと思いますので、タイミングなどは不安定になりがちです。</dd>
 		
 		<dt>Q. ホストPCのCPU使用率を抑えたい</dt>
 		<dd>A1. 単純にCPU倍率を必要最小限まで小さくするだけでもある程度CPU使用率は下がります。</dd>
-		<dd>A2. MS-DOSの場合・・・<a href="./download.html">なんかくれ</a>で公開しているnp2toolの中にNP2IDLE.COMというものがあります。これをDOSで常駐させるとキー入力待ちなどのアイドル中にホストCPU使用率を大幅に下げることが出来ます。他に、<a href="http://bauxite.sakura.ne.jp/software/dos/freedos.htm">FreeDOS</a>のHDイメージに含まれるPETIDLEでも同じことが出来ます。こちらは動作を一時停止できたりとより高性能です。</dd>
+		<dd>A2. MS-DOSの場合・・・<a href="./download.html">なんかくれ</a>で公開しているnp2toolの中にNP2IDLE.COMというものがあります。これをDOSで常駐させるとキー入力待ちなどのアイドル中にホストCPU使用率を大幅に下げることが出来ます。他に、<a href="http://bauxite.sakura.ne.jp/software/dos/freedos.htm">FreeDOS</a>のHDイメージに含まれるPETIDLEでも同じことが出来ます。こちらは動作を一時停止できたりとより高機能です。</dd>
 		<dd>A3. Win9x系の場合・・・Win9x用の常駐ソフトとしてCPU冷却ソフトがいくつか存在していました（例えばRain）が、現在では入手困難かも知れません。</dd>
 		<dd>A4. WinNT系の場合・・・<a href="./download.html">なんかくれ</a>の実機関連として公開している「PC-98版 Windows NT系用 HLT命令パッチドライバ」を導入すればCPU使用率を下げることが出来ます。</dd>
 		
@@ -166,6 +166,10 @@
 		<dt>Q. シームレスなマウス操作がしたい</dt>
 		<dd>A1. Device->Mouse->Non-capture Controlをオンにするとキャプチャ無しでも動かせるようになります。</dd>
 		<dd>A2. <a href="./download.html">なんかくれ</a>で公開している「Neko Project 21/W シームレスマウスドライバ」を導入すると、Windows上だけですがマウス座標も含めて完全にシームレスなマウス操作ができます。なお、WinNT用はインストール手順がやや複雑なため、説明書をよく読んでください。</dd>
+		
+		<dt>Q. ソフト毎にハードウェア設定を変えたい</dt>
+		<dd>A1. VM設定ファイル（npcfgファイル）を使用すると設定を丸ごと切り替えできます。Emulate→Save VM configで保存、Load VM configで読み込みできます。ファイル関連づけしてもOKです。</dd>
+		<dd>A2. CPUクロック、サウンドボード構成、ウィンドウアクセラレータ構成については、<a href="./download.html">なんかくれ</a>で公開している「Neko Project 21/W ユーティリティ＆ディスクイメージ」に含まれるツールでエミュレータ内から動的に変更できます。1つのHDDに登録した複数のプログラム毎に設定を変える、といった使い方が出来ます。</dd>
 	</dl>
 	<h2>ウィンドウアクセラレータ関連</h2>
 	<dl>
