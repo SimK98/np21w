@@ -33,8 +33,8 @@
 		通常版です。ソースコード付きです。
 	</div>
 	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/1WlZyCVI9qHkKPUzinOBmEgoZ4k7AQyW4/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev97β1）</a><br>
-		<a href="https://drive.google.com/file/d/1D0plH-IrXFdNOJvy1RIUlAKwOxCq8AwW/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev97β1）ish</a><br>
+		<a href="https://drive.google.com/file/d/1YTharTc3-7qb1RDRUToiS5l_9-PRR8iR/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev97β2）</a><br>
+		<a href="https://drive.google.com/file/d/1SFgMNjb1CEEdYX9CXRcDikCffeAmwKVA/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev97β2）ish</a><br>
 		β版です。ソースコード付きです。
 	</div>
 	<div class="downloadContents">
@@ -259,8 +259,27 @@
 	
 	<h3>ライセンスについて</h3>
 	<p>
-		Neko Project 21/Wの大半のコードは修正BSDライセンスですが、以下のファイルは移植のためライセンスが異なっています。これらを含めてコンパイルすると全体としてのライセンスが変わりますのでご注意ください。 
+		Neko Project 21/Wの大半のコードは修正BSDライセンスですが、以下のファイルは移植のためライセンスが異なっています。これらを含めてコンパイルすると全体としてのライセンスが変わりますのでご注意ください。
+		バージョンによってライセンスが異なる場合がありますので、必ずそのバージョンに該当する表を参照してください。
 	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev97β2以降</caption>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c</td><td>GPL</td><td>SUPPORT_FPU_DOSBOXとSUPPORT_FPU_DOSBOX2をプリプロセッサ定義から削除し、fpemul_dosbox.c, fpemul_dosbox2.cをコンパイルから除外する</td></tr>
+			<tr><td>fpemul_softfloat.c</td><td>修正BSD</td><td>本体と同じライセンスになりました。</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照<br>修正BSD風味</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、fpemul_softfloat.cとsoftfloat/*.*を除外する</td></tr>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照<br>原則商用不可</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>/sound/mame/*.*を除外し、代わりに/sound/mamebsd/*.*を使用する</td></tr>
+			<tr><td>/sound/mamebsd/*.*</td><td>修正BSD</td><td>GPLv2版MAMEの代替品です。</td></tr>
+			<tr><td>/cbus/ct1741io.c</td><td>修正BSD</td><td>本体と同じライセンスになりました。</td></tr>
+		</tbody>
+	</table>
+	</div>
 	<div  style="margin:16px;" class="tablediv">
 	<table style="max-width:100%;" border=1>
 		<caption style="font-weight:bold;">ver0.86 rev88以降</caption>
