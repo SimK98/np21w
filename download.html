@@ -262,6 +262,10 @@
 		Neko Project 21/Wの大半のコードは修正BSDライセンスですが、以下のファイルは移植のためライセンスが異なっています。これらを含めてコンパイルすると全体としてのライセンスが変わりますのでご注意ください。
 		バージョンによってライセンスが異なる場合がありますので、必ずそのバージョンに該当する表を参照してください。
 	</p>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1rgV2n0KZaHD4B4RHcSOnAS081APdvEeX/view?usp=drive_link">Neko Project 21/W 修正BSDライセンスソースダウンロード（ver0.86 rev97β2相当）</a><br>
+		下記の除外操作が面倒な人向けに修正BSDを適用できる範囲だけにしたバージョンを用意しました。
+	</div>
 	<div  style="margin:16px;" class="tablediv">
 	<table style="max-width:100%;" border=1>
 		<caption style="font-weight:bold;">ver0.86 rev97β2以降</caption>
@@ -272,9 +276,10 @@
 			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
 			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c</td><td>GPL</td><td>SUPPORT_FPU_DOSBOXとSUPPORT_FPU_DOSBOX2をプリプロセッサ定義から削除し、fpemul_dosbox.c, fpemul_dosbox2.cをコンパイルから除外する</td></tr>
 			<tr><td>fpemul_softfloat.c</td><td>修正BSD</td><td>本体と同じライセンスになりました。</td></tr>
-			<tr><td>fpu/softfloat/*.*</td><td>Readme参照<br>修正BSD風味</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、fpemul_softfloat.cとsoftfloat/*.*を除外する</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照<br>修正BSD風味</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、fpemul_softfloat.cとsoftfloat/*.*を除外する。<br>修正BSD版SoftFloatを使いたい場合はSUPPORT_FPU_SOFTFLOAT3を定義する。</td></tr>
+			<tr><td>fpemul_softfloat3.cpp<br>fpu/softfloat3/*.*</td><td>修正BSD</td><td>独自ライセンスSoftFloatの代替品です。</td></tr>
 			<tr><td>/sound/fmgen/*.*</td><td>Readme参照<br>原則商用不可</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
-			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>/sound/mame/*.*を除外し、代わりに/sound/mamebsd/*.*を使用する</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>/sound/mame/*.*を除外し、代わりに/sound/mamebsd/*.*を使用する。MAMEを一切使用しない場合はSUPPORT_MAMEをプリプロセッサ定義から削除。</td></tr>
 			<tr><td>/sound/mamebsd/*.*</td><td>修正BSD</td><td>GPLv2版MAMEの代替品です。</td></tr>
 			<tr><td>/cbus/ct1741io.c</td><td>修正BSD</td><td>本体と同じライセンスになりました。</td></tr>
 		</tbody>
