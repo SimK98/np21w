@@ -29,6 +29,10 @@
 		NPCxxx.SYSはNPCxxx.COMのデバイスドライバ版です。AUTOEXEC.BATでは手遅れな場合に使用してください。ただし、180byteほどメモリを占有します。
 	</p>
 	<p>
+		NPCNGIRQ.EXEは汎用的なエミュレーションデバイスIRQ変更プログラムです。
+		NPMAPIRQ.EXEはエミュレーションデバイスのデバイスIDとIRQを一覧表示するプログラムです。
+	</p>
+	<p>
 		これ以降はI/Oポートの仕様について説明します。
 	</p>
 	<h2>Neko Project II システムポート</h2>
@@ -149,6 +153,7 @@
 			<tr><td>7</td><td>遅延クロック数÷256  (1byte)</td><td>なし</td><td>IDE I/O読み取りウェイトを変更する。設定した値の256倍が遅延クロック数になる。</td></tr>
 			<tr><td>8</td><td>遅延クロック数÷256  (1byte)</td><td>なし</td><td>IDE I/O書き込みウェイトを変更する。設定した値の256倍が遅延クロック数になる。</td></tr>
 			<tr><td>9</td><td>有効=1, 無効=0 (1byte)</td><td>なし</td><td>ホストOSカーソルの表示非表示を制御する。非キャプチャ状態かつキャプチャなし操作ONの場合のみ有効。</td></tr>
+			<tr><td>10</td><td><a href="#irqdevice">デバイスID</a>(1byte)+IRQ (1byte)</td><td>設定されているIRQの文字列<br>ただし、<br>デバイス未使用=254<br>番号自体が無効=253<br></td><td>エミュレーションデバイスのIRQを変更する。255を指定した場合、一部デバイスではIRQを無効化可能。</td></tr>
 		</tbody>
 	</table>
 	</div>
@@ -218,6 +223,31 @@
 			<tr><td>112</td><td>70h</td><td>WaveStar</td></tr>
 			<tr><td>128</td><td>80h</td><td>AMD-98</td></tr>
 			<tr><td>130</td><td>82h</td><td>SOUND ORCHESTRA-V</td></tr>
+		</tbody>
+	</table>
+	</div>
+	
+	<h4 id="irqdevice">機能番号10 デバイスID(1byte)表</h4>
+	<div style="font-size:smaller;margin-left:16px;">
+		※デバイスを同時使用している場合、それぞれのデバイスに対して設定可能です。
+	</div>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<thead>
+			<tr><th>ID</th><th>ID(HEX)</th><th>種類</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>0</td><td>0h</td><td>（機能有無確認用、常時98が返る）</td></tr>
+			<tr><td>1</td><td>1h</td><td>PC-9801-26K</td></tr>
+			<tr><td>2</td><td>2h</td><td>PC-9801-86</td></tr>
+			<tr><td>3</td><td>3h</td><td>PC-9801-118</td></tr
+			<tr><td>4</td><td>4h</td><td>Mate-X PCM</td></tr>
+			<tr><td>5</td><td>5h</td><td>Sound Blaster 16</td></tr>
+			<tr><td>6</td><td>6h</td><td>Speak board/Spark board</td></tr>
+			<tr><td>7</td><td>7h</td><td>MPU-PC98II</td></tr>
+			<tr><td>8</td><td>8h</td><td>Super MPU</td></tr>
+			<tr><td>9</td><td>9h</td><td>LGY-98</td></tr>
+			<tr><td>10</td><td>ah</td><td>SOUND ORCHESTRA</td></tr>
 		</tbody>
 	</table>
 	</div>
