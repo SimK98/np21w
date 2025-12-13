@@ -30,7 +30,8 @@
 
 <DL>
 <DT><B>CPU Type</B></DT>
-<DD><P>CPUの種類を設定します。<BR>種類によってCPUIDの情報や挙動が変わります。<BR>customと表示されている場合は非公開機能などによってリストにない値が設定されていることを表します。</B></P>
+<DD><P>CPUの種類（拡張命令の水準）を設定します。<BR>種類によってCPUIDの情報や挙動が変わります。<BR>customと表示されている場合は非公開機能などによってリストにない値が設定されていることを表します。</P>
+<P>古いソフトに対しては古いCPUタイプが適している場合もあります。</P>
 <table border=1>
 <thead>
 <tr>
@@ -65,7 +66,7 @@
 <P>※設定変更はリセット後に有効になります。</P>
 <P>※ファミリ・モデル・ステッピングは非公開機能で自由に変えられるので（動くかは別問題として）バージョンチェック回避なども可能です。</P>
 <P>※Neko Processor IIはベンダ名がIntelでもAMDでもないのでCPUチェックに引っかかるかもしれません。</P>
-<P>※現時点ではIntel Pentium 4以前のCPUが安定しています</P></DD>
+<P>※8086のmov cs,xx命令を許可する特殊オプションもあります（<A HREF="othercfg.html">非公開機能</A> USEMOVCS参照）。</P>
 </DL>
 
 <DL>
@@ -114,8 +115,16 @@ Always use 16bit I/O port addressing (PC-9821) にチェックを入れるとPC-
 
 <DL>
 <DT><B>Save window size</B></DT>
-<DD><P>チェックすると 終了時のウィンドウサイズを記録します。</P></DD>
+<DD>
+<P>チェックすると 終了時のウィンドウサイズを記録します。</P>
+<DL>
+<DT><B>Save settings for each resolution</B></DT>
+<DD><P>チェックすると ウィンドウサイズを画面解像度毎に記録します。</P></DD>
 </DL>
+</DD>
+</DL>
+
+
 
 <DL>
 <DT><B>Multi-thread mode</B></DT>

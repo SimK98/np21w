@@ -17,13 +17,14 @@
 <DL>
 <DD><TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
 <TR><TH COLSPAN="2" NOWRAP>メニュー</TH><TH NOWRAP>機能</TH></TR>
-<TR><TD ROWSPAN="17">Keyboard</TD><TD>Keyboard</TD><TD>キーボードを通常モードで使用します。</TD></TR>
+<TR><TD ROWSPAN="19">Keyboard</TD><TD>Keyboard</TD><TD>キーボードを通常モードで使用します。</TD></TR>
 <TR><TD>JoyKey-1</TD><TD>テンキー及びZXキーをジョイパッド1に割り当てます。</TD></TR>
 <TR><TD>JoyKey-2</TD><TD>テンキー及びZXキーをジョイパッド2に割り当てます。</TD></TR>
 <TR><TD>Mechanical SHIFT</TD><TD>シフトキーを押下の度にLock/Unlockします。</TD></TR>
 <TR><TD>Mechanical CTRL</TD><TD>コントロールキーを押下の度にLock/Unlockにします。</TD></TR>
 <TR><TD>Mechanical GRPH</TD><TD>グラフキーを押下の度にLock/Unlockにします。</TD></TR>
 <TR><TD>Send Ctrl+Alt+Del</TD><TD>Ctrl+Alt+Delを送信します。エミュレーションウィンドウでCtrl+Alt+ScrollLockキーを押しても送信することが出来ます。</TD></TR>
+<TR><TD>Paste Clipboard Text</TD><TD>クリップボードの内容をエミュレーターへキー入力します。</TD></TR>
 <TR><TD>F12 = Mouse</TD><TD>F12キーにマウス切替えを割り当てます。</TD></TR>
 <TR><TD>F12 = Copy</TD><TD>F12キーにCopyキーを割り当てます。</TD></TR>
 <TR><TD>F12 = Stop</TD><TD>F12キーにStopキーを割り当てます。</TD></TR>
@@ -31,13 +32,15 @@
 <TR><TD>F12 = 10key [ , ]</TD><TD>F12キーにテンキーの,(カンマ)キーを割り当てます。</TD></TR>
 <TR><TD>F12 = No wait</TD><TD>F12キーを押している間、CPUをノーウェイトで動かします。</TD></TR>
 <TR><TD>F12 = No wait(toggle)</TD><TD>F12キーにCPUのノーウェイト切替えを割り当てます。</TD></TR>
+<TR><TD>F12 = WAB relay SW</TD><TD>F12キーにウィンドウアクセラレータボード出力切替えを割り当てます（デバッグ用）。</TD></TR>
 <TR><TD>Use NumLock key</TD><TD>NumLockキーを有効にします。</TD></TR>
 <TR><TD>Swap PageUp/PageDown</TD><TD>ROLLUP(PageDown)と ROLLDOWN(PageUp)キーを入れ換えます。</TD></TR>
 <TR><TD>System Key Hook</TD><TD>システムのショートカットキーをフックします。<BR>左側のALT,CTRL,SHIFTの組み合わせはエミュレータ側に、右側はホストに送られます。<BR>例外としてCtrl+Alt+DelはCtrl+Alt+ScrollLockに割り当てられます。</TD></TR>
-<TR><TD ROWSPAN="27">Sound</TD><TD>Beep off</TD><TD>Beepを再生しません。</TD></TR>
+<TR><TD ROWSPAN="28">Sound</TD><TD>Beep off</TD><TD>Beepを再生しません。</TD></TR>
 <TR><TD>Beep low</TD><TD>Beep音量を小にします。</TD></TR>
 <TR><TD>Beep mid</TD><TD>Beep音量を中にします。</TD></TR>
 <TR><TD>Beep high</TD><TD>Beep音量を大にします。</TD></TR>
+<TR><TD>Fix beep PCM offset</TD><TD>Beep PCMの再生開始終了時のブツブツ音を低減します。</TD></TR>
 <TR><TD>Disable boards</TD><TD>サウンドボードを使用しません。</TD></TR>
 <TR><TD>PC-9801-14</TD><TD>PC-9801-14(ミュージックジェネレータボード)を使用します。</TD></TR>
 <TR><TD>PC-9801-26K</TD><TD>PC-9801-26Kを使用します。</TD></TR>
@@ -77,9 +80,11 @@
 <TR><TD ROWSPAN="3">FPU</TD><TD>80bit Extended Precision FPU (recommended)</TD><TD>Berkeley SoftFloatによる80bit拡張倍精度浮動小数点でFPUエミュレーションを行います（推奨）。低速ですが実CPU同様の正確な計算結果となります。</TD></TR>
 <TR><TD>64bit Double Precision FPU</TD><TD>64bit倍精度浮動小数点でFPUエミュレーションを行います。高速ですが実CPUより精度が劣るため演算結果が不正確になる可能性があります。</TD></TR>
 <TR><TD>64bit Double Precision FPU + INT64 Load/Store</TD><TD>64bit倍精度浮動小数点でFPUエミュレーションを行いますが、整数のロード・ストアのみ80bit拡張倍精度相当で行えます。</TD></TR>
-<TR><TD ROWSPAN="10">Mouse</TD><TD>Mouse Capture</TD><TD>Windowsのマウスを占有して、マウスエミュレーションを有効にします。<BR>３ボタンマウスでは中ボタンクリックでも切替えが可能です。</TD></TR>
+<TR><TD ROWSPAN="12">Mouse</TD><TD>Mouse Capture</TD><TD>Windowsのマウスを占有して、マウスエミュレーションを有効にします。<BR>３ボタンマウスでは中ボタンクリックでも切替えが可能です。</TD></TR>
 <TR><TD>Raw Input Mode</TD><TD>マウスから移動量データを直接取得します。<BR>マウスの挙動がホストOSの設定に依存しなくなります。</TD></TR>
 <TR><TD>Non-capture Control</TD><TD>マウスキャプチャしていない状態でもマウス操作が出来るようにします。ゲストOSに専用のマウスドライバを入れている場合は、完全にシームレスなマウス操作が可能です。</TD></TR>
+<TR><TD>Change Sound Volume by Wheel</TD><TD>マウスホイール回転をボリューム調整に割り当てます。</TD></TR>
+<TR><TD>Limit Max Mouse Speed</TD><TD>マウス移動速度を4bitの範囲に制限します。マウスを速く動かすとカーソルが飛ぶ場合にONにしてみてください。</TD></TR>
 <TR><TD>x3.0</TD><TD>マウス速度を3倍にします。</TD></TR>
 <TR><TD>x2.0</TD><TD>マウス速度を2倍にします。</TD></TR>
 <TR><TD>x1.5</TD><TD>マウス速度を1.5倍にします。</TD></TR>
@@ -93,6 +98,8 @@
 <TR><TD COLSPAN="2">Sound option</TD><TD><A HREF="sndmix.html">サウンド設定ダイアログ</A>を開きます。</TD></TR>
 <TR><TD COLSPAN="2">Network option</TD><TD><A HREF="netlgy98.html">ネットワーク設定ダイアログ</A>を開きます。</TD></TR>
 <TR><TD COLSPAN="2">Window Accelerator option</TD><TD><A HREF="wabgd5430.html">ウィンドウアクセラレータ設定ダイアログ</A>を開きます。</TD></TR>
+<TR><TD COLSPAN="2">PCI option</TD><TD><A HREF="pciopt.html">PCI設定ダイアログ</A>を開きます。</TD></TR>
+<TR><TD COLSPAN="2">Hostdrv option</TD><TD><A HREF="hostdrvopt.html">ホスト共有ドライブ設定ダイアログ</A>を開きます。</TD></TR>
 </TABLE></DD>
 </DL>
 
