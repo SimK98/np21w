@@ -10,7 +10,7 @@
 
 <BR><BR>
 
-<H3><B>使用許諾条件（ver0.86 rev46）</B></H3>
+<H3><B>使用許諾条件</B></H3>
 
 <DL>
 <DT><B>使用許諾</B></DT>
@@ -24,7 +24,68 @@
 
 <DL>
 <DT><B>ソースコード</B></DT>
-<DD><P>ねこープロジェクトII及びねこープロジェクト21/Wのソースコードは LGY-98関連とCL-GD54xx関連の部分、FPU(fpemul_dosbox.c,fpemul_dosbox2.c,fpemul_softfloat.c, fpu/softfloat)、fmgen部分(sound/fmgen)、MAME部分(sound/mame)、その他外部から移植されたファイル（ソース内にライセンスに関する記載があります）を除き修正BSDライセンスとします。</P><P>コア部分とWindows/MacOS9部分については 再配布時の著作権表示の義務はありません。</P><P>LGY-98関連とCL-GD5430関連のソースコードはQEMUのMITライセンス部分からの移植であるためMIT License、FPUについてはDOSBoxからの移植であるためGPLとなります（ただし、SoftFloat版FPUは猫本体と同じ修正BSD扱いとします）。fmgenやMAMEについてもそれぞれのライセンスに従ってください。</P></DD>
+<DD><p>Neko Project 21/Wの大半のコードは修正BSDライセンスですが、以下のファイルは移植のためライセンスが異なっています。これらを含めてコンパイルすると全体としてのライセンスが変わりますのでご注意ください。
+バージョンによってライセンスが異なる場合がありますので、必ずそのバージョンに該当する表を参照してください。
+</p>
+	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev98以降<small>（※修正BSDを適用できないもののみ）</small></caption>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照<br>原則商用不可</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td colspan=3><small>以下のファイルは標準構成では除外されています（ビルド対象に含まれない）</small></td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c</td><td>GPL</td><td>【標準で除外】使用する場合はSUPPORT_FPU_DOSBOXとSUPPORT_FPU_DOSBOX2を定義する。</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>【標準で除外】使用する場合はUSE_MAMEを定義し、USE_MAME_BSDを定義しないようにする。</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照<br>修正BSD風味</td><td>【標準で除外】使用する場合はSUPPORT_FPU_SOFTFLOAT3の代わりにSUPPORT_FPU_SOFTFLOATを定義する。</td></tr>
+		</tbody>
+	</table>
+	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev97β2以降</caption>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c</td><td>GPL</td><td>SUPPORT_FPU_DOSBOXとSUPPORT_FPU_DOSBOX2をプリプロセッサ定義から削除し、fpemul_dosbox.c, fpemul_dosbox2.cをコンパイルから除外する</td></tr>
+			<tr><td>fpemul_softfloat.c</td><td>修正BSD</td><td>本体と同じライセンスになりました。</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照<br>修正BSD風味</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、fpemul_softfloat.cとsoftfloat/*.*を除外する。<br>修正BSD版SoftFloatを使いたい場合はSUPPORT_FPU_SOFTFLOAT3を定義する。</td></tr>
+			<tr><td>fpemul_softfloat3.cpp<br>fpu/softfloat3/*.*</td><td>修正BSD</td><td>独自ライセンスSoftFloatの代替品です。</td></tr>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照<br>原則商用不可</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>/sound/mame/*.*を除外し、代わりに/sound/mamebsd/*.*を使用する</td></tr>
+			<tr><td>/sound/mamebsd/*.*</td><td>修正BSD</td><td>GPLv2版MAMEの代替品です。</td></tr>
+			<tr><td>/cbus/ct1741io.c</td><td>修正BSD</td><td>本体と同じライセンスになりました。</td></tr>
+		</tbody>
+	</table>
+	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev88以降</caption>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c</td><td>GPL</td><td>SUPPORT_FPU_DOSBOXとSUPPORT_FPU_DOSBOX2をプリプロセッサ定義から削除し、fpemul_dosbox.c, fpemul_dosbox2.cをコンパイルから除外する</td></tr>
+			<tr><td>fpemul_softfloat.c</td><td>修正BSD</td><td>本体と同じライセンスになりました。</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照<br>修正BSD風味</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、fpemul_softfloat.cとsoftfloat/*.*を除外する</td></tr>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照<br>原則商用不可</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>USE_MAMEをプリプロセッサ定義から削除し、/sound/mame/*.*を除外する</td></tr>
+			<tr><td>/cbus/ct1741io.c</td><td>GPLv2</td><td>SUPPORT_SOUND_SB16をプリプロセッサ定義から削除し/cbus/ct1741io.cを除外する、またはDSP関連コードを手動削除</td></tr>
+		</tbody>
+	</table>
+	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev87以前</caption>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>cirrus_vga*.*<br>lgy98*.*</td><td>MIT</td><td>SUPPORT_CL_GD5430とSUPPORT_LGY98をプリプロセッサ定義から削除する</td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c<br>fpemul_softfloat.c</td><td>GPL</td><td>SUPPORT_FPU_SOFTFLOAT, SUPPORT_FPU_DOSBOXとSUPPORT_FPU_DOSBOX2をプリプロセッサ定義から削除し、fpemul_dosbox.c, fpemul_dosbox2.c, fpemul_softfloat.cをコンパイルから除外する（Berkeley SoftFloatは本来別のライセンスですがfpemul_softfloat.cだけはDOSBox由来のコードを含むためGPLです）</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照</td><td>SUPPORT_FPU_SOFTFLOATをプリプロセッサ定義から削除し、softfloat/*.*を除外する</td></tr>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照<br>原則商用不可</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>USE_MAMEをプリプロセッサ定義から削除し、/sound/mame/*.*を除外する</td></tr>
+			<tr><td>/cbus/ct1741io.c</td><td>GPLv2</td><td>SUPPORT_SOUND_SB16をプリプロセッサ定義から削除し/cbus/ct1741io.cを除外する、またはDSP関連コードを手動削除</td></tr>
+		</tbody>
+	</table></DD>
 </DL>
 
 </BODY>
