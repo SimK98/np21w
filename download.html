@@ -28,6 +28,12 @@
 		※初めて使用される場合はページ下部の注意事項もご覧下さい
 	</p>
 	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1v2hb6KtJHZrzxOie4wX4mQT4MF70Bxou/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev98β1）</a><br>
+		<a href="https://drive.google.com/file/d/17DSFvgAkucYf73ShOza3_I8IkmPCBKxT/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev98β1）ish</a><br>
+		β版です。ソースコード付きです。<br>
+		<small>ステートセーブは旧→rev98以降のみ互換、rev98→rev97は12/14差替版のみ互換、その他は非互換。</small>
+	</div>
+	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1Cf7U-E_WI395KPi4V95FrnTb6fBjzg6f/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev97）</a><br>
 		<a href="https://drive.google.com/file/d/1Qpn3E_OmYetpA3Myqyn7MI1aCh8eZygl/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev97）ish</a><br>
 		通常版です。ソースコード付きです。
@@ -262,8 +268,23 @@
 		バージョンによってライセンスが異なる場合がありますので、必ずそのバージョンに該当する表を参照してください。
 	</p>
 	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/1rgV2n0KZaHD4B4RHcSOnAS081APdvEeX/view?usp=drive_link">Neko Project 21/W 修正BSDライセンスソースダウンロード（ver0.86 rev97β2相当）</a><br>
+		<a href="https://drive.google.com/file/d/1mSSrBcMVkGE0VdjCd4yspMXN2vYy6eKu/view?usp=drive_link">Neko Project 21/W 修正BSDライセンスソースダウンロード（ver0.86 rev98β1相当）</a><br>
 		下記の除外操作が面倒な人向けに修正BSDを適用できる範囲だけにしたバージョンを用意しました。
+	</div>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="max-width:100%;" border=1>
+		<caption style="font-weight:bold;">ver0.86 rev98以降</caption>
+		<thead>
+			<tr><th style="min-width:6em;">ファイル</th><th style="min-width:7em;">ライセンス</th><th>除外方法</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>/sound/fmgen/*.*</td><td>Readme参照<br>原則商用不可</td><td>SUPPORT_FMGENをプリプロセッサ定義から削除し、/sound/fmgen/*.*を除外する</td></tr>
+			<tr><td colspan=3><small>以下のファイルは標準構成では除外されています（ビルド対象に含まれない）</small></td></tr>
+			<tr><td>fpemul_dosbox.c<br>fpemul_dosbox2.c</td><td>GPL</td><td>【標準で除外】使用する場合はSUPPORT_FPU_DOSBOXとSUPPORT_FPU_DOSBOX2を定義する。</td></tr>
+			<tr><td>/sound/mame/*.*</td><td>GPLv2</td><td>【標準で除外】使用する場合はUSE_MAMEを定義し、USE_MAME_BSDを定義しないようにする。</td></tr>
+			<tr><td>fpu/softfloat/*.*</td><td>Readme参照<br>修正BSD風味</td><td>【標準で除外】使用する場合はSUPPORT_FPU_SOFTFLOAT3の代わりにSUPPORT_FPU_SOFTFLOATを定義する。</td></tr>
+		</tbody>
+	</table>
 	</div>
 	<div  style="margin:16px;" class="tablediv">
 	<table style="max-width:100%;" border=1>
