@@ -236,9 +236,34 @@
 			ymfmidiに抱き合わせの定義ファイルは<a href="https://github.com/sneakernets/DMXOPL/tree/DMXOPL3">DMXOPL</a>
 		から来ているようです。ここにあるGENMIDI(GS).woplは個人的には結構いい感じだと思います。
 		</p>
+		
+		<h4 style="margin-left:0;">Windows標準のFM MIDI風にしたい人向け情報</h4>
 		<p>
 			Windows標準のFM MIDI風の音色にしたい場合はGENMIDI.op2を使用すると多少は近いです。
+			もっと完璧に近付けたい場合は、WindowsのSB16 FMドライバからパラメータを持ってくる必要があります。
 		</p>
+		<p>
+			WinDDKにこのパラメータ定義がありますが、本来の目的外での配布は恐らく不味いので組み込むことはしません。
+			その代わり、Windows NT4 DDKのSB16サンプルドライバに含まれるFMSYNTH.BINを引数に渡すと音色データとして読み込めるようにしておきました（v0.6.2.0以降対応）。
+			ただしドラムはOPLのドラムモード依存（ymfmidi未対応）のようなので、ドラムだけはGENMIDI.op2から読むようにしています。
+			GENMIDI.op2をymfmidiwin.exeと同じ場所に置いておいてください。
+		</p>
+		<p style="font-size:smaller;">
+			実はDDKを持っていなくても、NT4用のSound BlasterドライバのDLL(sndblst.dll等)にも全く同じものがリソースとして含まれています。
+			そこで、FMSYNTH.BIN相当のリソースを含むDLLを引数に渡したときにもリソースを引き抜いて使えるようにしておきました。
+		</p>
+		
+		<h4 style="margin-left:0;">Q&A</h4>
+		<dl>
+		<dt>Q. GENMIDI.woplがロードできないと出た</dt>
+		<dd>A. exeと同じ場所にGENMIDI.woplを置くか、明示的に指定してください。なお、圧縮されているときはセットで展開してから使ってください。</dd>
+		
+		<dt>Q. loopMIDIを使用しているとき、ymfmidiを起動せずにMIDIを鳴らし続けていたらymfmidiを起動しても音が出なくなった</dt>
+		<dd>A. loopMIDIへ無駄にデータを送ると暴走して無反応になることがあります。MIDI再生ソフトとymfmidiを一旦終了し、loopMIDIポートを削除して再作成してください。</dd>
+		
+		<dt>Q. 動作が重い</dt>
+		<dd>A. -qオプションで画面表示を止めてみたり、--resampler linearオプションで線形補間にしてみてください。また、チップ数も少なめにしてください。</dd>
+		</dl>
 	</div>
 
 	<h2>注意事項</h2>
