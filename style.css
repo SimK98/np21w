@@ -1,7 +1,8 @@
 @charset "UTF-8";
 
 body {
-	word-wrap:break-word;
+	word-wrap: break-word;
+	font-family: "Segoe UI", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
 }
 h2, h3, h4 {
 	padding-top: 1em;
