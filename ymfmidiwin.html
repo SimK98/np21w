@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>ymfmidi for Windows - Software OPL FM MIDI synthesizer</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=5">
+</head>
+<body>
+	<h1><span style="font-size:medium;">Software OPL FM MIDI synthesizer</span><br> ymfmidi for Windows</h1>
+	<img src="img/ymfmidiwin.png" style="width:48px;">
+	<div>
+		<a href="https://github.com/SimK98/ymfmidiwin/releases">ymfmidi for Windows ダウンロード</a>
+	</div>
+	<p style="font-weight:bold;">
+		ヤマハのFM音源をエミュレーションする<a href="https://github.com/aaronsgiles/ymfm">ymfm</a>をMIDIプレーヤーとして実装した<a href="https://github.com/devinacker/ymfmidi">ymfmidi</a>をさらにWindowsへ移植したものです。
+	</p>
+	<p>
+		ここで言うFM音源のMIDIとは、昔のSound Blasterなどに載っていたOPL3チップを使ったMIDIのことです。
+		今時はサウンドフォントを使った高品質MIDI音源が手軽に使用できますので、FM音源のMIDIは品質面で到底太刀打ちできるものではありません。
+	</p>
+	<p>
+		しかし、PCにFM音源が搭載されなくなって久しい今となっては、逆にFM音源によるMIDIの音色は新しい存在です。
+		このFM音源を再現したサウンドフォントは世の中にありますが、FM音源はサンプリング音源とは根本的に音の作り方が違います。
+		つまり「あの時のあの音」を目指すには、サウンドフォントではなくFM音源の波形合成の仕組みそのものの再現が（おそらく）ベストです。
+	</p>
+	<p>
+		そういうわけで、本ソフトウェアはヤマハのOPL系チップのFM音源をエミュレーションし、WindowsのMIDI環境（midiIn/midiOut API）からFM音源を利用可能にすることを目的としています。
+	</p>
+	<h3>特徴</h3>
+	<ul>
+		<li><strong>FM音源風サウンドフォントではなく、完全なFM音源エミュレーション</strong>
+			<ul>
+				<li>YAMAHA OPL系チップ（種類選択可能）を再現</li>
+				<li>波形合成レベルでのエミュレーション</li>
+				<li>チップの複数使用によって同時発音数を増加可能</li>
+			</ul>
+		</li>
+		<li><strong>過去のWindows FM MIDIよりもMIDI仕様への互換性が向上</strong>
+			<ul>
+				<li>GM/GS/XGの処理に対応（音色定義を調整することで、さらに互換性を向上可能）</li>
+				<li>過去のWindows FM MIDIで正しく処理されていなかった仕様を修正（ピッチベンド周りなど）</li>
+			</ul>
+		</li>
+		<li><strong>WindowsネイティブなMIDIデバイスとして動作</strong>
+			<ul>
+				<li>MIDI INデバイスとして使用可能な常駐型ソフトウェアシンセサイザー</li>
+				<li>loopMIDI等の仮想MIDIケーブルを使用することで、Windows標準のmidiOut API対応アプリケーションから利用可能</li>
+			</ul>
+		</li>
+		<li><strong>リアルタイム再生＆オフラインレンダリング</strong>
+			<ul>
+				<li>MIDIメッセージをリアルタイムに処理し、音声出力可能</li>
+				<li>MIDI再生結果をWAVファイルとして書き出し可能</li>
+			</ul>
+		</li>
+	</ul>
+	<p>
+		コアになるymfmのみならず、主要なコードのほとんどはymfmidiから来ています。サンプリング変換なども他の方々のものです。素晴らしいプログラムをありがとうございます。
+		また、追加コードの8割方は（面倒くさがって）ChatGPTにたたき台を書かせたりしているので、最低限の内容チェックはしていますが雑です。
+	</p>
+	<p>
+		音色の定義ファイル（*.wopl等）はエディタで自作するほかに、公開されているものも使用できます。
+		ymfmidiに抱き合わせの定義ファイルは<a href="https://github.com/sneakernets/DMXOPL/tree/DMXOPL3">DMXOPL</a>
+	から来ているようです。ここにあるGENMIDI(GS).woplは個人的には結構いい感じだと思います。
+	</p>
+	
+	<h3>Windows標準のFM MIDI風にしたい人向け情報</h3>
+	<p>
+		Windows標準のFM MIDI音源に近い音色で再生したい場合、Windows標準のSound Blaster 16ドライバで使用されている音色パラメータが必要になります。
+		この実体はWindows NT4 DDKサンプルに含まれるFMSYNTH.BINです。
+	</p>
+	<p>
+		ただし、このパラメータ定義は本来ドライバ開発用（DDK）に含まれるものであり、サンプルとは言えども目的外での再配布は適切でない可能性があるため、本ソフトウェアにはFMSYNTH.BINを同梱していません。
+		その代替手段として以下の方法に対応しています。
+	</p>
+	<ol>
+		<li>DDKサンプルのFMSYNTH.BINを使用する方法
+			<p>
+				Windows NT4 DDKに含まれるSound Blaster 16 サンプルドライバのFMSYNTH.BINを
+				音色定義ファイルとして指定すると読み込めます。
+			</p>
+			<p>
+				（例）ymfmidiwin //MIDIIN FMSYNTH.BIN
+			</p>
+		</li>
+		<li>ドライバDLLから読み込む方法
+			<p>
+				実はWindows NT4用のSound Blaster系ドライバのDLL（例：sndblst.dllなど）には、FMSYNTH.BINと同一内容のデータがリソースとして含まれています。
+			</p>
+			<p>
+				そのため、本ソフトウェアではFMSYNTH.BIN相当のリソースを含むDLLファイルを指定した場合も、そのリソースから音色データを読み込めるようにしています。
+				FMSYNTH.BIN相当のリソースが含まれていればsndblst.dllでなくても構いません。
+			</p>
+			<p>
+				（例）ymfmidiwin //MIDIIN sndblst.dll
+			</p>
+		</li>
+	</ol>
+	<p>
+		【注意】FMSYNTH.BINに含まれるドラム音色はOPLのリズム音に依存していますが、リズム音は現在のymfmidiでは未対応です。そのため、ドラム音色のみGENMIDI.op2から読み込む実装になっています。
+		GENMIDI.op2をymfmidiwin.exeと同じフォルダに配置してください。
+	</p>
+	
+	<h3>Q&A</h3>
+	<dl>
+	<dt>Q. GENMIDI.woplがロードできないと出た</dt>
+	<dd>A. exeと同じ場所にGENMIDI.woplを置くか、明示的に指定してください。なお、圧縮されているときはセットで展開してから使ってください。</dd>
+	
+	<dt>Q. loopMIDIを使用しているとき、ymfmidiを起動せずにMIDIを鳴らし続けていたらymfmidiを起動しても音が出なくなった</dt>
+	<dd>A. loopMIDIへ無駄にデータを送ると暴走して無反応になることがあります。MIDI再生ソフトとymfmidiを一旦終了し、loopMIDIポートを削除して再作成してください。</dd>
+	
+	<dt>Q. 動作が重い</dt>
+	<dd>A. -qオプションで画面表示を止めてみたり、--resampler linearオプションで線形補間にしてみてください。また、チップ数も少なめにしてください。</dd>
+	
+	<dt>Q. 標準のMIDI出力先にしたい</dt>
+	<dd>A. 最近のWindowsはMIDIマッパーがなくなったため、OS標準ではデフォルトのMIDI出力デバイスを変更できなくなりました。変更したい場合はCoolSoft MIDIMapper等を使用してください。</dd>
+	</dl>
+	
+	<p>
+		<a href="./download.html">なんかくれに戻る</a>
+	</p>
+	<p>
+		<a href="./index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
