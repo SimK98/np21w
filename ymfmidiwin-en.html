@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./ymfmidi.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>ymfmidi for Windows - Software OPL FM MIDI synthesizer</title>
+	<link rel="stylesheet" type="text/css" href="./style.css?dummy=5">
+</head>
+<body>
+	<div><a href="./ymfmidiwin.html">日本語</a></div>
+	<h1><span style="font-size:medium;">Software OPL FM MIDI synthesizer</span><br> ymfmidi for Windows</h1>
+	<img src="img/ymfmidiwin.png" style="width:48px;">
+	<div>
+		<a href="https://github.com/SimK98/ymfmidiwin/releases">Download ymfmidi for Windows</a>
+	</div>
+	<p style="font-weight:bold;">
+		ymfmidi for Windows is a software FM MIDI synthesizer for Windows, based on <a href="https://github.com/aaronsgiles/ymfm">ymfm</a> and <a href="https://github.com/devinacker/ymfmidi">ymfmidi</a>.
+	</p>
+	<p>
+		Unlike FM-style soundfonts, this software performs true FM sound synthesis by emulating YAMAHA OPL-series FM chips at the waveform synthesis level.
+	</p>
+	<h3>What is “FM MIDI”?</h3>
+	<p>
+		In the past, many PCs used FM sound chips to play MIDI music.
+		These chips generated sound by combining simple waveforms, resulting in a distinctive and hardware-dependent sound character.
+	</p>
+	<p>
+		Modern MIDI synthesizers usually rely on sampled instruments, but FM synthesis still has unique qualities that cannot be reproduced exactly with soundfonts.
+	</p>
+	<p>
+		This project aims to reproduce the original FM synthesis behavior itself, not just imitate its sound.
+	</p>
+	<h3>Features</h3>
+	<ul>
+		<li><strong>True FM sound synthesis</strong>
+			<ul>
+				<li>Emulates YAMAHA OPL / OPL2 / OPL3 chips</li>
+				<li>Waveform-level FM synthesis (not sample-based)</li>
+				<li>Multiple virtual chips can be used to increase polyphony</li>
+			</ul>
+		</li>
+		<li><strong>Improved MIDI compatibility</strong>
+			<ul>
+				<li>Supports GM, GS, and XG behavior (depending on instrument definitions)</li>
+				<li>Correct handling of MIDI specifications that were not properly supported by older Windows FM MIDI drivers (e.g. pitch bend range)</li>
+			</ul>
+		</li>
+		<li><strong>Native Windows MIDI device</strong>
+			<ul>
+				<li>Provides a resident software synthesizer usable as a MIDI IN device</li>
+				<li>Can be used from standard Windows applications supporting the midiOut API by using a virtual MIDI cable such as loopMIDI</li>
+			</ul>
+		</li>
+		<li><strong>Real-time playback and offline rendering</strong>
+			<ul>
+				<li>Real-time audio output via WASAPI</li>
+				<li>MIDI-to-WAV rendering supported</li>
+			</ul>
+		</li>
+	</ul>
+	<figure>
+		<img src="img/ymfmidiwin_ss.png">
+		<figcaption>ymfmidi for Windows (resident)</figcaption>
+	</figure>
+	<figure>
+		<img src="img/ymfmidiwin_ss2.png">
+		<figcaption>ymfmidi for Windows (console)</figcaption>
+	</figure>
+	
+	<h3>Information for those who want Windows-style FM MIDI sound</h3>
+	<p>
+		If you want to play MIDI with tones similar to the standard FM MIDI sound source in Windows, you will need the tone parameters used by the standard Windows Sound Blaster 16 driver.
+		The actual data is included as FMSYNTH.BIN in the Windows NT4 DDK sample.
+	</p>
+	<p>
+		However, since this parameter definition was originally provided for driver development (DDK) use, redistributing it for purposes outside that scope may be inappropriate—even if it is only a sample. For this reason, this software does not include FMSYNTH.BIN.
+		Instead, the following alternative methods are supported:
+	</p>
+	<ol>
+		<li>Using the FMSYNTH.BIN from the DDK sample
+			<p>
+				If you specify the FMSYNTH.BIN included with the Sound Blaster 16 sample driver in the Windows NT4 DDK as the tone definition file, it can be loaded.
+			</p>
+			<p>
+				Example: 
+				ymfmidiwin //MIDIIN FMSYNTH.BIN
+			</p>
+		</li>
+		<li>Loading from a driver DLL
+			<p>
+				In fact, the Sound Blaster–series driver DLLs for Windows NT4 (such as sndblst.dll) contain the same data as FMSYNTH.BIN embedded as a resource.
+			</p>
+			<p>
+				Therefore, this software can also load tone data from such DLL files if they contain an FMSYNTH.BIN-equivalent resource. It does not have to be specifically sndblst.dll, as long as the resource is present.
+			</p>
+			<p>
+				Example: 
+				ymfmidiwin //MIDIIN sndblst.dll
+			</p>
+		</li>
+	</ol>
+	<p>
+		[Note] The drum tones contained in FMSYNTH.BIN depend on OPL rhythm sounds. However, rhythm sounds are currently not supported in ymfmidi. For this reason, only the drum tones are loaded from GENMIDI.op2 instead.
+Please place GENMIDI.op2 in the same folder as ymfmidiwin.exe.
+	</p>
+	
+	<p>
+		<a href="./download.html">なんかくれに戻る</a>
+	</p>
+	<p>
+		<a href="./index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
