@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
 	<meta charset="utf-8"/>
 	<meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -11,6 +11,9 @@
 </head>
 <body>
 	<h1><span style="font-size:medium;">Software OPL FM MIDI synthesizer</span><br> ymfmidi for Windows</h1>
+	<div style="font-size: small; position: fixed; right: 0; top: 0; background-color: rgba(255,255,255,0.8); padding: 2px; z-index: 9999; ">
+		日本語 | <a href="./ymfmidiwin-en.html">English</a>
+	</div>
 	<img src="img/ymfmidiwin.png" style="width:48px;">
 	<div>
 		<a href="https://github.com/SimK98/ymfmidiwin/releases">ymfmidi for Windows ダウンロード</a>
@@ -32,26 +35,31 @@
 	</p>
 	<h3>特徴</h3>
 	<ul>
-		<li><strong>FM音源風サウンドフォントではなく、完全なFM音源エミュレーション</strong>
+		<li>
+			<strong>FM音源風サウンドフォントではなく、完全なFM音源エミュレーション</strong>
 			<ul>
 				<li>YAMAHA OPL系チップ（種類選択可能）を再現</li>
 				<li>波形合成レベルでのエミュレーション</li>
 				<li>チップの複数使用によって同時発音数を増加可能</li>
 			</ul>
 		</li>
-		<li><strong>過去のWindows FM MIDIよりもMIDI仕様への互換性が向上</strong>
+		<li>
+			<strong>過去のWindows FM MIDIよりもMIDI仕様への互換性が向上</strong>
 			<ul>
 				<li>GM/GS/XGの処理に対応（音色定義を調整することで、さらに互換性を向上可能）</li>
 				<li>過去のWindows FM MIDIで正しく処理されていなかった仕様を修正（ピッチベンド周りなど）</li>
 			</ul>
 		</li>
-		<li><strong>WindowsネイティブなMIDIデバイスとして動作</strong>
+		<li>
+			<strong>WindowsネイティブなMIDIデバイスとして動作</strong>
 			<ul>
-				<li>MIDI INデバイスとして使用可能な常駐型ソフトウェアシンセサイザー</li>
+				<li>MIDI INの入力を受け取れる常駐型ソフトウェアシンセサイザー</li>
 				<li>loopMIDI等の仮想MIDIケーブルを使用することで、Windows標準のmidiOut API対応アプリケーションから利用可能</li>
+				<li>MIDIメッセージがないときは自動的にスリープ状態になるため、低消費電力</li>
 			</ul>
 		</li>
-		<li><strong>リアルタイム再生＆オフラインレンダリング</strong>
+		<li>
+			<strong>リアルタイム再生＆オフラインレンダリング</strong>
 			<ul>
 				<li>MIDIメッセージをリアルタイムに処理し、音声出力可能</li>
 				<li>MIDI再生結果をWAVファイルとして書き出し可能</li>
@@ -65,7 +73,7 @@
 	<p>
 		音色の定義ファイル（*.wopl等）はエディタで自作するほかに、公開されているものも使用できます。
 		ymfmidiに抱き合わせの定義ファイルは<a href="https://github.com/sneakernets/DMXOPL/tree/DMXOPL3">DMXOPL</a>
-	から来ているようです。ここにあるGENMIDI(GS).woplは個人的には結構いい感じだと思います。
+		から来ているようです。ここにあるGENMIDI(GS).woplは個人的には結構いい感じだと思います。
 	</p>
 	<figure>
 		<img src="img/ymfmidiwin_ss.png" alt="ymfmidi for Windowsをタスクバーに常駐させた例">
@@ -75,7 +83,32 @@
 		<img src="img/ymfmidiwin_ss2.png" alt="ymfmidi for Windows コンソール版を2つ使用して32ch MIDIを再生した例">
 		<figcaption>ymfmidi for Windows コンソール版</figcaption>
 	</figure>
-	
+
+	<h3>MIDI出力先として設定する方法</h3>
+	<p>
+		本ソフトウェアはMIDI INからのメッセージを受け取って再生することができますが、他のソフトウェアのMIDI出力先として直接選ぶことはできません。
+		他のソフトウェアでMIDI出力先として選ぶためにはloopMIDI等の仮想MIDIケーブルが必要です。
+	</p>
+	<p>
+		loopMIDIを使う場合は以下の手順で設定できます。
+	</p>
+	<ol>
+		<li><a href="https://www.tobias-erichsen.de/software/loopmidi.html" target="_blank">loopMIDIの公式サイト</a>からloopMIDIをダウンロードしてインストールしてください。</li>
+		<li>
+			loopMIDIを起動し、「Add port（+）」ボタンをクリックして新しい仮想MIDIポートを作成します。ポート名は「YMFM OPL FM MIDI Synthesizer」など任意の名前で構いません。これにより同じ名前のMIDI INとMIDI OUTポートが出現し、それらが仮想的に直結された状態になります。<br>
+			<img src="img/ymfmidiwin_loopmidi1.png" alt="loopMIDIにポートを足した例">
+		</li>
+		<li>loopMIDIが唯一のMIDI INデバイスであれば、ymfmidiwin-synth.exeを起動するだけで自動的に作成したMIDI INデバイスが使用されます。</li>
+	</ol>
+	<p>
+		もしMIDI INが複数ある場合は、MIDIデバイスの番号を //MIDIIN&lt;番号&gt; オプションで明示してください。
+	</p>
+	<p>
+		デフォルトのMIDI出力先として使用したい場合は、<a href="https://coolsoft.altervista.org/en/midimapper" target="_blank">CoolSoft MIDIMapper</a>をインストールしてください。
+		インストール後にMIDIMapper Configuratorを使用して先に作成した仮想MIDIポートを指定してください。
+	</p>
+	<img src="img/ymfmidiwin_midimapper1.png" alt="MIDIMapperの設定例">
+
 	<h3>Windows標準のFM MIDI風にしたい人向け情報</h3>
 	<p>
 		Windows標準のFM MIDI音源に近い音色で再生したい場合、Windows標準のSound Blaster 16ドライバで使用されている音色パラメータが必要になります。
@@ -86,7 +119,8 @@
 		その代替手段として以下の方法に対応しています。
 	</p>
 	<ol>
-		<li>DDKサンプルのFMSYNTH.BINを使用する方法
+		<li>
+			DDKサンプルのFMSYNTH.BINを使用する方法
 			<p>
 				Windows NT4 DDKに含まれるSound Blaster 16 サンプルドライバのFMSYNTH.BINを
 				音色定義ファイルとして指定すると読み込めます。
@@ -95,7 +129,8 @@
 				（例）ymfmidiwin //MIDIIN FMSYNTH.BIN
 			</p>
 		</li>
-		<li>ドライバDLLから読み込む方法
+		<li>
+			ドライバDLLから読み込む方法
 			<p>
 				実はWindows NT4用のSound Blaster系ドライバのDLL（例：sndblst.dllなど）には、FMSYNTH.BINと同一内容のデータがリソースとして含まれています。
 			</p>
@@ -112,22 +147,22 @@
 		【注意】FMSYNTH.BINに含まれるドラム音色はOPLのリズム音に依存していますが、リズム音は現在のymfmidiでは未対応です。そのため、ドラム音色のみGENMIDI.op2から読み込む実装になっています。
 		GENMIDI.op2をymfmidiwin.exeと同じフォルダに配置してください。
 	</p>
-	
+
 	<h3>Q&A</h3>
 	<dl>
-	<dt>Q. GENMIDI.woplがロードできないと出た</dt>
-	<dd>A. exeと同じ場所にGENMIDI.woplを置くか、明示的に指定してください。なお、圧縮されているときはセットで展開してから使ってください。</dd>
-	
-	<dt>Q. loopMIDIを使用しているとき、ymfmidiを起動せずにMIDIを鳴らし続けていたらymfmidiを起動しても音が出なくなった</dt>
-	<dd>A. loopMIDIへ無駄にデータを送ると暴走して無反応になることがあります。MIDI再生ソフトとymfmidiを一旦終了し、loopMIDIポートを削除して再作成してください。</dd>
-	
-	<dt>Q. 動作が重い</dt>
-	<dd>A. -qオプションで画面表示を止めてみたり、--resampler linearオプションで線形補間にしてみてください。また、チップ数も少なめにしてください。</dd>
-	
-	<dt>Q. 標準のMIDI出力先にしたい</dt>
-	<dd>A. 最近のWindowsはMIDIマッパーがなくなったため、OS標準ではデフォルトのMIDI出力デバイスを変更できなくなりました。変更したい場合はCoolSoft MIDIMapper等を使用してください。</dd>
+		<dt>Q. GENMIDI.woplがロードできないと出た</dt>
+		<dd>A. exeと同じ場所にGENMIDI.woplを置くか、明示的に指定してください。なお、圧縮されているときはセットで展開してから使ってください。</dd>
+
+		<dt>Q. loopMIDIを使用しているとき、ymfmidiを起動せずにMIDIを鳴らし続けていたらymfmidiを起動しても音が出なくなった</dt>
+		<dd>A. loopMIDIへ無駄にデータを送ると暴走して無反応になることがあります。MIDI再生ソフトとymfmidiを一旦終了し、loopMIDIポートを削除して再作成してください。</dd>
+
+		<dt>Q. 動作が重い</dt>
+		<dd>A. -qオプションで画面表示を止めてみたり、--resampler linearオプションで線形補間にしてみてください。また、チップ数も少なめにしてください。</dd>
+
+		<dt>Q. 標準のMIDI出力先にしたい</dt>
+		<dd>A. 最近のWindowsはMIDIマッパーがなくなったため、OS標準ではデフォルトのMIDI出力デバイスを変更できなくなりました。変更したい場合はCoolSoft MIDIMapper等を使用してください。</dd>
 	</dl>
-	
+
 	<p>
 		<a href="./download.html">なんかくれに戻る</a>
 	</p>

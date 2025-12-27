@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8"/>
+	<meta charset="utf-8" />
 	<meta http-equiv="Content-Script-Type" content="text/javascript">
 	<meta http-equiv="Content-Style-Type" content="text/css">
 	<link rel="SHORTCUT ICON" href="./ymfmidi.ico">
@@ -10,108 +10,166 @@
 	<link rel="stylesheet" type="text/css" href="./style.css?dummy=5">
 </head>
 <body>
-	<div><a href="./ymfmidiwin.html">日本語</a></div>
 	<h1><span style="font-size:medium;">Software OPL FM MIDI synthesizer</span><br> ymfmidi for Windows</h1>
+	<div style="font-size: small; position: fixed; right: 0; top: 0; background-color: rgba(255,255,255,0.8); padding: 2px; z-index: 9999; ">
+		<a href="./ymfmidiwin.html">日本語</a> | English
+	</div>
 	<img src="img/ymfmidiwin.png" style="width:48px;">
 	<div>
 		<a href="https://github.com/SimK98/ymfmidiwin/releases">Download ymfmidi for Windows</a>
 	</div>
 	<p style="font-weight:bold;">
-		ymfmidi for Windows is a software FM MIDI synthesizer for Windows, based on <a href="https://github.com/aaronsgiles/ymfm">ymfm</a> and <a href="https://github.com/devinacker/ymfmidi">ymfmidi</a>.
+		This is a port of <a href="https://github.com/devinacker/ymfmidi">ymfmidi</a>, which implements <a href="https://github.com/aaronsgiles/ymfm">ymfm</a>, a Yamaha FM sound source emulator, as a MIDI player, to Windows.
 	</p>
 	<p>
-		Unlike FM-style soundfonts, this software performs true FM sound synthesis by emulating YAMAHA OPL-series FM chips at the waveform synthesis level.
-	</p>
-	<h3>What is “FM MIDI”?</h3>
-	<p>
-		In the past, many PCs used FM sound chips to play MIDI music.
-		These chips generated sound by combining simple waveforms, resulting in a distinctive and hardware-dependent sound character.
+		The FM MIDI mentioned here refers to MIDI using the OPL3 chip found in old Sound Blaster cards and similar devices.
+		Nowadays, high-quality MIDI sound sources using soundfonts are easily available, so FM MIDI cannot compete in terms of sound quality.
 	</p>
 	<p>
-		Modern MIDI synthesizers usually rely on sampled instruments, but FM synthesis still has unique qualities that cannot be reproduced exactly with soundfonts.
+		However, since FM sound sources have long disappeared from PCs, the unique sound of FM MIDI is actually a novel experience today.
+		Although there are soundfonts that try to reproduce FM sounds, FM synthesis fundamentally differs from sample-based soundfonts.
+		In other words, to recreate "that particular sound from back then," faithfully reproducing the FM synthesis mechanism itself is (probably) the best approach rather than relying on soundfonts.
 	</p>
 	<p>
-		This project aims to reproduce the original FM synthesis behavior itself, not just imitate its sound.
+		Therefore, this software aims to emulate Yamaha's OPL-series FM sound chips and make FM sound sources available from Windows MIDI environments (midiIn/midiOut API).
 	</p>
 	<h3>Features</h3>
 	<ul>
-		<li><strong>True FM sound synthesis</strong>
+		<li>
+			<strong>Complete FM sound source emulation, not just FM-style soundfonts</strong>
 			<ul>
-				<li>Emulates YAMAHA OPL / OPL2 / OPL3 chips</li>
-				<li>Waveform-level FM synthesis (not sample-based)</li>
-				<li>Multiple virtual chips can be used to increase polyphony</li>
+				<li>Emulates YAMAHA OPL-series chips (chip type selectable)</li>
+				<li>Emulation at the waveform synthesis level</li>
+				<li>Supports multiple chips to increase polyphony</li>
 			</ul>
 		</li>
-		<li><strong>Improved MIDI compatibility</strong>
+		<li>
+			<strong>Improved MIDI specification compatibility compared to past Windows FM MIDI</strong>
 			<ul>
-				<li>Supports GM, GS, and XG behavior (depending on instrument definitions)</li>
-				<li>Correct handling of MIDI specifications that were not properly supported by older Windows FM MIDI drivers (e.g. pitch bend range)</li>
+				<li>Supports GM/GS/XG processing (further compatibility possible by adjusting instrument definitions)</li>
+				<li>Fixes issues found in previous Windows FM MIDI implementations (e.g., pitch bend handling)</li>
 			</ul>
 		</li>
-		<li><strong>Native Windows MIDI device</strong>
+		<li>
+			<strong>Operates as a native Windows MIDI device</strong>
 			<ul>
-				<li>Provides a resident software synthesizer usable as a MIDI IN device</li>
-				<li>Can be used from standard Windows applications supporting the midiOut API by using a virtual MIDI cable such as loopMIDI</li>
+				<li>Resident software synthesizer that accepts MIDI IN input</li>
+				<li>Can be used from standard Windows midiOut API applications by using virtual MIDI cables like loopMIDI</li>
+				<li>Automatically enters a sleep state when no MIDI messages are present, reducing unnecessary power consumption</li>
 			</ul>
 		</li>
-		<li><strong>Real-time playback and offline rendering</strong>
+		<li>
+			<strong>Real-time playback & offline rendering</strong>
 			<ul>
-				<li>Real-time audio output via WASAPI</li>
-				<li>MIDI-to-WAV rendering supported</li>
+				<li>Processes MIDI messages in real-time and outputs sound</li>
+				<li>Can export MIDI playback results as WAV files</li>
 			</ul>
 		</li>
 	</ul>
-	<figure>
-		<img src="img/ymfmidiwin_ss.png">
-		<figcaption>ymfmidi for Windows (resident)</figcaption>
-	</figure>
-	<figure>
-		<img src="img/ymfmidiwin_ss2.png">
-		<figcaption>ymfmidi for Windows (console)</figcaption>
-	</figure>
-	
-	<h3>Information for those who want Windows-style FM MIDI sound</h3>
 	<p>
-		If you want to play MIDI with tones similar to the standard FM MIDI sound source in Windows, you will need the tone parameters used by the standard Windows Sound Blaster 16 driver.
-		The actual data is included as FMSYNTH.BIN in the Windows NT4 DDK sample.
+		The core is ymfm, but most of the main code comes from ymfmidi. Sampling conversion is also from others. Many thanks for these excellent programs.
 	</p>
 	<p>
-		However, since this parameter definition was originally provided for driver development (DDK) use, redistributing it for purposes outside that scope may be inappropriate—even if it is only a sample. For this reason, this software does not include FMSYNTH.BIN.
-		Instead, the following alternative methods are supported:
+		Instrument definition files (*.wopl, etc.) can be created with an editor or you can use publicly available files.
+		The bundled definition files with ymfmidi seem to come from <a href="https://github.com/sneakernets/DMXOPL/tree/DMXOPL3">DMXOPL</a>.
+		I personally find the GENMIDI(GS).wopl there quite good.
+	</p>
+	<figure>
+		<img src="img/ymfmidiwin_ss.png" alt="Example of ymfmidi for Windows resident in taskbar">
+		<figcaption>ymfmidi for Windows Resident Version</figcaption>
+	</figure>
+	<figure>
+		<img src="img/ymfmidiwin_ss2.png" alt="Example of playing 32ch MIDI using two console versions of ymfmidi for Windows">
+		<figcaption>ymfmidi for Windows Console Version</figcaption>
+	</figure>
+
+	<h3>How to set as a MIDI output device</h3>
+	<p>
+		This software can receive and play back MIDI messages from MIDI IN, but cannot be selected directly as a MIDI output destination by other software.
+		To select it as an output in other software, you need virtual MIDI cables such as loopMIDI.
+	</p>
+	<p>
+		To use loopMIDI, follow these steps:
 	</p>
 	<ol>
-		<li>Using the FMSYNTH.BIN from the DDK sample
+		<li>Download and install loopMIDI from the <a href="https://www.tobias-erichsen.de/software/loopmidi.html" target="_blank">official loopMIDI website</a>.</li>
+		<li>
+			Start loopMIDI and click the "Add port (+)" button to create a new virtual MIDI port.
+			You can name the port anything like "YMFM OPL FM MIDI Synthesizer".
+			This will create corresponding virtual MIDI IN and OUT ports that are virtually connected.<br>
+			<img src="img/ymfmidiwin_loopmidi1.png" alt="Example of adding a port in loopMIDI">
+		</li>
+		<li>If loopMIDI is your only MIDI IN device, simply running ymfmidiwin-synth.exe will automatically use the created MIDI IN device.</li>
+	</ol>
+	<p>
+		If you have multiple MIDI IN devices, specify the MIDI device number explicitly with the //MIDIIN&lt;number&gt; option.
+	</p>
+	<p>
+		If you want to use it as the default MIDI output device, install <a href="https://coolsoft.altervista.org/en/midimapper" target="_blank">CoolSoft MIDIMapper</a>.
+		After installation, use the MIDIMapper Configurator to specify the virtual MIDI port you created.
+	</p>
+	<img src="img/ymfmidiwin_midimapper1.png" alt="Example of MIDIMapper configuration">
+
+	<h3>Information for users who want a Windows standard FM MIDI-like sound</h3>
+	<p>
+		If you want to play sounds close to the Windows standard FM MIDI sound source, you need the instrument parameters used in the Windows standard Sound Blaster 16 driver.
+		This data is included in FMSYNTH.BIN from the Windows NT4 DDK sample.
+	</p>
+	<p>
+		However, since these parameter definitions are originally included for driver development (DDK), redistribution for other purposes may not be appropriate.
+		Therefore, FMSYNTH.BIN is not included with this software.
+		Instead, the following methods are supported as alternatives.
+	</p>
+	<ol>
+		<li>
+			Using the DDK sample FMSYNTH.BIN
 			<p>
-				If you specify the FMSYNTH.BIN included with the Sound Blaster 16 sample driver in the Windows NT4 DDK as the tone definition file, it can be loaded.
+				Specify the FMSYNTH.BIN from the Sound Blaster 16 sample driver included in Windows NT4 DDK as the instrument definition file to load it.
 			</p>
 			<p>
-				Example: 
-				ymfmidiwin //MIDIIN FMSYNTH.BIN
+				(e.g.) ymfmidiwin //MIDIIN FMSYNTH.BIN
 			</p>
 		</li>
-		<li>Loading from a driver DLL
+		<li>
+			Loading from a driver DLL
 			<p>
-				In fact, the Sound Blaster–series driver DLLs for Windows NT4 (such as sndblst.dll) contain the same data as FMSYNTH.BIN embedded as a resource.
+				Some Windows NT4 Sound Blaster driver DLLs (e.g., sndblst.dll) contain data identical to FMSYNTH.BIN as a resource.
 			</p>
 			<p>
-				Therefore, this software can also load tone data from such DLL files if they contain an FMSYNTH.BIN-equivalent resource. It does not have to be specifically sndblst.dll, as long as the resource is present.
+				This software can load instrument data from such DLL resources if you specify the DLL file.
+				It does not have to be sndblst.dll as long as it contains the equivalent FMSYNTH.BIN resource.
 			</p>
 			<p>
-				Example: 
-				ymfmidiwin //MIDIIN sndblst.dll
+				(e.g.) ymfmidiwin //MIDIIN sndblst.dll
 			</p>
 		</li>
 	</ol>
 	<p>
-		[Note] The drum tones contained in FMSYNTH.BIN depend on OPL rhythm sounds. However, rhythm sounds are currently not supported in ymfmidi. For this reason, only the drum tones are loaded from GENMIDI.op2 instead.
-Please place GENMIDI.op2 in the same folder as ymfmidiwin.exe.
+		<strong>Note:</strong> The drum sounds included in FMSYNTH.BIN depend on OPL rhythm sounds, which are not supported by the current ymfmidi.
+		Therefore, drum sounds are loaded only from GENMIDI.op2.
+		Please place GENMIDI.op2 in the same folder as ymfmidiwin.exe.
 	</p>
-	
+
+	<h3>Q&A</h3>
+	<dl>
+		<dt>Q. "GENMIDI.wopl cannot be loaded" error</dt>
+		<dd>A. Place GENMIDI.wopl in the same folder as the executable or specify it explicitly. If it is compressed, decompress it before use.</dd>
+
+		<dt>Q. When using loopMIDI, if I play MIDI without starting ymfmidi and then start ymfmidi, no sound comes out</dt>
+		<dd>A. Sending unnecessary data to loopMIDI can cause it to become unresponsive. Close the MIDI player and ymfmidi, delete and recreate the loopMIDI port, then try again.</dd>
+
+		<dt>Q. Performance is slow</dt>
+		<dd>A. Try using the -q option to disable screen output, or use --resampler linear for linear interpolation. Also, reduce the number of chips used.</dd>
+
+		<dt>Q. I want to set it as the default MIDI output</dt>
+		<dd>A. Recent Windows versions removed the MIDI mapper, so the OS no longer allows changing the default MIDI output device. Use CoolSoft MIDIMapper or similar tools to change it.</dd>
+	</dl>
+
 	<p>
-		<a href="./download.html">なんかくれに戻る</a>
+		<a href="./download.html">Back to Download</a>
 	</p>
 	<p>
-		<a href="./index.html">トップに戻る</a>
+		<a href="./index.html">Back to Top</a>
 	</p>
 </body>
 </html>
