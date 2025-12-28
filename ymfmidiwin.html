@@ -55,7 +55,6 @@
 			<ul>
 				<li>MIDI INの入力を受け取れる常駐型ソフトウェアシンセサイザー</li>
 				<li>loopMIDI等の仮想MIDIケーブルを使用することで、Windows標準のmidiOut API対応アプリケーションから利用可能</li>
-				<li>MIDIメッセージがないときは自動的にスリープ状態になるため、低消費電力</li>
 			</ul>
 		</li>
 		<li>
@@ -63,6 +62,13 @@
 			<ul>
 				<li>MIDIメッセージをリアルタイムに処理し、音声出力可能</li>
 				<li>MIDI再生結果をWAVファイルとして書き出し可能</li>
+			</ul>
+		</li>
+		<li>
+			<strong>常駐用に最適化</strong>
+			<ul>
+				<li>MIDIメッセージがないときは自動的にスリープ状態になるため、低消費電力</li>
+				<li>FM音源パラメータのみを保持するため、省メモリ</li>
 			</ul>
 		</li>
 	</ul>
@@ -126,7 +132,10 @@
 				音色定義ファイルとして指定すると読み込めます。
 			</p>
 			<p>
-				（例）ymfmidiwin //MIDIIN FMSYNTH.BIN
+				（例1）ymfmidiwin //MIDIIN FMSYNTH.BIN
+			</p>
+			<p>
+				（例2）ymfmidiwin-synth FMSYNTH.BIN
 			</p>
 		</li>
 		<li>
@@ -139,7 +148,10 @@
 				FMSYNTH.BIN相当のリソースが含まれていればsndblst.dllでなくても構いません。
 			</p>
 			<p>
-				（例）ymfmidiwin //MIDIIN sndblst.dll
+				（例1）ymfmidiwin //MIDIIN sndblst.dll
+			</p>
+			<p>
+				（例2）ymfmidiwin-synth sndblst.dll
 			</p>
 		</li>
 	</ol>

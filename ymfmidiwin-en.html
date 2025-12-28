@@ -55,7 +55,6 @@
 			<ul>
 				<li>Resident software synthesizer that accepts MIDI IN input</li>
 				<li>Can be used from standard Windows midiOut API applications by using virtual MIDI cables like loopMIDI</li>
-				<li>Automatically enters a sleep state when no MIDI messages are present, reducing unnecessary power consumption</li>
 			</ul>
 		</li>
 		<li>
@@ -63,6 +62,13 @@
 			<ul>
 				<li>Processes MIDI messages in real-time and outputs sound</li>
 				<li>Can export MIDI playback results as WAV files</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Optimized for resident operation</strong>
+			<ul>
+				<li>Automatically enters a sleep state when no MIDI messages are received, reducing power consumption</li>
+				<li>Low memory usage by keeping only FM synthesis parameters in memory</li>
 			</ul>
 		</li>
 	</ul>
@@ -127,7 +133,10 @@
 				Specify the FMSYNTH.BIN from the Sound Blaster 16 sample driver included in Windows NT4 DDK as the instrument definition file to load it.
 			</p>
 			<p>
-				(e.g.) ymfmidiwin //MIDIIN FMSYNTH.BIN
+				Example 1: ymfmidiwin //MIDIIN FMSYNTH.BIN
+			</p>
+			<p>
+				Example 2: ymfmidiwin-synth FMSYNTH.BIN
 			</p>
 		</li>
 		<li>
@@ -140,7 +149,10 @@
 				It does not have to be sndblst.dll as long as it contains the equivalent FMSYNTH.BIN resource.
 			</p>
 			<p>
-				(e.g.) ymfmidiwin //MIDIIN sndblst.dll
+				Example 1: ymfmidiwin //MIDIIN sndblst.dll
+			</p>
+			<p>
+				Example 2: ymfmidiwin-synth sndblst.dll
 			</p>
 		</li>
 	</ol>
