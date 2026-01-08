@@ -12,8 +12,17 @@
 <body>
 	<h1>バージョン履歴</h1>
 	<div style="margin:4px; padding 4px; border: 3px groove gray">
-		<p>
-<pre>
+		<p><pre>
+【2026/01/09】
+Neko Project 21/W ver0.86 rev99β1を公開しました。
+・SCSIステートセーブのバグ修正
+・エミュレーションIDE BIOSで異常なDA/UAが通ってしまう問題を修正
+・INT 1BhでDMAバンクを跨ぐ転送がエラーになっていなかったのを修正
+・rev96β3から実機IDE BIOSが使えなくなっていたのを修正
+　・ただし使用は非推奨です
+・実機IDE BIOS不使用時でもダミーのIDE BIOSを置くようにした
+　・ダミー（実質不使用）ですのでUMB用に潰しても大丈夫なはずです
+
 【2025/12/26】
 Neko Project 21/W ver0.86 rev98を公開しました。
 ・バイナリが修正BSDライセンス＋fmgenライセンスになりました
@@ -604,8 +613,7 @@ Neko Project 21/W ver0.86 rev1を公開しました。
 
 【2016/03/11】
 Neko Project 21/W ver0.85（初版）を公開しました。
-</pre>
-		</p>
+</pre></p>
 	</div>
 	<p>
 		<a href="./index.html">トップに戻る</a>
