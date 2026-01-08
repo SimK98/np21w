@@ -55,8 +55,17 @@
 	</div>
 	<h2 style="clear:both;">NEWS</h2>
 	<div style="margin:4px; padding: 4px; border: 3px groove gray">
-		<p>
-<pre>
+		<p><pre>
+【2026/01/09】
+Neko Project 21/W ver0.86 rev99β1を公開しました。
+・SCSIステートセーブのバグ修正
+・エミュレーションIDE BIOSで異常なDA/UAが通ってしまう問題を修正
+・INT 1BhでDMAバンクを跨ぐ転送がエラーになっていなかったのを修正
+・rev96β3から実機IDE BIOSが使えなくなっていたのを修正
+　・ただし使用は非推奨です
+・実機IDE BIOS不使用時でもダミーのIDE BIOSを置くようにした
+　・ダミー（実質不使用）ですのでUMB用に潰しても大丈夫なはずです
+
 【2025/12/26】
 Neko Project 21/W ver0.86 rev98を公開しました。
 ・バイナリが修正BSDライセンス＋fmgenライセンスになりました
@@ -214,8 +223,7 @@ Neko Project 21/W ver0.86 rev93を公開しました。
 ・マルチスレッドモードを非公開機能から昇格（設定画面）に追加しました
 　・Emulate→Configureの下側にあります
 　・ウィンドウ操作でエミュレーションが停止しなくなり、他のアプリケーションに起因するパフォーマンスの影響を受けにくくなります
-</pre>
-		</p>
+</pre></p>
 		<p><a href="./history.html">更に前の更新履歴</a></p>
 	</div>
 	<h2>本家からの変更点</h2>

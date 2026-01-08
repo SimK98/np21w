@@ -12,8 +12,16 @@
 <body>
 	<h1>更新履歴</h1>
 	<div style="margin:4px; padding 4px; border: 3px groove gray">
-		<p>
-<pre>>
+		<p><pre>
+(2026/01/09 ver0.86 rev99β1)
+・SCSIステートセーブのバグ修正
+・エミュレーションIDE BIOSで異常なDA/UAが通ってしまう問題を修正
+・INT 1BhでDMAバンクを跨ぐ転送がエラーになっていなかったのを修正
+・rev96β3から実機IDE BIOSが使えなくなっていたのを修正
+　・ただし使用は非推奨です
+・実機IDE BIOS不使用時でもダミーのIDE BIOSを置くようにした
+　・ダミー（実質不使用）ですのでUMB用に潰しても大丈夫なはずです
+
 (2025/12/26 ver0.86 rev98)
 Neko Project 21/W ver0.86 rev98を公開しました。
 ・バイナリが修正BSDライセンス＋fmgenライセンスになりました
@@ -1389,8 +1397,7 @@ FDCの不具合修正はSL9821開発者の富沢様にご協力を頂きまし�
 
 (2016/03/11 ver0.85)
 ・初版
-</pre>
-		</p>
+</pre></p>
 	</div>
 	<p>
 		<a href="./download.html">なんかくれに戻る</a>
