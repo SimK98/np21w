@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <TITLE>Serial option - COM1</TITLE>
+  <TITLE>Serial/Parallel option - COM1</TITLE>
   <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
   <meta name="viewport" content="user-scalable=yes,initial-scale=1">
 </HEAD>
@@ -12,13 +12,14 @@
 <AREA HREF="ser9861k.html" COORDS="57,32,117,47" ALT="PC-9861K">
 <AREA HREF="ser9861a.html" COORDS="121,32,159,47" ALT="CH.1">
 <AREA HREF="ser9861b.html" COORDS="163,32,200,47" ALT="CH.2">
+<AREA HREF="serparallel.html" COORDS="204,32,252,47" ALT="Parallel">
 </MAP>
 
 <BR><BR>
 
-<H3><B>Serial option - COM1</B></H3>
+<H3><B>Serial/Parallel option - COM1</B></H3>
 
-<P><IMG SRC="images/sercom1s.gif" BORDER="0" ALT="Serial option" USEMAP="#sercom1"></P>
+<P><IMG SRC="images/sercom1s.gif" BORDER="0" ALT="Serial/Parallel option" USEMAP="#sercom1"></P>
 
 <DL>
 <DT><B>Port</B></DT>
@@ -61,7 +62,7 @@
 
 <H4><B>MIDI</B></H4>
 
-<P><IMG SRC="images/sercom1m.gif" BORDER="0" ALT="Serial option" USEMAP="#sercom1"></P>
+<P><IMG SRC="images/sercom1m.gif" BORDER="0" ALT="Serial/Parallel option" USEMAP="#sercom1"></P>
 
 <P>この設定ではホストOSのMIDIデバイスをシリアル接続されたMIDIデバイスとしてエミュレーションします。</P>
 
@@ -91,7 +92,7 @@
 
 <H4><B>PENTAB</B></H4>
 
-<P><IMG SRC="images/sercom1p.gif" BORDER="0" ALT="Serial option" USEMAP="#sercom1"></P>
+<P><IMG SRC="images/sercom1p.gif" BORDER="0" ALT="Serial/Parallel option" USEMAP="#sercom1"></P>
 
 <P>この設定ではホストOSのペンタブレットをシリアル接続されたペンタブレット(ArtPad II)としてエミュレーションします。</P>
 
@@ -104,7 +105,7 @@
 
 <H4><B>PIPE</B></H4>
 
-<P><IMG SRC="images/sercom1pipe.gif" BORDER="0" ALT="Serial option" USEMAP="#sercom1"></P>
+<P><IMG SRC="images/sercom1pipe.gif" BORDER="0" ALT="Serial/Parallel option" USEMAP="#sercom1"></P>
 
 <P>この設定ではホストOSの名前付きパイプをシリアルポートとしてエミュレーションします。名前付きパイプに対応している他のアプリケーションと通信を行うことが出来ます。</P>
 <P>使用するパイプ名は \\&lt;Server Name&gt;\pipe\&lt;Pipe Name&gt; となります。</P>
@@ -117,6 +118,25 @@
 <DL>
 <DT><B>Server Name</B></DT>
 <DD><P>接続先パイプのあるコンピュータ名（IPアドレスも可）を指定します。ピリオド「.」を指定した場合はローカルでのみ有効なパイプが作成されます。</P></DD>
+</DL>
+
+<P>&nbsp;</P>
+
+<H4><B>FILE</B></H4>
+
+<P><IMG SRC="images/sercom1file.gif" BORDER="0" ALT="Serial/Parallel option" USEMAP="#sercom1"></P>
+
+<P>この設定ではポートへ出力されたデータをホストOSの指定ディレクトリへ保存します。</P>
+<P>ポートは受信専用で、送信を行うことはできません。</P>
+
+<DL>
+<DT><B>Output Directory Path</B></DT>
+<DD><P>出力先のディレクトリパスを指定します。</P></DD>
+</DL>
+
+<DL>
+<DT><B>Timeout</B></DT>
+<DD><P>通信がない状態がここに指定した時間だけ継続したとき、出力データファイルを一旦閉じます。再びデータが送られた場合は別のファイルになります。</P><P>ここに0を指定した場合は、リセットするあるいは終了させるなどで明示的に出力を完了させるまで1つのファイルへ出力し続けます。</P></DD>
 </DL>
 
 </BODY>
