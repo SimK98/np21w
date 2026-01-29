@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <TITLE>Serial/Parallel option - Parallel</TITLE>
+  <link charset="UTF-8" href="common.css" rel="stylesheet" type="text/css">
+  <meta name="viewport" content="user-scalable=yes,initial-scale=1">
+</HEAD>
+<BODY BGCOLOR="#ffffee" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="red">
+
+<MAP NAME="parallel">
+<AREA HREF="sercom1.html" COORDS="14,32,53,47" ALT="COM1">
+<AREA HREF="ser9861k.html" COORDS="57,32,117,47" ALT="PC-9861K">
+<AREA HREF="ser9861a.html" COORDS="121,32,159,47" ALT="CH.1">
+<AREA HREF="ser9861b.html" COORDS="163,32,200,47" ALT="CH.2">
+</MAP>
+
+<BR><BR>
+
+<H3><B>Serial/Parallel option - Parallel</B></H3>
+
+<P><IMG SRC="images/parallel.gif" BORDER="0" ALT="Serial option" USEMAP="#parallel"></P>
+
+<DL>
+<DT><B>Port</B></DT>
+<DD><P>接続デバイスを選択します。</P></DD>
+</DL>
+
+<P>&nbsp;</P>
+
+<H4><B>LPT1〜LPT4</B></H4>
+
+<P>この設定ではホストのパラレルポート(LPT1〜LPT4)に直接接続します。</P>
+
+<P>&nbsp;</P>
+
+<H4><B>PIPE, FILE</B></H4>
+
+<P><A HREF="sercom1.html">COM1</A>と同様に通信ポートを設定します。</P>
+
+<P>&nbsp;</P>
+
+<H4><B>PRINTER</B></H4>
+
+<P><IMG SRC="images/parallelprinter.gif" BORDER="0" ALT="Serial option" USEMAP="#parallel"></P>
+
+<P>この設定ではホストOSのプリンタドライバへ印刷データを送信します。</P>
+
+<DL>
+<DT><B>Printer</B></DT>
+<DD><P>使用するプリンタを指定します。</P></DD>
+</DL>
+
+<DL>
+<DT><B>Timeout</B></DT>
+<DD><P>通信がない状態がここに指定した時間だけ継続したとき、印刷ジョブが完了したとみなします。</P><P>ここに0を指定した場合は、リセットするあるいは終了させるなどで明示的に印刷ジョブ完了させるまで1つのジョブとして扱われます。
+明示的な印刷ジョブ完了はDeviceメニューのFinish Current Print Jobでも行えます。</P></DD>
+</DL>
+
+<DL>
+<DT><B>Emulation</B></DT>
+<DD><P>通常のプリンタ(GDI印刷対応)で、指定した方式での印刷ができるようにエミュレーションします。</P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>項目</TH><TH>説明</TH></TR>
+<TR><TD>Bypass (RAW)</TD><TD>データをそのままプリンタへ送信します（エミュレーション無効）</TD></TR>
+<TR><TD>PC-PR201</TD><TD>PC-PR201系プリンタでの印刷を再現します。</TD></TR>
+<TR><TD>ESC/P</TD><TD>ESC/P系プリンタでの印刷を再現します。</TD></TR>
+</TABLE>
+<DL>
+<DT><B>Dot Size</B></DT>
+<DD><P>グラフィック印刷時のドットのサイズを補正します。例えば130にすると130%の大きさに補正されます。</P></DD>
+</DL>
+<DL>
+<DT><B>Use Rectangle Dot</B></DT>
+<DD><P>グラフィック印刷時のドットを円ではなく長方形として描画します。また、横方向に連続するドット列を1つの矩形へ統合してデータ量及び処理負荷を低減します。</P></DD>
+</DL>
+<DL>
+<DT><B>Offset</B></DT>
+<DD><P>印字のX,Y座標位置を調整します。</P></DD>
+</DL>
+<DL>
+<DT><B>Scale</B></DT>
+<DD><P>印字のスケールを調整します。</P></DD>
+</DL>
+
+</DL>
+
+
+<P>&nbsp;</P>
+
+</BODY>
+</HTML>
+
