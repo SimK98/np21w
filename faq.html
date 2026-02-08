@@ -155,7 +155,7 @@
 		<dd>A. languageフォルダの中のDLLをexeと同じフォルダに配置すると日本語化します。違うバージョンや違うNeko Project II系のDLLを持ってくるとメニューの表示がおかしくなりますので、必ずそのバージョンに付属のものを使用してください。</dd>
 	
 		<dt>Q. 終了して再度起動したときに終了時の状態を復元したい</dt>
-		<dd>A. エミュレーション状態の復元は設定にあるレジューム機能を使用してください。ウィンドウ状態の復元は同じく設定のSave window sizeにチェックを入れると可能です。</dd>
+		<dd>A. エミュレーション状態の復元は設定にあるレジューム機能を使用してください。ウィンドウ状態の復元は同じく設定のSave window sizeにチェックを入れると可能です。また、<a href="./help/othercfg.html">非公開機能</a>のSVFDFILE（FDマウント状態の記憶）、SVCDFILE（FDマウント状態の記憶）も活用できます。</dd>
 	
 		<dt>Q. ステートセーブを使いたい</dt>
 		<dd>A. PC-98は家庭用ゲーム機などとは異なり、ソフトによってはディスクの内容も動作に影響します。ステートセーブはCPUとメモリの状態しか保存しませんので、不用意にステートセーブを使用するとディスクイメージが不整合を起こす（最悪の場合破壊される）恐れがあります。このようなトラブルを避けるためにステートセーブは標準では無効になっています。リスクを理解した上でどうしても使いたい場合は付属ヘルプの<a href="./help/othercfg.html">非公開機能</a>を参照してください。</dd>
@@ -172,7 +172,7 @@
 		
 		<dt>Q. ホストPCのCPU使用率を抑えたい</dt>
 		<dd>A1. 単純にCPU倍率を必要最小限まで小さくするだけでもある程度CPU使用率は下がります。</dd>
-		<dd>A2. MS-DOSの場合・・・<a href="./download.html">なんかくれ</a>で公開しているnp2toolの中にNP2IDLE.COMというものがあります。これをDOSで常駐させるとキー入力待ちなどのアイドル中にホストCPU使用率を大幅に下げることが出来ます。他に、<a href="http://bauxite.sakura.ne.jp/software/dos/freedos.htm">FreeDOS</a>のHDイメージに含まれるPETIDLEでも同じことが出来ます。こちらは動作を一時停止できたりとより高機能です。</dd>
+		<dd>A2. MS-DOSの場合・・・<a href="./download.html">なんかくれ</a>で公開しているnp2toolの中にNP2IDLE.COMというものがあります。これをDOSで常駐させるとキー入力待ちなどのアイドル中にホストCPU使用率を大幅に下げることが出来ます。なお、フリーズする場合はVSYNC版をお試しください。他に、<a href="http://bauxite.sakura.ne.jp/software/dos/freedos.htm">FreeDOS</a>のHDイメージに含まれるPETIDLEでも同じことが出来ます。こちらは動作を一時停止できたりとより高機能です。</dd>
 		<dd>A3. Win9x系の場合・・・Win9x用の常駐ソフトとしてCPU冷却ソフトがいくつか存在していました（例えばRain）が、現在では入手困難かも知れません。</dd>
 		<dd>A4. WinNT系の場合・・・<a href="./download.html">なんかくれ</a>の実機関連として公開している「PC-98版 Windows NT系用 HLT命令パッチドライバ」を導入すればCPU使用率を下げることが出来ます。</dd>
 		<dd>A5. 一部のソフトMIDIシンセは何も送らないとCPUを占有するものがあります。<a href="./help/othercfg.html">非公開機能</a>のMIDIASNSを使用すると回避できる場合があります。</dd>
@@ -191,6 +191,15 @@
 		
 		<dt>Q. 印刷時のフォントを変えたい</dt>
 		<dd>A. <a href="./help/othercfg.html">非公開機能</a>のPRNFONTMとPRNFONTGで指定できます。雰囲気を出したければ24ドットフォントを使うのがおすすめです（例えば<a href="http://jikasei.me/font/kh-dotfont/">KHドットフォントシリーズ</a>のKHドット日比谷24など）。</dd>
+		
+		<dt>Q. マウスホイールで音量を変えたい</dt>
+		<dd>A. Deviceメニュー→Mouse→Change Sound Volume by Wheelで出来るようになります。</dd>
+		
+		<dt>Q. FDイメージファイルをドラッグアンドドロップでマウントしたい</dt>
+		<dd>A. Otherメニュー→Allow drag and dropで出来るようになります。</dd>
+		
+		<dt>Q. エミュレータ内の日付を過去にしたい</dt>
+		<dd>A. Otherメニュー→CalendarでVirtual calendarを選択し、年2桁・月・日・時・分・秒を入力すると過去の日付に出来ます。Neko Project 21/WではVirtual calendarをホスト時刻からのオフセットとして管理するため、Neko Project 21/Wを終了しても時刻の整合性は保持されます。</dd>
 	</dl>
 	<h2>ウィンドウアクセラレータ関連</h2>
 	<dl>
