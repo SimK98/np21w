@@ -36,14 +36,14 @@
 	<p>
 		Neko Project 21/W以外は、実機用だったりドライバだったりツールだったりと雑多なものです。
 	</p>
-	<h2>Neko Project 21/W関連</h2>
+	<h2 id="np21w">Neko Project 21/W関連</h2>
 	<img src="img/np21w.png">
 	<p>
 		※ステートセーブ・レジュームの互換性はバージョンアップの際に無くなる場合がありますのでご注意ください<br>
 		※初めて使用される場合はページ下部の注意事項もご覧下さい
 	</p>
 	<div style="padding-left:32px;">
-		<h3 style="margin: 0;">Neko Project 21/W 本体</h3>
+		<h3 id="np21w-main" style="margin: 0;">Neko Project 21/W 本体</h3>
 	</div>
 	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1-k8wdumbKF-CrNfyJ--7A0fkwQC67eg0/view?usp=drive_link">Neko Project 21/W ダウンロード（ver0.86 rev100）</a><br>
@@ -69,7 +69,7 @@
 		<a href="./version.html">バージョン履歴</a>
 	</div>
 	<div style="padding-left:32px;">
-		<h3 style="margin: 0;">Neko Project 21/W ツール類</h3>
+		<h3 id="np21w-tool" style="margin: 0;">Neko Project 21/W ツール類</h3>
 	</div>
 	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1R7YK4YRZXO5_-owK4if8i_U4BsjTRJpw/view?usp=sharing">Neko Project II ユーティリティディスク（np2tool.d88）</a><br>
@@ -108,7 +108,7 @@
 		名前の通り1.25MB ベタFDイメージの77-79シリンダを付けたり切ったりできるツールです。
 	</div>
 	<div style="padding-left:32px;">
-		<h3 style="margin: 0;">Neko Project 21/W ドライバ類</h3>
+		<h3 id="np21w-drv" style="margin: 0;">Neko Project 21/W ドライバ類</h3>
 	</div>
 	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1hWT_U6BtwzGFj2bf88xOSUBgI-kETnnA/view?usp=drive_link">Neko Project 21/W システムポートドライバ＆ユーティリティ for Windows NT (ver1.1)</a><br>
@@ -140,7 +140,7 @@
 		エミュレータ内のWindows 9xおよびWindows NTで使用出来るNeko Project 21/W専用SCSIドライバです。非常に高速に読み書き出来ます。
 	</div>
 	<div style="padding-left:32px;">
-		<h3 style="margin: 0;">Neko Project 21/W その他</h3>
+		<h3 id="np21w-misc" style="margin: 0;">Neko Project 21/W その他</h3>
 	</div>
 	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/1JSZ1eeqZ9uiELOKN738LjuQsB0S7Tpfg/view?usp=drive_link">Neko Project II用 代替フォントビットマップ</a><br>
@@ -160,7 +160,7 @@
 		各OSのセットアップ手順（旧サイトにあったもの）のアーカイブです。最近のバージョンであればこれを見ないでセットアップしてもほぼ問題ないです。
 	</div>
 
-	<h2>実機関連</h2>
+	<h2 id="actual">実機関連</h2>
 	<img src="img/sb16.png">
 	<p>
 		エミュレータだけでなく実機でも使えます。
@@ -204,7 +204,7 @@
 		普通の人には用事がありません。開発者向けです。
 	</div>
 
-	<h2>N88-BASIC関連</h2>
+	<h2 id="basic">N88-BASIC関連</h2>
 	<img src="img/fft.png">
 	<p>
 		N88-BASICで高速フーリエ変換をするプログラムです。
@@ -227,7 +227,7 @@
 		<a href="./src/FFT009.BAS">BASICで高速フーリエ変換　第9回</a><br>
 	</div>
 
-	<h2>SL9821勝手に改造関連</h2>
+	<h2 id="sl">SL9821勝手に改造関連</h2>
 	<img src="img/sl9821.png">
 	<p>
 		SL9821にNeko Project 21/WのLGY-98とCL-GD5430を無理やりくっつけてみた試作品です。
@@ -244,7 +244,7 @@
 		Neko Project 21/Wのソースを流用してSL9821(0.2.4.2)をLGY-98とCL-GD5430ウィンドウアクセラレータに対応させてみたものです。別窓モードしか実装していない＆マウス操作はメイン画面でしかできないので使いにくいと思います。使用条件等はSL9821のサイトをご覧下さい。
 	</div>
 
-	<h2>その他ソフトウェア</h2>
+	<h2 id="misc">その他ソフトウェア</h2>
 	<p>
 		どのカテゴリにも属さない雑多なプログラムです。
 	</p>
@@ -255,9 +255,9 @@
 		</div>
 	</div>
 
-	<h2>注意事項</h2>
+	<h2 id="note">注意事項</h2>
 
-	<h3>BIOSについて</h3>
+	<h3 id="note-bios">BIOSについて</h3>
 	<p>
 		本家Neko Project IIと同じく、Neko Project 21/WもBIOSがなくてもそれなりに動くように作られています。<br>
 		BIOSがない場合の制限事項は以下の通りです。<span style="font-size:smaller;">逆に言えばこれ以外の制限はほぼありません。</span>
@@ -274,7 +274,7 @@
 		機種依存系のフラグは全てNeko Project 21/Wが修正しますので、よほど特殊でない限りはどんな機種から取ってきても問題ないはずです。
 	</p>
 
-	<h3>メモリマップについて</h3>
+	<h3 id="note-mmap">メモリマップについて</h3>
 	<p>
 		Neko Project 21/Wのメモリマップはやや特殊ですので、UMBの設定の際はご注意下さい。
 		実機でチューニングしたものを持ってきてもそのままでは動かないと思います。
@@ -295,7 +295,7 @@
 		</table>
 	</div>
 
-	<h3>ディスクイメージ追加サポートについて</h3>
+	<h3 id="note-nvl">ディスクイメージ追加サポートについて</h3>
 	<p>
 		NVL.DLLを用意するとNeko Project 21/Wで追加のディスクイメージが読めるようになります。NVL.DLLについては「<a href="https://euee.web.fc2.com/tool/np21wnvl.html">Neko Project 21/W(np21w, ねこープロジェクト21/W)用のVirtualPC等イメージ使用ライブラリ</a>」から入手してください（ディスクイメージエディタのNDと同じサイトです）。ページにはビルド手順が書かれていますが、現在のバージョンでは既に取り込まれていますので変更用ファイルの中のNVL.DLLだけを用意すればOKです。
 	</p>
@@ -314,7 +314,7 @@
 		<li>QEMU qcow形式</li>
 	</ul>
 
-	<h3>ライセンスについて</h3>
+	<h3 id="note-license">ライセンスについて</h3>
 	<p>
 		Neko Project 21/Wの大半のコードは修正BSDライセンスですが、以下のファイルは移植のためライセンスが異なっています。これらを含めてコンパイルすると全体としてのライセンスが変わりますのでご注意ください。
 		バージョンによってライセンスが異なる場合がありますので、必ずそのバージョンに該当する表を参照してください。
@@ -395,7 +395,7 @@
 		</table>
 	</div>
 
-	<h3>ソースコードについて</h3>
+	<h3 id="note-src">ソースコードについて</h3>
 	<p>
 		Visual Studio プロジェクトはwin9x\np2vs2010.slnとwin9x\np2vs2019.slnしかメンテナンスされていません。
 		また、最近のバージョンではDebugビルドもちゃんと通るようにしたつもりですが、保証はしません。
