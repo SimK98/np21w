@@ -106,12 +106,13 @@
 			<tr><td>"changeclockmul"</td><td>クロック倍率の値(1byte)</td><td>設定されているクロック倍率の文字列</td><td>CPUクロック倍率を設定する。パラメータは文字列ではなく1byteの数値である事に注意。パラメータに0を渡すと設定変更せずに現在値が返ります。</td></tr>
 			<tr><td>"changeconfig"</td><td>可変長（後述）</td><td>可変長（後述）</td><td>Neko Project 21/Wの設定を変更する。ここで加えた変更はハードリセットで元に戻ります。</td></tr>
 			<tr><td>"getconfig"</td><td>可変長（後述）</td><td>可変長（後述）</td><td>Neko Project 21/Wの設定を取得する。</td></tr></td></tr>
-			<tr><td rowspan=6>"getmpos"</td><td>0（1byte）</td><td>X座標,Y座標の形式の文字列</td><td>エミュレーションウィンドウ上でのマウス絶対座標を取得する。X,Y座標値は0（左・上）～65535（右・下）にマップされている。（np21w ver0.86 rev94β11以降対応）</td></tr></td></tr>
-			<tr><td>1（1byte）</td><td>文字列"OK"<br>BX, CX, DI</td><td>X絶対座標をBX、Y絶対座標をCX、取得成功をDIの最上位ビットに書き込む。Win3.1準拠マウスドライバ向け。（np21w ver0.86 rev94β12以降対応）</td></tr></td></tr>
-			<tr><td>2（1byte）</td><td>文字列"OK"<br>BX, CX<br>成功:CF=1<br>失敗:CF=0</td><td>X絶対座標をBX、Y絶対座標をCX、取得成功をFLAGSのCFに書き込む。CFを事前に0にしておくとよい。（np21w ver0.86 rev94β12以降対応）</td></tr></td></tr>
-			<tr><td>3（1byte）</td><td>文字列"OK"<br>BX, CX，DI<br>成功:CF=1<br>失敗:CF=0</td><td>X絶対座標をBX、Y絶対座標をCX、ボタン状態をDI、取得成功をFLAGSのCFに書き込む。CFを事前に0にしておくとよい。ボタン状態は0x80が左ボタン、0x20が右ボタン。（np21w ver0.86 rev94β12以降対応）</td></tr></td></tr>
-			<tr><td>4（1byte）</td><td>文字列"OK"<br>BX, CX，DI<br>成功:CF=1<br>失敗:CF=0</td><td>X相対座標をBX、Y相対座標をCX、ボタン状態をDI、取得成功をFLAGSのCFに書き込む。CFを事前に0にしておくとよい。取得した相対座標のクリアは行わない。（np21w ver0.86 rev94β12以降対応）</td></tr></td></tr>
-			<tr><td>5（1byte）</td><td>文字列"OK"<br>BX, CX，DI<br>成功:CF=1<br>失敗:CF=0</td><td>パラメータ4番と取得されるものは同じだが、相対座標のクリアを行う（取得後に相対座標を0,0に戻す、つまり基準位置を更新する）。（np21w ver0.86 rev94β12以降対応）</td></tr></td></tr>
+			<tr><td rowspan=7>"getmpos"</td><td>0（1byte）</td><td>X座標,Y座標の形式の文字列</td><td>エミュレーションウィンドウ上でのマウス絶対座標を取得する。X,Y座標値は0（左・上）～65535（右・下）にマップされている。（np21w ver0.86 rev94β11以降対応）</td></tr>
+			<tr><td>1（1byte）</td><td>文字列"OK"<br>BX, CX, DI</td><td>X絶対座標をBX、Y絶対座標をCX、取得成功をDIの最上位ビットに書き込む。Win3.1準拠マウスドライバ向け。（np21w ver0.86 rev94β12以降対応）</td></tr>
+			<tr><td>2（1byte）</td><td>文字列"OK"<br>BX, CX<br>成功:CF=1<br>失敗:CF=0</td><td>X絶対座標をBX、Y絶対座標をCX、取得成功をFLAGSのCFに書き込む。CFを事前に0にしておくとよい。（np21w ver0.86 rev94β12以降対応）</td></tr>
+			<tr><td>3（1byte）</td><td>文字列"OK"<br>BX, CX，DI<br>成功:CF=1<br>失敗:CF=0</td><td>X絶対座標をBX、Y絶対座標をCX、ボタン状態をDI、取得成功をFLAGSのCFに書き込む。CFを事前に0にしておくとよい。ボタン状態は0x80が左ボタン、0x20が右ボタン。（np21w ver0.86 rev94β12以降対応）</td></tr>
+			<tr><td>4（1byte）</td><td>文字列"OK"<br>BX, CX，DI<br>成功:CF=1<br>失敗:CF=0</td><td>X相対座標をBX、Y相対座標をCX、ボタン状態をDI、取得成功をFLAGSのCFに書き込む。CFを事前に0にしておくとよい。取得した相対座標のクリアは行わない。（np21w ver0.86 rev94β12以降対応）</td></tr>
+			<tr><td>5（1byte）</td><td>文字列"OK"<br>BX, CX，DI<br>成功:CF=1<br>失敗:CF=0</td><td>パラメータ4番と取得されるものは同じだが、相対座標のクリアを行う（取得後に相対座標を0,0に戻す、つまり基準位置を更新する）。（np21w ver0.86 rev94β12以降対応）</td></tr>
+			<tr><td>6（1byte）</td><td>成功時"OK"<br>取得不能時"OFF"<br>未サポート時 空文字<br>BX, CX<br>成功:CF=1<br>失敗:CF=0</td><td>ピクセル単位のX絶対座標をBX、Y絶対座標をCX、取得成功をFLAGSのCFに書き込む。CFを事前に0にしておくとよい。（np21w ver0.86 rev101β1以降対応）</td></tr>
 		</tbody>
 	</table>
 	</div>
@@ -152,7 +153,7 @@
 			<tr><td>6</td><td>1 (1byte)</td><td>なし</td><td>サウンドROMを強制的に無効にする。</td></tr>
 			<tr><td>7</td><td>遅延クロック数÷256  (1byte)</td><td>なし</td><td>IDE I/O読み取りウェイトを変更する。設定した値の256倍が遅延クロック数になる。</td></tr>
 			<tr><td>8</td><td>遅延クロック数÷256  (1byte)</td><td>なし</td><td>IDE I/O書き込みウェイトを変更する。設定した値の256倍が遅延クロック数になる。</td></tr>
-			<tr><td>9</td><td>有効=1, 無効=0 (1byte)</td><td>なし</td><td>ホストOSカーソルの表示非表示を制御する。非キャプチャ状態かつキャプチャなし操作ONの場合のみ有効。</td></tr>
+			<tr><td>9</td><td>非表示=1, 表示=0 (1byte)</td><td>なし</td><td>ホストOSカーソルの表示非表示を制御する。非キャプチャ状態かつキャプチャなし操作ONの場合のみ有効。</td></tr>
 			<tr><td>10</td><td><a href="#irqdevice">デバイスID</a>(1byte)+IRQ (1byte)</td><td>設定されているIRQの文字列<br>ただし、<br>デバイス未使用=254<br>番号自体が無効=253<br></td><td>エミュレーションデバイスのIRQを変更する。255を指定した場合、一部デバイスではIRQを無効化可能。</td></tr>
 		</tbody>
 	</table>
