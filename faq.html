@@ -151,6 +151,8 @@
 		<dt>Q. Win3.1で86音源のPCM再生を使うと例外が発生する</dt>
 		<dd>A. WINDOWS\WAVEMIX.INIを調整すると直る場合があります。例えば、WaveOutDeviceを-1(WAVE_MAPPER)にしてみてください。</dd>
 		
+		<dt>Q. Win3.1でSB16を使おうとするとMIDIポート設定エラーがでる</dt>
+		<dd>A. SB16のMIDIはMPU-PC98IIやS-MPUの設定に宿借りしていますので、こちらを適切に設定しておく必要があります。特に、有効にしておきながらMIDI-OUTデバイスをN/Cにしていたり、MPU-PC98IIやS-MPUのポートに重複して同じMIDIデバイスを選択していたりするとエラーになります。</dd>
 	</dl>
 	<h2>こんなことがしたい</h2>
 	<dl>
