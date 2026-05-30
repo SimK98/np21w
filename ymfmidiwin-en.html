@@ -31,7 +31,7 @@
 		<a href="https://github.com/SimK98/ymfmidiwin/releases">Download ymfmidi for Windows</a>
 	</div>
 	<p style="font-weight:bold;">
-		ymfmidi for Windows is a software FM MIDI synthesizer for Windows, based on <a href="https://github.com/aaronsgiles/ymfm">ymfm</a> and <a href="https://github.com/devinacker/ymfmidi">ymfmidi</a>.
+		ymfmidi for Windows (ymfmidiwin) is a software FM MIDI synthesizer for Windows, based on <a href="https://github.com/aaronsgiles/ymfm">ymfm</a> and <a href="https://github.com/devinacker/ymfmidi">ymfmidi</a>.
 	</p>
 	<p>
 		The FM MIDI mentioned here refers to MIDI using the OPL3 chip found in old Sound Blaster cards and similar devices.
@@ -169,7 +169,7 @@
 		</li>
 	</ol>
 	<p>
-		<strong>Note:</strong> The drum sounds included in FMSYNTH.BIN depend on OPL rhythm sounds, which are not supported by the current ymfmidi.
+		<strong>Note:</strong> The drum sounds included in FMSYNTH.BIN depend on OPL rhythm sounds, which are not supported by the current ymfmidiwin.
 		Therefore, drum sounds are loaded only from GENMIDI.op2.
 		Please place GENMIDI.op2 in the same folder as ymfmidiwin.exe.
 	</p>
@@ -177,16 +177,22 @@
 	<h3>Q&A</h3>
 	<dl>
 		<dt>Q. "GENMIDI.wopl cannot be loaded" error</dt>
-		<dd>A. Place GENMIDI.wopl in the same folder as the executable or specify it explicitly.</dd>
+		<dd>A. Place GENMIDI.wopl in the same folder as the executable or specify it explicitly. If the files are distributed in an archive, extract all files together before use.</dd>
 
-		<dt>Q. When using loopMIDI, if I play MIDI without starting ymfmidi and then start ymfmidi, no sound comes out</dt>
-		<dd>A. Sending unnecessary data to loopMIDI can cause it to become unresponsive. Close the MIDI player and ymfmidi, delete and recreate the loopMIDI port, then try again.</dd>
+		<dt>Q. When using loopMIDI, if I play MIDI without starting ymfmidiwin and then start ymfmidiwin, no sound comes out</dt>
+		<dd>A. Sending unnecessary data to loopMIDI can cause it to become unresponsive. Close the MIDI player and ymfmidiwin, delete and recreate the loopMIDI port, then try again.</dd>
 
 		<dt>Q. Performance is slow</dt>
 		<dd>A. Try using the -q option to disable screen output, or use --resampler linear for linear interpolation. Also, reduce the number of chips used.</dd>
 
 		<dt>Q. I want to set it as the default MIDI output</dt>
 		<dd>A. Recent Windows versions removed the MIDI mapper, so the OS no longer allows changing the default MIDI output device. Use CoolSoft MIDIMapper or similar tools to change it.</dd>
+
+		<dt>Q. MIDI IN devices are no longer detected on Windows 11</dt>
+		<dd>A. This is a bug in Windows 11 MIDI 2.0. The latest version of ymfmidiwin includes a workaround, so please update to the latest release.</dd>
+
+		<dt>Q. ymfmidiwin was running in the background, but it seems to have exited unexpectedly</dt>
+		<dd>A. It may be terminated forcibly by Windows Update. The latest version of ymfmidiwin has been updated to restart automatically in such cases, so please update to the latest release.</dd>
 	</dl>
 
 	<p>
