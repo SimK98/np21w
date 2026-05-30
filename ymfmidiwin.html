@@ -169,7 +169,7 @@
 		</li>
 	</ol>
 	<p>
-		【注意】FMSYNTH.BINに含まれるドラム音色はOPLのリズム音に依存していますが、リズム音は現在のymfmidiでは未対応です。そのため、ドラム音色のみGENMIDI.op2から読み込む実装になっています。
+		【注意】FMSYNTH.BINに含まれるドラム音色はOPLのリズム音に依存していますが、リズム音は現在のymfmidiwinでは未対応です。そのため、ドラム音色のみGENMIDI.op2から読み込む実装になっています。
 		GENMIDI.op2をymfmidiwin.exeと同じフォルダに配置してください。
 	</p>
 
@@ -178,8 +178,8 @@
 		<dt>Q. GENMIDI.woplがロードできないと出た</dt>
 		<dd>A. exeと同じ場所にGENMIDI.woplを置くか、明示的に指定してください。なお、圧縮されているときはセットで展開してから使ってください。</dd>
 
-		<dt>Q. loopMIDIを使用しているとき、ymfmidiを起動せずにMIDIを鳴らし続けていたらymfmidiを起動しても音が出なくなった</dt>
-		<dd>A. loopMIDIへ無駄にデータを送ると暴走して無反応になることがあります。MIDI再生ソフトとymfmidiを一旦終了し、loopMIDIポートを削除して再作成してください。</dd>
+		<dt>Q. loopMIDIを使用しているとき、ymfmidiwinを起動せずにMIDIを鳴らし続けていたらymfmidiwinを起動しても音が出なくなった</dt>
+		<dd>A. loopMIDIへ無駄にデータを送ると暴走して無反応になることがあります。MIDI再生ソフトとymfmidiwinを一旦終了し、loopMIDIポートを削除して再作成してください。</dd>
 
 		<dt>Q. 動作が重い</dt>
 		<dd>A. -qオプションで画面表示を止めてみたり、--resampler linearオプションで線形補間にしてみてください。また、チップ数も少なめにしてください。</dd>
@@ -188,10 +188,10 @@
 		<dd>A. 最近のWindowsはMIDIマッパーがなくなったため、OS標準ではデフォルトのMIDI出力デバイスを変更できなくなりました。変更したい場合はCoolSoft MIDIMapper等を使用してください。</dd>
 
 		<dt>Q. Windows 11でMIDI INが見つからなくなった</dt>
-		<dd>A. Windows 11のMIDI 2.0のバグです。最新版ymfmidiでは対策してありますのでアップデートしてください。</dd>
+		<dd>A. Windows 11のMIDI 2.0のバグです。最新版ymfmidiwinでは対策してありますのでアップデートしてください。</dd>
 
 		<dt>Q. 常駐させていたはずなのにいつの間にか終了している</dt>
-		<dd>A. Window Updateで強制終了されることがあるようです。最新版ymfmidiでは自動再起動するように対策しましたのでアップデートしてください。</dd>
+		<dd>A. Window Updateで強制終了されることがあるようです。最新版ymfmidiwinでは自動再起動するように対策しましたのでアップデートしてください。</dd>
 	</dl>
 
 	<p>
