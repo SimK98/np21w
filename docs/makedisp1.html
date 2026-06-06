@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>Win3.1, 9x共用フルディスプレイドライバの製作 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=6">
+	<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-c.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-makefile.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-ini.min.js"></script>
+	<style type="text/css">
+	code{
+		font-size: smaller !important;
+		line-height: 110% !important;
+	}
+	pre{
+		line-height: 110% !important;
+	}
+	</style>
+</head>
+<body>
+	<h1>Win3.1, 9x共用フルディスプレイドライバの製作</h1>
+	<p>
+		この記事はWindows3.1/9x系向けのディスプレイドライバの作成方法を解説するものです。
+		内容はNeko Project 21/W向けの独自ディスプレイドライバNPDISP製作の際に調査した内容に基づいています。
+	</p>
+	
+	<h2>0. 製作動機</h2>
+	<p>
+		この章はWindows3.1/9x系向けのディスプレイドライバを作ろうと考えた動機を書いていますが、本編の理解には関係ありませんので興味がない場合は読み飛ばして構いません。
+	</p>
+	<p>
+		まず、Windows3.1系向けのディスプレイドライバを作ろうと考えたのはいくつかの理由がありますが、大きくはNeko Project 21/W上のWindows3.1においてOS標準の高解像度表示ドライバが使えないという点にありました。そこで、なんの心配もなく使用可能な独自実装のドライバがあれば良いのではないかと考えて作り始めたのが始まりです。
+	</p>
+	<p>
+		他の動機として、既にHOSTDRV for NTやNeko Project 21/W専用高速SCSIで実績がある「エミュレータ側が直接仮想環境内の仮想メモリを参照する」という手法が16bit環境下でも通用するか確認したいということもありました。
+	</p>
+	<p>
+		その後、Windows9xに対象を広げたのは、Windows3.1向けのままでもWindows9xで結構動くということが分かったことの他に、Windows98 DDK文書に記載されているFull Driver (old-model driver、DIBエンジンを使わないドライバ)というものが現実に作り得るものなのかを検証してみたいということがありました。
+	</p>
+	<p>
+		結果として上記の目標は達せられましたが、嵌まり所もたくさんあったためここに文章として残そうと考え、このページを作成しました。
+	</p>
+	
+	<h2>1. 基礎知識</h2>
+	<h3>1.1. Windows3.1のディスプレイドライバ</h3>
+	<p>
+		Windows3.1のディスプレイドライバの本体は非常にシンプルで、実体はただの16-bit Windows DLLです。
+		この16-bit Windows DLLにBitBltやSetPalette等のエクスポート関数を用意し、それらがOSからの描画要求を受ける形になっています。
+	</p>
+	<p>
+		エクスポート関数はかなり沢山ありますが、使用できる機能のフラグを返すことができるので、全部を実装しなくても動かすことができます。
+	</p>
+	<p>
+		他に、グラバーと呼ばれる仮想デバイスドライバもありますが、これはウィンドウモードDOS窓の画面を取得するために使われるもので、OS標準のものを使い回すことができます。
+		つまり、標準DOS窓で特に問題ないのであれば作る必要はありません。
+	</p>
+	
+	<h3>1.2. Windows9xのディスプレイドライバ</h3>
+	<p>
+		Windows9xのディスプレイドライバでは、DIBエンジンを使用するミニドライバが推奨されるようになりました。
+		DDKに付属するサンプルも全てミニドライバによる実装になっています。
+		一方で、DDKヘルプによればミニドライバを強く奨励するような記載がある一方で、従来のフルドライバを廃止したという記載はありません。
+		つまり、推奨はされないが作ることはできる、ということになります。
+	</p>
+	<p>
+		フルドライバにした場合、ドライバの構成自体はWindows3.1とほぼ同じで、それにいくつかの関数が足された形になります。
+		つまり、フルドライバであればWindows3.1と9xでドライバを共用することも可能です。
+		ただし、Windows9xで問題なく使用できるドライバ（画面解像度変更対応、DirectDraw対応等）にするためには、DIBエンジンと互換になるような処理やデータ構造を要求されます。
+		この点はDDKでもあまり明確に書いていないため、この記事で補足していきたいと思います。
+		また、DOS窓関連でWin9xはかなり変更が加えられており、Windows3.1では不要だったVxD（mini-VDD）の作成が必要になります。
+	
+	<h3>1.3. DIBエンジン</h3>
+	<p>
+		DIBエンジンはWindows95から導入された汎用的グラフィック描画エンジンみたいなものです。
+		Windows3.1ではディスプレイドライバのエクスポート関数のうち一部のみが必須で残りは任意という形でしたが、どこまで実装すればいいかが曖昧で、正しい実装をするのも困難でした。
+	</p>
+	<p>
+		DIBエンジンを使うと、画面のVRAMのメモリアドレスと形式を与えてあげるだけで正しいディスプレイドライバの実装を容易に作ることができます。
+		DIBエンジンをベースにしておくことでアクセラレーションを追加するのも簡単になります。
+		一方でDIBエンジンはWindows3.1以前にはありませんから、ドライバはWin9x前提のものになります。
+	</p>
+	<p>
+		世の中には有志作成のWin9x向けディスプレイドライバがありますが、知る限りにおいてはDIBエンジンを前提に作られているものが多いです。
+		Neko Project 21/Wとしては既に世にあるものを作っても面白くありませんので、あえてDIBエンジンを使わない実装にしています。
+	</p>
+	
+	<h2>2. 暫定 嵌まり所リスト</h2>
+	<p>
+		本来は順番に解説していくところですが、完成までにどれだけかかるか分かりませんので、嵌まり所だけを忘れないうちに先に書いておきます。
+		Neko Project 21/Wのwab/npdispの実装も参考にしてください。
+	</p>
+	<h3>Windows3.1 DDKのヘルプを見ましょう</h3>
+	<p>
+		Windows98 DDKのヘルプは説明が端折られていたり、Windows3.1時代の関数の説明が消失していたりします。
+	</p>
+	<h3>Windows3.1ではEnableの前にGetDriverResourceIDが呼ばれる</h3>
+	<p>
+		Enableが最初に呼ばれるはずだと思っていると嵌まります。
+	</p>
+	<h3>Windows3.1ではUserRepaintDisableの実装が必須</h3>
+	<p>
+		DDKヘルプにほぼ書いてありませんが、UserRepaintDisable関数の実装が必須です。
+		これがないとWindows終了時に例外がでたりします。
+		実装はとりあえず0を返せばOKです。
+	</p>
+	<h3>解像度はWindows3.1では自前管理、Windows9xではVDDから取得</h3>
+	<p>
+		画面解像度はWindows3.1では自前で管理する必要があります。
+		SYSTEM.INIに書いておく実装が一般的なようです。
+	</p>
+	<p>
+		Windows9xでは画面解像をVDDで管理しています。
+		VDD_GET_DISPLAY_CONFIGを使って取得してください。
+		これをしなかった場合は画面のプロパティで解像度変更ができなくなります。
+	</p>
+	<h3>マウス関係は割り込みされる場合がある</h3>
+	<p>
+		MoveCursor等のマウス関係の関数は割り込みで他の関数と同時実行される可能性があります。
+		同時実行を想定した処理にしておく必要があります。
+	</p>
+	<h3>SelectBitmap関数はなにもしなくていい</h3>
+	<p>
+		GDIINFOのdpRasterにRC_DEVBITSを立ててDDBをサポートする際にSelectBitmap関数を実装する必要がありますが、この関数では何もしなくていいです。
+		DDKヘルプにごちゃごちゃ書いてある内容は無視しましょう。
+	</p>
+	<h3>DIBエンジン互換にしたい場合PDEVICEの中身はDIBENGINE構造体にし、GDIINFOでフラグを立てる</h3>
+	<p>
+		ドライバをDIBエンジン互換にしたい場合は、PDEVICEの中身をDIBENGINE構造体にしておく必要があります。
+		また、TypeはTYPE_DIBENG (0x5250)にしておかないと駄目です。
+		また、Enable関数で返すGDIINFOのdpCaps1にC1_DIBENGINEビットを立てる必要があります。
+	</p>
+	<h3>DIBエンジン互換にしたい場合DDBのサポートは必須</h3>
+	<p>
+		DIBエンジン互換にするにはGDIINFOのdpRasterにRC_DEVBITSが必須です。
+		これがないとエラーになります。
+	</p>
+	<h3>Windows3.1ではSetStretchBltModeがどうなっているか取得できない</h3>
+	<p>
+		WHITEONBLACK, BLACKONWHITE, COLORONCOLORがありますが、Windows3.1ドライバでは把握できません。
+		特に影響が大きいモノクロビットマップではStretch系関数でGDIに書かせるように戻り値を返す方が賢明です。
+	</p>
+	<p>
+		Windows9xではDRAWMODE構造体が拡張されていて、この値を取得することができます。
+	</p>
+	<h3>モノクロビットマップは扱いが特殊</h3>
+	<p>
+		モノクロビットマップはDRAWMODEの前景色と背景色の指示で描画される場合が非常に多いです。
+	</p>
+	<h3>DeviceBitmapBitsでlpDIBitsがNULLのときビットフィールドやカラーパレット部分も埋める必要あり</h3>
+	<p>
+		ヘルプにはビットマップサイズのフィールドを埋めるという記述がありますが、これだけでは不十分です。
+		ビットフィールドやカラーパレット部分も埋めないと解像度変更でアクセス違反になったりOpenGLがフリーズしたりします。
+		なお、この時に正しい走査線数を返すとWindows9xでアイコンキャッシュが有効になります。
+	</p>
+	<h3>BitmapBits関数で渡すデータはWORDアライメント前提</h3>
+	<p>
+		BitmapBits関数でDDBの画素を読み書きできますが、その際はDWORDアライメントではなくWORDアライメントです。
+	</p>
+	<h3>Windows9xではControl関数でQUERYDIBSUPPORTのフラグを返す</h3>
+	<p>
+		DDKヘルプには名前しか出て来ませんが、Win9xにおいてControl関数のQUERYDIBSUPPORTエスケープでフラグを立てるだけで描画パフォーマンスがとてもよくなります。
+	</p>
+	<h3>DIBENGINE互換の場合、TypeがTYPE_DIBENG (0x5250)になっているビットマップを処理できるようにする</h3>
+	<p>
+		TypeがTYPE_DIBENGでdeFlagsにSELECTEDDIBが立っている場合、そのデバイスはDIBです。
+		deBits～の所に実際の画素データがあるのでそれを処理してください。
+	</p>
+	<h3>DIBENGINE構造体のdeBitmapInfoにはパレットをいれておく</h3>
+	<p>
+		DDKヘルプではBITMAPINFOHEADERへのポインタと書いてありますが、実際にはBITMAPINFO構造体でビットフィールドやパレットの部分も必要です。
+		ここのパレットは256色モードの時DirectDrawが参照します。
+	</p>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
