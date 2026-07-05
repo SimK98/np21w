@@ -14,50 +14,28 @@
 	<div style="margin:4px; padding 4px; border: 3px groove gray">
 		<p><pre>
 【2026/07/05】
-Neko Project 21/W ver0.86 rev103β8を公開しました。
-・GLIO GSCREENのバグ修正
-
-【2026/07/04】
-Neko Project 21/W ver0.86 rev103β7を公開しました。
-・BIOS I/Oエミュレーションのミスを修正
-・GLIOのバグ修正と追加実装
-　・実機BIOSがなくてもそこそこ描画されます
-・システムメニューからのフルメモリダンプに対応（デバッグメニュー有効時）
-
-【2026/06/28】
-Neko Project 21/W ver0.86 rev103β6を公開しました。
+Neko Project 21/W ver0.86 rev103を公開しました。
 ・rev101以降画面描画でメモリ破壊していたバグを修正
-
-【2026/06/24】
-Neko Project 21/W ver0.86 rev103β5を公開しました。
-・サウンドボードにSNE MULTIMEDIA ORCHESTRAを追加
-　・PCM部についてはADPCMを使うソフトがあるようなのでADPCMのみ暫定実装
-　・FM部などその他はnp2sからの移植です
-　・ステートセーブ対応はまだ中途半端です
-
-【2026/06/20】
-Neko Project 21/W ver0.86 rev103β4を公開しました。
-・CPUスタックチェックでリミットの判定を間違える問題を修正
-　・LEMM通常版のRELOADが正しく動きます
-・CPUのVMEを追加実装
-・ADPCM修正およびCPU経由ADPCMを実装
-
-【2026/06/15】
-Neko Project 21/W ver0.86 rev103β3を公開しました。
+・CL-GD54xx（PC-9801-96等）がWinNT3.1およびWinNT3.5で動くように修正
+　・自動選択は上手くいかないかもしれません
+・HOSTDRVのファイル同時検索上限緩和
+・NVL.DLLが無いときのエラーメッセージを丁寧にした
 ・CPUのTrap Flag扱いの誤りを修正
 ・CALL gate処理中に例外が起こるとCPU状態が中途半端になる不具合を修正
 ・その他細かいCPUフラグチェックミス修正
 ・FDCのステータスのミス修正
-
-【2026/06/14】
-Neko Project 21/W ver0.86 rev103β2を公開しました。
-・HOSTDRVのファイル同時検索上限緩和
-・NVL.DLLが無いときのエラーメッセージを丁寧にした
-
-【2026/06/13】
-Neko Project 21/W ver0.86 rev103β1を公開しました。
-・CL-GD54xx（PC-9801-96等）がWinNT3.1およびWinNT3.5で動くように修正
-　・自動選択は上手くいかないかもしれません
+・CPUスタックチェックでリミットの判定を間違える問題を修正
+　・LEMM通常版のRELOADが正しく動きます
+・CPUのVMEを追加実装
+・ADPCM修正およびCPU経由ADPCMを実装
+・サウンドボードにSNE MULTIMEDIA ORCHESTRAを追加
+　・PCM部についてはADPCMを使うソフトがあるようなのでADPCMのみ暫定実装
+　・FM部などその他はnp2sからの移植です
+　・ステートセーブ対応はまだ中途半端です
+・BIOS I/Oエミュレーションのミスを修正
+・GLIOのバグ修正と追加実装
+　・実機BIOSがなくてもそこそこ描画されます
+・システムメニューからのフルメモリダンプに対応（I286SAVE=trueでデバッグメニュー有効時）
 
 【2026/06/06】
 Neko Project 21/W ver0.86 rev102を公開しました。
