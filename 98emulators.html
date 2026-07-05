@@ -15,6 +15,7 @@
 		PC-9800シリーズ（およびその互換機）エミュレータはかなり昔から開発されています。
 		古くから開発され、現在でも有名なものとしてはT98-NEXT、Anex86、Neko Project II系の3つが存在しています。
 		また、比較的最近登場したものとして、QEMU/9821、SL9821、DOSBox-X(PC-98 mode)などが挙げられます。
+		2026年には海外発のNeetan, 従来のエミュレータの位置づけから視点を変えたQuuBeeが登場しました。
 	</p>
 	<p>
 		どれが一番優れているのかという議論は基本的に無意味で、何を求めているかによってその答えは変わります。
@@ -170,13 +171,28 @@
 		音源周りの再現性を求めるならばこれが最優先の選択肢になります。
 	</p>
 	<p>
-		最近までメンテナンスされており、本家に存在している不具合の修正や追加機能の実装などが行われています。
+		頻繁にメンテナンスされており、本家に存在している不具合の修正や追加機能の実装などが行われています。
 		高品質なFM音を生成するfmgenが完全な形で搭載されているのは魅力的です。
 		現代的なスペックのPCで、前期PC-9821くらいまでの再現をしたい場合は一番良い選択だと思います。
 	</p>
 	<p>
 		機能的な仕様は本家とほぼ同じですが、多種イメージ対応やUI周りの操作性改善が行われていたりします。
 	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">Neko Project II fmgen版の基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9801/PC-9821</td></tr>
+			<tr><td>CPU</td><td>i486SX相当(+Pentium命令の一部)</td></tr>
+			<tr><td>拡張メモリ</td><td>最大63MB</td></tr>
+			<tr><td>FDD</td><td>3モード対応</td></tr>
+			<tr><td>HDD</td><td>SASI, SCSI, IDE（CDも可）</td></tr>
+			<tr><td>拡張ボード</td><td>本家と基本的に同じ</td></tr>
+			<tr><td>その他</td><td>fmgen完全搭載、音声出力フィルタ対応、マルチスレッド対応、デバッガ強化等々。エミュレーション精度や音源周りの改善が多数。UIの改善もあり。ステートセーブもあり（要INI編集）。</td></tr>
+			<tr><td>実機BIOS</td><td>任意</td></tr>
+		</tbody>
+	</table>
+	</div>
 	<h3>Neko Project II改変</h3>
 	<p>
 		Neko Project II ver. 0.86のRaspberry Pi・RetroPie向け移植品をベースにNeko Project 21/Wの一部をくっつけて、クロスプラットフォーム対応にしたものです。
@@ -187,6 +203,21 @@
 		最近はあまり更新されていませんが、メンテナンスが完全に止まったわけではありません。
 		Windows以外のOSで動かしたいと考えるならば最も良い選択になり得ると思います。
 	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">Neko Project II改変の基本仕様</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9801/PC-9821</td></tr>
+			<tr><td>CPU</td><td>80386相当～Core i相当命令</td></tr>
+			<tr><td>拡張メモリ</td><td>最大4GB（実際上は1GBちょっと）</td></tr>
+			<tr><td>FDD</td><td>3モード対応</td></tr>
+			<tr><td>HDD</td><td>IDE, SASI, SCSI</td></tr>
+			<tr><td>拡張ボード</td><td>本家のものに加えて、Super MPU, LGY-98, ウィンドウアクセラレータ、Sound Blaster 16、音源複数枚差しなど。</td></tr>
+			<tr><td>その他</td><td>マニアックな機能多数あり。ステートセーブもあり（要INI編集）。</td></tr>
+			<tr><td>実機BIOS</td><td>任意</td></tr>
+		</tbody>
+	</table>
+	</div>
 	<h3>Neko Project 21/W</h3>
 	<p>
 		拙作の物です。
@@ -203,7 +234,7 @@
 	<table style="width:auto;" border=1>
 		<caption style="font-weight:bold;">Neko Project 21/Wの基本仕様</caption>
 		<tbody>
-			<tr><td style="min-width:6em;">再現対象</td><td>PC-9821</td></tr>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9801/PC-9821</td></tr>
 			<tr><td>CPU</td><td>80386相当～Core i相当命令</td></tr>
 			<tr><td>拡張メモリ</td><td>最大4GB（実際上は1GBちょっと）</td></tr>
 			<tr><td>FDD</td><td>3モード対応</td></tr>
@@ -242,6 +273,25 @@
 	</table>
 	</div>
 	
+	<h2>Common Source Code Project</h2>
+	<p>
+		PC-98専用のエミュレータというよりは、様々なエミュレータの集合体の中の1つにPC-98が含まれるという扱いです。
+		QEMU/9821と同じ方が作成されています。
+	</p>
+	<p>
+		PC-98の特定機種を再現することに特化しています。
+		用意されているものとしては、初代PC-9801、PC-9801E/F/M, PC-9801U, PC-9801VF, PC-9801VM, PC-9801VX, PC-9801RA等が挙げられています。
+		PC-98XA, PC-98XL, PC-98RL, PC-98DO, PC-98LT, PC-98HA等の特殊な機種のエミュレータも用意されています。
+		ハイレゾを再現できるエミュレータとしては唯一かもしれません。
+	</p>
+	<p>
+		原則としてその機種に対応する実機を所有していることが前提です。
+		ある程度時期が近い機種のITF/BIOS等であれば流用できる場合もありますが、完全に動く保証はありません。
+	</p>
+	<p>
+		特定の機種、特殊な機種を再現したいのであれば選択肢になります。
+	</p>
+	
 	<h2>SL9821</h2>
 	<p>
 		上記よりもさらに後発のエミュレータです。
@@ -277,6 +327,54 @@
 	<p>
 		あまり詳しくありませんので詳細は書けませんが、DOSベースのPC-98ソフトウェアをMS-DOS無しで動かしたいのであれば選択肢になるかもしれません。
 	</p>
+	
+	<h2>Neetan</h2>
+	<p>
+		2026年公開のRustで作成された海外発エミュレータです。
+		既存のコードを参考にしつつも、流用はせずに作成されていると思われます。
+		再現対象はPC-98のみならず日本製クラシックPCを再現することを目指していそうです。
+	</p>
+	<p>
+		2026年時点でそれほど互換性が高いとは言えませんが、GA-1280A等の他にはないもののエミュレーションコードが含まれていたりします。
+	</p>
+	<p>
+		PC-98の場合は実機BIOSがなくてもOKのようです。
+	</p>
+	
+	<h2>QuuBee</h2>
+	<p>
+		2026年に公開された、Webブラウザ上で動くPC-98フリーソフトプレイヤーです。
+		Neko Project II改変ベースという意味ではNeko Project II系と呼んでもよいですが、エミュレータと言うよりはPC-98ソフトウェアの実行環境を提供し、PC-98フリーソフト文化の再体験を目指したものになっています。
+	</p>
+	<p>
+		既存の多くのエミュレータでは実機PC-98と同じように動くことが重視されていましたが、QuuBeeは逆にPC-98やDOS上であることを意識させずにDOSソフトを動かすことを重視しています。
+		アーカイブのまま直接実行できること、コマンドを打つ操作が必要ないこと、テキストや画像などをその場で確認できることなどはこの設計思想の表れと思います。
+	</p>
+	<p>
+		PC-98やDOSの存在自体を意識させないというコンセプトのため、ディスクイメージからのブートやコマンドでの操作は基本的にできません。
+		結果として主にフリーソフトのプレイヤーという位置づけになります。
+	</p>
+	<p>
+		DOSは独自のエミュレーションコードで再現し、実機関係の何かは必要とせずまた使用できないようにすることで、権利関係の怪しさをなくす＆怪しい使い方をさせないことも重視しているようです。
+	</p>
+	<p>
+		アーカイブのまま実行でき、MS-DOSコマンドを知っている必要がないという特性から、PC-98自体の知識がない人はもちろん、PC-98に詳しい人にとっても、環境構築や準備をごっそり省略という点で非常に手軽なPC-98ソフトウェア実行環境だと思います。
+	</p>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" border=1>
+		<caption style="font-weight:bold;">QuuBeeの基本仕様（2026年7月時点）</caption>
+		<tbody>
+			<tr><td style="min-width:6em;">再現対象</td><td>PC-9821上のMS-DOSプログラム実行環境</td></tr>
+			<tr><td>CPU</td><td>i486DX相当命令</td></tr>
+			<tr><td>拡張メモリ</td><td>32MB</td></tr>
+			<tr><td>FDD</td><td>無し</td></tr>
+			<tr><td>HDD</td><td>無し</td></tr>
+			<tr><td>拡張ボード</td><td>86音源+ちびおと、MPU-PC98II</td></tr>
+			<tr><td>その他</td><td>MS-DOS不要。アーカイブ内またはディスクイメージ内ファイルをHLE DOS上で直接実行</td></tr>
+			<tr><td>実機BIOS</td><td>使用禁止、エミュレーションBIOSのみ</td></tr>
+		</tbody>
+	</table>
+	</div>
 	
 	<p>
 		<a href="./index.html">トップに戻る</a>
