@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<meta content="text/javascript" http-equiv="Content-Script-Type" />
+	<meta content="text/css" http-equiv="Content-Style-Type" />
+	<link href="./favicon.ico" rel="SHORTCUT ICON" />
+	<meta content="user-scalable=yes,initial-scale=1" name="viewport" />
+	<title>NEONシリーズ プログラム実行フロー解説 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link href="../style.css?dummy=7" rel="stylesheet" type="text/css" />
+	<meta content="PC-98用グラフィック＆サウンドデモ NEON / NEON2 / NEON3 の起動、描画、VSYNC、BGM、終了処理、内部データ形式をソースコードから追う資料です。" name="description" />
+</head>
+<body class="neonflow">
+	<h1>NEONシリーズ プログラム実行フロー解説</h1>
+	<p>
+		PC-98用グラフィック＆サウンドデモ <b>NEON / NEON2 / NEON3</b> の、起動からデモループ、終了までの流れをソースコードから追った資料です。
+		通常版・256色版・80286版に共通する骨格を中心に、描画方式や世代ごとの差もまとめています。
+	</p>
+	<p>
+		このHTML版は「NEONシリーズ プログラム実行フロー解説」PDFをWeb向けに再構成したものです。
+		<a href="./NEON_series_program_flow.pdf">PDF版はこちら</a>。
+	</p>
+	<h2 style="margin-top:0;">目次</h2>
+	<ol class="compact-list">
+		<li><a href="#overview">全体をフラットに見渡す</a></li>
+		<li><a href="#startup">COM起動と初期設定</a></li>
+		<li><a href="#mainloop">デモ本体のメインループ</a></li>
+		<li><a href="#render">シーン選択と1フレームの描画</a></li>
+		<li><a href="#video">表示ページ・VRAM・パレット</a></li>
+		<li><a href="#vsync">VSYNC、論理時間、BGMの進行</a></li>
+		<li><a href="#sound">音源検出・初期化・シーケンサ</a></li>
+		<li><a href="#exit">入力、STOP/Ctrl+C、終了処理</a></li>
+		<li><a href="#fallback">IRQが使えない場合のフォールバック</a></li>
+		<li><a href="#differences">NEON / NEON2 / NEON3 と各版の差分</a></li>
+		<li><a href="#bgmdata">BGMデータ形式</a></li>
+		<li><a href="#graphicsdata">グラフィックデータ形式</a></li>
+		<li><a href="#sources">主要ソースファイルとラベル一覧</a></li>
+		<li><a href="#reading">ソースを読むおすすめ順序</a></li>
+	</ol>
+	<h2 id="overview">1. 全体をフラットに見渡す</h2>
+	<p>
+		NEONシリーズの各版は、描画方式やシーン内容が異なっても、プログラム全体の寿命はほぼ同じ形です。
+		COMプログラムとして開始し、実行条件を確定し、画面・文字・音源・時間管理を初期化してからデモループへ入り、終了要求を検出したら逆順にハードウェア状態を戻してDOSへ帰ります。
+	</p>
+	<p>
+		プログラムを「描画」「音源」「VSYNC」のどれか一つとして見るより、複数のサブシステムが一つの論理フレーム番号を共有して進むデモプログラムとして見ると理解しやすくなります。
+	</p>
+	<figure class="doc-figure"><img alt="NEONシリーズの起動から終了までの全体フロー図" src="./img/neonflow/program-lifecycle.png" /><figcaption>図1-1　NEONシリーズの起動から終了までの全体フロー</figcaption></figure><p class="source-note">図版はPDF版「NEONシリーズ プログラム実行フロー解説」から切り出したものです。</p>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>段階</th><th>主な仕事</th><th>代表的な状態・データ</th></tr></thead>
+			<tbody>
+				<tr><td>起動</td><td>DS/ESをプログラムセグメントへ揃え、タイトルを表示</td><td>PSPのコマンドライン</td></tr>
+				<tr><td>条件確定</td><td>コマンドライン、CPU機能、音源、描画モードを決定</td><td><code>sound_mode</code>, <code>video_backend</code>, <code>frame_skip</code>, <code>speed_percent</code></td></tr>
+				<tr><td>初期化</td><td>終了保護、グラフィック、文字VRAM、音源、VSYNC時間管理を準備</td><td><code>draw_page</code>, <code>sound_present</code>, scheduler flags</td></tr>
+				<tr><td>フレーム生成</td><td>現在の時刻からシーンを決め、非表示ページへ描画</td><td><code>scene_index</code>, <code>scene_frame</code>, <code>draw_page</code></td></tr>
+				<tr><td>表示・時間進行</td><td>完成ページがあればVSYNCで表示し、モード規則に従ってBGMと論理時刻を進める</td><td><code>vsync_frame_ready</code>, <code>frame_counter</code>, <code>music_index</code></td></tr>
+				<tr><td>入力確認</td><td>通常キー、STOP、Ctrl+Cの終了要求を確認</td><td><code>break_requested</code></td></tr>
+				<tr><td>終了</td><td>IRQ、音源、画面、カーソル、割り込みベクタを復元</td><td>元INT 0Ah/06h/23h、PIC状態</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<p class="note"><b>用語:</b> ここで「論理時刻」は <code>frame_counter</code> を中心としたデモ内部の時間、「実時間」はディスプレイのVSYNC周期を指します。<code>/SPEED</code> は論理時刻の進み方を変え、<code>/AFS</code> と <code>/FS</code> は描画と論理時刻の関係を決めます。</p>
+	<p class="source-note">代表ソース: NEON <code>NEONRUN.ASM</code> / NEON2 <code>neon2.asm</code> / NEON3 <code>NEON3256.ASM</code></p>
+	<h2 id="startup">2. COM起動と初期設定</h2>
+	<h3>2.1 <code>start</code>: COMプログラムの入口</h3>
+	<p>各版は <code>org 100h</code> のCOM形式です。CSをDS/ESへコピーして、文字列・テーブル・変数を同一セグメントで扱える状態にします。</p>
+<pre><code>start:
+        push    cs
+        pop     ds
+        push    cs
+        pop     es
+        cld
+        ...
+        call    parse_command_line</code></pre>
+	<h3>2.2 コマンドラインを読み、実行条件を確定する</h3>
+	<p>
+		<code>parse_command_line</code> はPSPの80h番地にある長さと81h以降の文字列を読み、空白単位でトークン化します。
+		小文字は大文字へ変換され、<code>parse_option_token</code> が <code>/AUTO</code>、音源選択、<code>/AFS</code>、<code>/FS</code>、<code>/SPEED</code>、256色版のPEGCバックエンド指定などを判定します。
+	</p>
+	<h3>2.3 CPU・音源を検出する</h3>
+	<p>
+		CPU依存の高速化を持つ版では <code>cpu_detect_features</code> を実行します。続いて <code>sound_detect</code> がOPNA/YM2608、YM2203/26K、OPL3を検査し、選択された構成を確定します。
+		音源が見つからなくても、グラフィックのみでデモを続行できます。
+	</p>
+	<h3>2.4 終了保護、画面、文字、音源、VSYNCを立ち上げる</h3>
+	<ol>
+		<li><code>break_guard_install</code> でSTOP(INT 06h)とCtrl+C(INT 23h)を安全な終了要求ハンドラへ差し替える。</li>
+		<li><code>video_enter</code> / <code>video16_enter</code> でグラフィックモードとページ構成を設定する。</li>
+		<li>テキストカーソルを隠し、<code>text_initialize</code> で文字VRAMを準備する。</li>
+		<li>音源があれば <code>sound_initialize</code> でOPNA/OPL3と曲の先頭状態を作る。</li>
+		<li><code>adaptive_clock_initialize</code> でVSYNC IRQ2 / INT 0Ahスケジューラを導入し、実際に動作するか確認する。</li>
+	</ol>
+	<h2 id="mainloop">3. デモ本体のメインループ</h2>
+	<p>初期化後は <code>.main_loop</code> を繰り返します。通常はVSYNC IRQスケジューラを利用し、IRQが使えない場合だけlegacy経路へ移ります。</p>
+	<h3>3.1 通常のIRQ駆動ループ</h3>
+	<ul>
+		<li>固定フレームスキップ時は、次の論理slotが来るまで待つ。<code>/AFS</code> ではこの待ちを行わない。</li>
+		<li><code>vsync_frame_ready</code> が0になるまで待ち、前の完成フレームが表示済みであることを確認する。</li>
+		<li>現在の <code>frame_counter</code> をスナップショットし、非表示ページへ次のフレームを完成させる。</li>
+		<li><code>vsync_queue_completed_frame</code> で表示予定ページ、シーン時刻、パレットをVSYNC側へ公開する。</li>
+		<li>VSYNC側が完成ページを受け取るまで待ち、キー/終了要求を確認して次へ進む。</li>
+	</ul>
+	<div class="twocol-flow">
+		<div><b>メイン処理</b><br />時刻snapshot<br />↓<br />裏ページ描画<br />↓<br />完成フレームをqueue</div>
+		<div><b>VSYNC IRQ</b><br />完成ページ確認<br />↓<br />ページ切替・パレット反映<br />↓<br />モードに従いBGM/論理時刻を進行</div>
+	</div>
+	<h3>3.2 なぜ「完成したページ」を渡すのか</h3>
+	<p>
+		描画途中のページを表へ出すと、ティアリングや中間状態が見えます。そのためメイン側は裏ページを最後まで描き終えてから <code>vsync_frame_ready=1</code> とし、VSYNC IRQは完成したページだけを表示します。
+	</p>
+	<p>
+		<code>/AFS</code> では重い描画中も実VSYNCに合わせて音楽・映像時刻が進み、次に描くフレームが追いつくことで自動スキップします。<code>/FS:n</code> では固定の論理フレーム進行へ音楽も合わせるため、描画が遅い場合はBGMも同じだけ遅くなります。
+	</p>
+	<h2 id="render">4. シーン選択と1フレームの描画</h2>
+	<h3>4.1 <code>frame_counter</code> を <code>scene_index</code> / <code>scene_frame</code> に分解する</h3>
+	<p>
+		デモ全体の時刻は <code>frame_counter</code> で持ちます。<code>select_scene</code> は全体フレーム番号を各シーンの長さで順に減算し、現在のシーン番号とシーン内相対時刻へ分解します。
+	</p>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>作品</th><th>総論理フレーム</th><th>シーン数</th><th>選択方法</th></tr></thead>
+			<tbody>
+				<tr><td>NEON</td><td>3072</td><td>5</td><td>比較チェーン（384 + 640×4）</td></tr>
+				<tr><td>NEON2</td><td>6144</td><td>12</td><td><code>scene_length_table</code> を順に走査</td></tr>
+				<tr><td>NEON3</td><td>6144</td><td>9</td><td>長さテーブル + 一部シーン境界の状態管理</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<p>描画先は <code>scene_routines</code> のnear pointer表から選び、メインループは個々のシーン名を意識しません。</p>
+	<h3>4.2 1フレームの代表的なレンダリング工程</h3>
+	<figure class="doc-figure"><img alt="論理フレームから完成ページまでの代表的な流れの図" src="./img/neonflow/frame-render-flow.png" style="max-height:700px;" /><figcaption>図4-1　論理フレームから完成ページまでの代表的な流れ</figcaption></figure>
+	<p>
+		NEON2 256色版ではシーン確定→パレット位相同期→ページ選択→クリア→シーン→Plane固有レイヤ→遷移→粒子→テキストの順です。
+		NEON3は最終ロトズームでページ再利用の最適化があるため分岐が増えますが、通常区間の骨格は同じです。
+	</p>
+	<h3>4.3 世代が進むほどシーン内部の状態が厚くなる</h3>
+	<p>
+		初代NEONは5つの大きな章を比較的直接的に描き、NEON2は64小節に対応した12シーン、NEON3は持続するカメラ状態を持った9シーンの連続都市飛行になっています。
+		AFSでシーン先頭フレームが描かれない可能性があるため、カメラのrebaseなどは単純な <code>scene_frame==0</code> だけに依存しない境界処理が必要です。
+	</p>
+	<h2 id="video">5. 表示ページ・VRAM・パレット</h2>
+	<h3>5.1 描画ページと表示ページを分ける</h3>
+	<p>
+		各版は <code>draw_page</code> をアクセスページとして選び、そのページをクリアして描画します。完成後にVSYNC側が表示ページへ切り替え、次の裏ページへ交代します。
+	</p>
+	<h3>5.2 256色版のバックエンド</h3>
+	<p>
+		PEGC 256色版はPlane / Packed / PackedFullなど複数の描画経路を持ちます。<code>video_enter</code> が実際に使う <code>video_backend</code> を決め、その後のシーン選択や時間管理はバックエンドから独立します。
+	</p>
+	<h3>5.3 パレットは「完成フレームの時刻」に固定する</h3>
+	<p>
+		IRQ駆動中は描画途中にもグローバル時刻が進む可能性があります。完成した絵と後から参照した現在時刻を混ぜると、映像よりパレットだけ先行します。
+		そのため完成時の <code>scene_index</code> / <code>scene_frame</code> を保存し、その時刻に対応するパレットをメイン側で準備してから公開します。IRQ内では準備済み値を反映するだけにし、重い補間や除算を避けます。
+	</p>
+	<h2 id="vsync">6. VSYNC、論理時間、BGMの進行</h2>
+	<h3>6.1 IRQ2 / INT 0Ahを共通の表示境界にする</h3>
+	<p>
+		現行版はPC-98のmaster GDC VSYNC割り込み（IRQ2 / INT 0Ah）を表示切替の共通境界として使います。
+		ただしBGMと映像の時刻をどう進めるかは、<code>/AFS</code> と <code>/FS:n</code> で異なります。
+	</p>
+<pre><code>adaptive_vsync_irq:
+        ...
+        ; 完成フレームがあれば表示
+        if (vsync_frame_ready) {
+                set_display_page(vsync_pending_page)
+                commit_prepared_palette()
+                draw_page ^= 1
+                vsync_frame_ready = 0
+        }
+
+        ; AFS: 毎VSYNC
+        ; FS : 完成フレーム/固定skipの論理slotだけ
+        if (/AFS || vsync_visual_tick_due) {
+                advance_audio_tick()
+                advance_visual_tick()
+        }
+        ...</code></pre>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>モード</th><th>描画開始</th><th>BGM / 論理時刻</th><th>重い場面</th></tr></thead>
+			<tbody>
+				<tr><td><code>/AFS</code></td><td>前フレームが表示済みならすぐ次を描く</td><td>毎VSYNC、音楽と映像時刻を同時に進める</td><td>未描画フレームを飛ばし、BGMテンポは実時間を維持</td></tr>
+				<tr><td><code>/FS:n</code></td><td>完成表示後、指定skipを消費してから次を描く</td><td>完成フレーム/固定skipの論理slotだけ両方進める</td><td>自動skipせず、処理が遅ければBGMも同じだけ遅れる</td></tr>
+				<tr><td>IRQ不可</td><td>従来のポーリング経路</td><td><code>advance_logical_tick</code> で音楽+映像を同期更新</td><td>AFSはlegacy測定または固定相当へ縮退</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<h3>6.2 <code>/SPEED</code> は論理時刻の倍率</h3>
+	<p>
+		<code>speed_percent</code> は100分率の位相蓄積として扱います。100なら1回につき1論理tick、100未満では時々据え置き、100超では時々2回以上進みます。
+		音楽用 <code>audio_speed_phase</code> と映像用 <code>speed_phase</code> は同じ倍率を受けるため、片方だけ異なる速度で進まないようにしています。
+	</p>
+	<h2 id="sound">7. 音源検出・初期化・シーケンサ</h2>
+	<h3>7.1 <code>sound_detect</code></h3>
+	<p>
+		OPNA/YM2608またはYM2203/26Kを調べ、必要に応じてOPL3を調べます。<code>/AUTO</code>、<code>/OPNA</code>、<code>/26K</code>、<code>/OPL</code>、<code>/BOTH</code> などの指定と組み合わせて最終構成を決めます。
+	</p>
+	<h3>7.2 <code>sound_initialize</code></h3>
+	<p>
+		存在するチップだけを初期化し、ミキサ設定と音量補正を反映します。曲のindex、section、dividerを先頭へ戻し、最初の音源レジスタ状態を作ってからメインループへ入ります。
+	</p>
+	<h3>7.3 <code>sound_tick</code> は論理tickの一部</h3>
+	<p>
+		曲データは <code>MUSIC_DIVIDER</code> ごとに1step進み、各チップへ必要なレジスタを書き込みます。NEON2/NEON3では6144論理フレームと64小節の構成が対応しています。
+	</p>
+	<h3>7.4 <code>sound_stop</code></h3>
+	<p>終了時は全音停止とミキサ/音源状態の復元を行い、音が鳴りっぱなしのままDOSへ戻ることを防ぎます。</p>
+	<h2 id="exit">8. 入力、STOP/Ctrl+C、終了処理</h2>
+	<h3>8.1 非同期割り込みの中では後始末しない</h3>
+	<p>
+		STOPはINT 06h、DOS Ctrl+CはINT 23hです。割り込みハンドラは <code>break_requested=1</code> として戻るだけで、DOS、BIOS、VRAM、音源の復元を行いません。
+	</p>
+	<h3>8.2 通常キーも同じ終了経路へ合流する</h3>
+	<p>メインループは終了フラグとDOS AH=06hの直接コンソール入力を確認し、どちらも <code>.exit_demo</code> へ合流します。</p>
+	<h3>8.3 終了処理の順序</h3>
+	<ol>
+		<li><code>adaptive_clock_shutdown</code> でVSYNC IRQとPIC状態を復元。</li>
+		<li><code>sound_stop</code> で発音停止・音源状態を復元。</li>
+		<li><code>video_leave</code> / <code>video16_leave</code> でグラフィック、ページ、PEGC/GRCG/EGC状態を復元。</li>
+		<li>テキストカーソルを再表示。</li>
+		<li><code>break_guard_restore</code> でINT 06h / INT 23hを復元。</li>
+		<li>終了メッセージを表示し、DOS INT 21h AH=4Chで終了。</li>
+	</ol>
+	<p class="note">終了保護のベクタ復元を画面・音源の復元より後にすることで、クリーンアップ途中にSTOP/Ctrl+Cが入っても割り込みコンテキストで中途半端な後始末を開始しないようにしています。</p>
+	<h2 id="fallback">9. IRQが使えない場合のフォールバック</h2>
+	<p>
+		VSYNC IRQ2は環境や常駐ソフトによって既に利用されている可能性があります。そのため、スケジューラはベクタを設定しただけでは成功扱いにせず、実際にVSYNCカウンタが進むか確認します。
+	</p>
+	<figure class="doc-figure"><img alt="VSYNC IRQスケジューラ初期化とフォールバックの図" src="./img/neonflow/irq-fallback-flow.png" style="max-height:600px;" /><figcaption>図9-1　VSYNC IRQスケジューラ初期化とフォールバック</figcaption></figure>
+	<h3>9.1 installと所有権</h3>
+	<p>
+		PICマスク状態と旧INT 0Ahベクタを保存します。IRQ2が元々マスクされていた場合だけ自前でアンマスクし、「自分が有効化したIRQ」であることを記録します。既存利用者がいる場合は旧ハンドラへのchainを考慮します。
+	</p>
+	<h3>9.2 実動作確認</h3>
+	<p>
+		初期化直後にVSYNCカウンタ差が0なら、IRQが実際には動作していないと判断して元に戻します。検証中はスケジューラ本体をrunningにしないため、確認用のVSYNCがBGM時間を消費しません。
+	</p>
+	<h3>9.3 legacy loop</h3>
+	<p>
+		legacy経路ではメイン側が <code>wait_vsync</code>、ページフリップ、パレット反映、<code>advance_logical_tick</code> を同期的に実行します。IRQが使えなくてもデモ自体は停止せず、従来方式へ縮退します。
+	</p>
+	<h2 id="differences">10. NEON / NEON2 / NEON3 と各版の差分</h2>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>項目</th><th>初代 NEON</th><th>NEON2</th><th>NEON3</th></tr></thead>
+			<tbody>
+				<tr><td>全体時間</td><td>3072 frames / 5 scenes</td><td>6144 frames / 12 scenes</td><td>6144 frames / 9 continuous scenes</td></tr>
+				<tr><td>シーン選択</td><td>比較チェーン</td><td>長さテーブル</td><td>長さテーブル + 一部境界状態管理</td></tr>
+				<tr><td>描画の性格</td><td>2D/3D + text、比較的直接的</td><td>多数の演出レイヤ、パターン、粒子</td><td>連続3D都市、持続カメラ、ロトズーム</td></tr>
+				<tr><td>256色</td><td>別NEON256、PEGC系</td><td>Plane/Packed系 + CPU機能活用</td><td>Plane/Packed/PackedFull、都市パレット</td></tr>
+				<tr><td>標準/16色/286</td><td>NEONRUNは8色、286版あり</td><td>16色GRCG/EGC + 286版</td><td>16色版 + 286版（200/400）</td></tr>
+				<tr><td>VSYNC/BGM</td><td colspan="3">現行版はIRQ駆動へ統一。AFSは実時間優先、FSは映像/BGM同期優先。</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<h3>10.1 版が違っても変わらない骨格</h3>
+	<ul>
+		<li><code>start</code> で環境・オプション・検出を確定する。</li>
+		<li>画面、文字、音源、VSYNC時間管理を初期化する。</li>
+		<li><code>frame_counter</code> をシーン時刻へ分解し、裏ページへ描画する。</li>
+		<li>完成フレームをVSYNC側へ渡し、表示とパレットを同期する。</li>
+		<li>音楽と映像時刻をAFS/FSの規則に従って進める。</li>
+		<li>キー/STOP/Ctrl+Cをメイン側で検出して一つの終了経路へ入る。</li>
+		<li>IRQ→音源→画面→文字→break guardの順に安全に復元する。</li>
+	</ul>
+	<h2 id="bgmdata">11. BGMデータ形式</h2>
+	<p>
+		NEONシリーズの実行時BGMは、S98やMIDIファイルを読み込む方式ではありません。COM内にアセンブルされた短い1byteイベント列を、<code>sound_tick</code> / OPNA / OPL3側のシーケンサが一定の論理間隔で読み、音源レジスタへ変換して演奏します。
+	</p>
+	<p class="note"><b>配布用データとの違い:</b> NEON3に同梱したS98はOPNA+OPL3のレジスタログ、MIDIは鑑賞・DAW用の編曲データです。どちらも実行時プレイヤーが読むファイルではありません。</p>
+	<h3>11.1 1byteの音符トークン</h3>
+	<p>
+		基本トークンは3作品で共通です。<code>REST=FFh</code> は休符/キーオフ、<code>HOLD=FEh</code> は直前の発音を保持し、通常音符は <code>NOTE(block, semi) = (block &lt;&lt; 4) | semi</code> の形で1byte化します。
+		上位4bitが音域(block)、下位4bitが半音番号です。
+	</p>
+<pre><code>music_data:
+        db 54h,0FEh,0FFh,0FFh,5Bh,0FEh,...
+        ; 1チャンネル分の全stepを並べ、その後に次チャンネルが続く</code></pre>
+	<p>
+		<code>music_data</code> は基本的にchannel-majorで、読み出し時に <code>channel * MUSIC_STEPS + music_score_index</code> の形で現在位置を求めます。
+	</p>
+	<h3>11.2 作品ごとのスコア長とチャンネル構成</h3>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>作品 / 曲名</th><th>内部スコア</th><th>主な構成</th><th>論理時間</th></tr></thead>
+			<tbody>
+				<tr><td>NEON<br /><b>Pulse Cartography</b></td><td>512 step × 12ch（32 bars）</td><td>OPNA: FM 0..5 + SSG 6..8。OPL3側も共通スコアを利用</td><td>6 logical frames / step = 3072 frames</td></tr>
+				<tr><td>NEON2<br /><b>Signal Convergence</b></td><td>1024 step × 12ch（64 bars）</td><td>OPNA: 0..5 FM + 6..8 SSG / OPL3: 0..9、10..11予約</td><td>6 logical frames / step = 6144 frames</td></tr>
+				<tr><td>NEON3<br /><b>METROPOLITAN IGNITION</b></td><td>1024 step × 9ch（64 bars）+ rhythm 1024 bytes</td><td>9 tonal rolesをOPNA/OPL3で共有 + 独立rhythm mask</td><td>6 logical frames / step = 6144 frames</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<h3>11.3 6フレームごとのシーケンサとAFS/FS</h3>
+	<p>
+		標準速度では <code>MUSIC_DIVIDER=6</code> なので、6<b>論理</b>フレームごとに <code>music_score_index</code> が1進みます。
+		AFSでは論理時刻が実VSYNCへ追従し、FSでは映像の固定論理進行へBGMも合わせます。
+	</p>
+	<h3>11.4 NEON3の独立リズムマスク</h3>
+	<p>
+		NEON3は旋律9chとは別に <code>rhythm_steps</code> を1024byte持ち、各stepを1byteのbit maskとして扱います。
+		BD=01h、SD=02h、CYM=04h、HH=08h、TOM=10h、RIM=20hです。同じマスクをOPNA Rhythm側とOPL3 percussion側が読み、それぞれの音源向けレジスタへ変換します。
+	</p>
+	<h2 id="graphicsdata">12. グラフィックデータ形式</h2>
+	<p>
+		NEONシリーズには、一般的なゲームのような「画面1枚のビットマップ」や「スプライト画像集」を中心とする共通グラフィックファイル形式はありません。
+		画面の大部分は、少数の座標・辺・配置パラメータ・lookup tableを入力として、そのフレームの形状をCPUが生成してVRAMへ描く<b>手続き型</b>です。
+	</p>
+	<p class="note"><b>固定画像ではなく生成規則:</b> 同じモデル/シーン情報から16色、256色、286版の異なるVRAM方式へ出力できます。見た目を規定する中心は「ピクセル列」より「幾何データ + 時間関数 + 描画バックエンド」です。</p>
+	<h3>12.1 シーン時刻のテーブル</h3>
+<pre><code>scene_length_table:
+        dw 640,640,512,896,...
+scene_routines:
+        dw scene_city_descent, scene_tower_canyon, ...</code></pre>
+	<p>
+		NEON2/NEON3では、シーン長を <code>dw</code> のフレーム数配列、処理先をnear pointer配列として持ちます。これは画像そのものではありませんが、「どの生成規則をいつ使うか」を決める最上位のグラフィックメタデータです。
+	</p>
+	<h3>12.2 頂点・面・辺 — 初代NEONの八面体</h3>
+	<p>
+		初代NEONの八面体は、6頂点をsigned wordのx,y,z、8面を3つの頂点index + 面色、12辺を始点/終点indexのbyte pairとして保持します。姿勢や投影後座標は毎フレーム計算します。
+	</p>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>データ</th><th>格納単位</th><th>意味</th><th>例</th></tr></thead>
+			<tbody>
+				<tr><td>頂点</td><td><code>dw x, y, z</code></td><td>3Dモデルのローカル座標</td><td><code>oct_vertices</code></td></tr>
+				<tr><td>面</td><td><code>db v0, v1, v2, color</code></td><td>三角面の頂点参照 + 面色</td><td><code>oct_faces</code></td></tr>
+				<tr><td>辺</td><td><code>db v0, v1</code></td><td>wireframeの接続関係</td><td><code>oct_edges</code>, <code>city_box_edges</code></td></tr>
+				<tr><td>投影scratch</td><td><code>dw screen_x, screen_y, ...</code></td><td>そのフレームだけ使う計算結果</td><td><code>oct_projected</code></td></tr>
+			</tbody>
+		</table>
+	</div>
+	<h3>12.3 NEON3の都市はbox descriptorから生成する</h3>
+	<p>
+		NEON3のビル等は8頂点を個別に保存せず、位置・幅・高さ・奥行きから8頂点を組み立てます。<code>city_obj_skew_q8</code> でせん断し、flagsで中間bandや屋上antennaを追加します。辺の接続は共通の <code>city_box_edges</code> を再利用します。
+	</p>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>フィールド/表</th><th>型</th><th>役割</th></tr></thead>
+			<tbody>
+				<tr><td><code>city_obj_x / y / z</code></td><td>dw</td><td>箱のワールド座標</td></tr>
+				<tr><td><code>city_obj_w / h / d</code></td><td>dw</td><td>幅・高さ・奥行き</td></tr>
+				<tr><td><code>city_obj_skew_q8</code></td><td>dw (Q8)</td><td>Z方向に応じたXせん断</td></tr>
+				<tr><td><code>city_obj_flags</code></td><td>db bit flags</td><td>中間band / roof antenna</td></tr>
+				<tr><td><code>city_box_edges</code></td><td>12 × (db v0,v1)</td><td>全box共通の辺接続</td></tr>
+				<tr><td>height / jitter / park / rail配列</td><td>小さなdw table</td><td>建物変化、木、線路等の安定配置</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<h3>12.4 データからVRAMまでの変換パイプライン</h3>
+	<figure class="doc-figure"><img alt="幾何データから各版のVRAMへ到達するまでの図" src="./img/neonflow/graphics-pipeline.png" /><figcaption>図12-1　幾何データから各版のVRAMへ到達するまで</figcaption></figure>
+	<p>
+		16色版はGRCG/EGC系、256色版はPEGC Plane/Packed/PackedFull、286版は16色GRCG系へ出力します。
+		286版NEON3は論理座標系を640×400に保ち、標準640×200モードだけ最終primitive側でYを1/2へ変換します。<code>/400</code> では同じ論理データを400lineへそのまま出します。
+	</p>
+	<h3>12.5 lookup tableと作業領域</h3>
+	<p>
+		<code>sin_table</code>、perspective reciprocal、tunnel scaleなどは、フレーム中の乗除算を減らすlookup tableです。
+		<code>tunnel_current</code>、<code>oct_projected</code>、<code>city_box_projected</code> などは毎フレーム上書きされるscratch bufferです。
+		ソースを読むときは「固定モデル/配置」「時間で変わるparameter」「計算結果scratch」を分けて考えると整理しやすくなります。
+	</p>
+	<h2 id="sources">付録A. 主要ソースファイルとラベル一覧</h2>
+	<div class="tablediv">
+		<table border="1">
+			<thead><tr><th>役割</th><th>初代NEON</th><th>NEON2</th><th>NEON3</th></tr></thead>
+			<tbody>
+				<tr><td>プログラム入口/主ループ</td><td><code>NEONRUN.ASM</code><br /><code>NEON256.ASM</code><br /><code>NEON286.ASM</code></td><td><code>neon2_16.asm</code><br /><code>neon2.asm</code><br /><code>NEON2286.ASM</code></td><td><code>NEON3_16.ASM</code><br /><code>NEON3256.ASM</code><br /><code>NEON3286.ASM</code></td></tr>
+				<tr><td>コマンドライン</td><td>本体内 or <code>COMMAND256.INC</code></td><td><code>COMMAND16/256/286.INC</code></td><td><code>COMMAND3_16</code> / <code>COMMAND256</code> / <code>COMMAND3_286.INC</code></td></tr>
+				<tr><td>VSYNC/AFS</td><td><code>AFS*.INC</code></td><td><code>AFS16/256/286.INC</code></td><td><code>AFS3_16</code> / <code>AFS256</code> / <code>AFS3_286.INC</code></td></tr>
+				<tr><td>シーン選択</td><td>本体内 / <code>SCENE256.INC</code></td><td><code>SCENE16/SCENE256.INC</code></td><td><code>SCENE3_256.INC</code> + 3D scene source</td></tr>
+				<tr><td>フレーム生成</td><td>本体内 / <code>FRAME_RENDER256.INC</code></td><td><code>FRAME_RENDER256.INC</code> / 16色本体</td><td><code>FRAME_RENDER3_256/16/286.INC</code></td></tr>
+				<tr><td>映像</td><td><code>VIDEO*.INC</code></td><td><code>VIDEO16_*</code> / <code>VIDEO256*.INC</code></td><td><code>VIDEO3_16/256/286.INC</code> + Packed系</td></tr>
+				<tr><td>文字</td><td><code>TEXT*.INC</code></td><td><code>TEXT16/256/286.INC</code></td><td><code>TEXT3_16</code> / <code>TEXT256</code> / <code>TEXT3_286.INC</code></td></tr>
+				<tr><td>音源</td><td colspan="3"><code>OPNA.INC</code> + <code>OPL3.INC</code></td></tr>
+				<tr><td>安全終了</td><td colspan="3"><code>BREAKGUARD.INC</code></td></tr>
+				<tr><td>BGMデータ</td><td><code>DATA.INC: music_data</code></td><td><code>MUSIC_R11_OPNA_OPL3.INC</code></td><td><code>MUSIC_URBAN_D8.INC</code> + <code>rhythm_steps</code></td></tr>
+				<tr><td>グラフィックデータ</td><td><code>DATA.INC: oct_vertices/faces/edges</code></td><td><code>SCENE*.INC</code> + <code>DATA*.INC</code> の演出/lookup表</td><td><code>SCENE3*.INC</code> + <code>DATA3.INC</code> + <code>CITY3D*.INC</code> のbox/配置表</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<p>代表ラベルを追う場合は、次の流れを見ると全体制御がつながります。</p>
+<pre><code>start
+  -&gt; parse_command_line
+  -&gt; sound_detect / video_enter / text_initialize / sound_initialize
+  -&gt; adaptive_clock_initialize
+  -&gt; .main_loop
+  -&gt; snapshot render_frame_counter
+  -&gt; select_scene / render_scene / text_update
+  -&gt; vsync_queue_completed_frame
+  &lt;-&gt; adaptive_vsync_irq
+  -&gt; present completed page
+  -&gt; /AFS: audio + visual every VSYNC
+     /FS : audio + visual only fixed logical slots
+  -&gt; .exit_demo
+  -&gt; adaptive_clock_shutdown -&gt; sound_stop -&gt; video_leave -&gt; break_guard_restore</code></pre>
+	<h2 id="reading">付録B. ソースを読むおすすめ順序</h2>
+	<ol>
+		<li>メインASMの <code>start</code> から <code>.exit_demo</code> までを通読し、初期化順とループ骨格を把握する。</li>
+		<li><code>AFS*.INC</code> の <code>adaptive_vsync_irq</code> と <code>vsync_queue_completed_frame</code> を読み、描画側とVSYNC側の境界を理解する。</li>
+		<li><code>advance_audio_tick</code> / <code>advance_visual_tick</code> と <code>OPNA.INC</code> の <code>sound_tick</code> をつなげ、音楽と <code>frame_counter</code> の関係を見る。</li>
+		<li><code>SCENE*.INC</code> の <code>select_scene</code> と <code>scene_routines</code> を確認する。</li>
+		<li><code>FRAME_RENDER*.INC</code> でページクリア、scene描画、追加レイヤ、<code>text_update</code> の順を見る。</li>
+		<li>最後に <code>VIDEO*.INC</code> や各シーン実装へ入り、VRAM方式・3D・パレットなど版固有の詳細を見る。</li>
+		<li>BGMを追う場合は <code>CONFIG*.INC</code> の <code>MUSIC_STEPS</code> / <code>MUSIC_DIVIDER</code> と <code>music_data</code> を確認し、OPNA/OPL3側の <code>music_score_index</code> 計算へつなげる。</li>
+		<li>グラフィックデータを追う場合は <code>SCENE*.INC</code> → <code>DATA*.INC</code> の固定表 → projection/clip → <code>VIDEO*.INC</code> のprimitive描画の順に見る。</li>
+	</ol>
+	<p class="note">
+		<b>まとめ:</b> NEONシリーズは「論理時刻からシーンと内部BGMスコアを選び、幾何データ/パラメータから裏ページへ画面を生成し、VSYNCで完成結果だけを公開する」という構造で読むと全体が整理できます。BGMは1byte token列、グラフィックは座標・辺・配置表を中心とした手続き型です。
+	</p>
+	<p style="clear:both;">
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
