@@ -89,3 +89,87 @@ a {
 	font-size: 10px;
 }
 }
+
+/* NEON program flow page */
+.neonflow {
+	max-width: 1100px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0 8px 24px 8px;
+}
+.neonflow .flowline {
+	margin: 16px 8px;
+	padding: 10px;
+	border: 1px solid #888;
+	line-height: 2.1;
+	text-align: center;
+}
+.neonflow .flowline span {
+	display: inline-block;
+	padding: 0 5px;
+}
+.neonflow .flowline b {
+	padding: 0 3px;
+}
+.neonflow .twocol-flow {
+	display: flex;
+	gap: 12px;
+	margin: 16px 8px;
+}
+.neonflow .twocol-flow > div {
+	flex: 1;
+	border: 1px solid #888;
+	padding: 10px;
+	line-height: 1.7;
+	text-align: center;
+}
+.neonflow .note {
+	margin: 12px 8px;
+	padding: 8px 10px;
+	border-left: 4px solid #48F;
+	background: #f6f8ff;
+}
+.neonflow .source-note {
+	font-size: smaller;
+	color: #555;
+}
+.neonflow code {
+	font-family: Consolas, "Courier New", monospace;
+}
+.neonflow pre {
+	margin: 12px 8px;
+	border: 1px solid #aaa;
+	background: #f7f7f7;
+	overflow: auto;
+}
+.neonflow .compact-list li {
+	margin-top: 4px;
+}
+.neonflow table th,
+.neonflow table td {
+	padding: 5px 7px;
+	vertical-align: top;
+}
+@media screen and (max-width: 640px) {
+	.neonflow .twocol-flow {
+		display: block;
+	}
+	.neonflow .twocol-flow > div {
+		margin-bottom: 8px;
+	}
+}
+
+.neonflow .doc-figure {
+	margin: 16px 8px 20px 8px;
+	padding: 0;
+	text-align: center;
+}
+.neonflow .doc-figure img {
+	max-width: 100%;
+	height: auto;
+}
+.neonflow .doc-figure figcaption {
+	margin-top: 8px;
+	font-size: 90%;
+	color: #555;
+}
