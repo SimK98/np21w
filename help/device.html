@@ -80,10 +80,11 @@
 <TR><TD ROWSPAN="3">FPU</TD><TD>80bit Extended Precision FPU (recommended)</TD><TD>Berkeley SoftFloatによる80bit拡張倍精度浮動小数点でFPUエミュレーションを行います（推奨）。低速ですが実CPU同様の正確な計算結果となります。</TD></TR>
 <TR><TD>64bit Double Precision FPU</TD><TD>64bit倍精度浮動小数点でFPUエミュレーションを行います。高速ですが実CPUより精度が劣るため演算結果が不正確になる可能性があります。</TD></TR>
 <TR><TD>64bit Double Precision FPU + INT64 Load/Store</TD><TD>64bit倍精度浮動小数点でFPUエミュレーションを行いますが、整数のロード・ストアのみ80bit拡張倍精度相当で行えます。</TD></TR>
-<TR><TD ROWSPAN="12">Mouse</TD><TD>Mouse Capture</TD><TD>Windowsのマウスを占有して、マウスエミュレーションを有効にします。<BR>３ボタンマウスでは中ボタンクリックでも切替えが可能です。</TD></TR>
+<TR><TD ROWSPAN="13">Mouse</TD><TD>Mouse Capture</TD><TD>Windowsのマウスを占有して、マウスエミュレーションを有効にします。<BR>３ボタンマウスでは中ボタンクリックでも切替えが可能です。</TD></TR>
 <TR><TD>Raw Input Mode</TD><TD>マウスから移動量データを直接取得します。<BR>マウスの挙動がホストOSの設定に依存しなくなります。</TD></TR>
 <TR><TD>Non-capture Control</TD><TD>マウスキャプチャしていない状態でもマウス操作が出来るようにします。ゲストOSに専用のマウスドライバを入れている場合は、完全にシームレスなマウス操作が可能です。</TD></TR>
-<TR><TD>Change Sound Volume by Wheel</TD><TD>マウスホイール回転をボリューム調整に割り当てます。</TD></TR>
+<TR><TD>Mouse Wheel Action</TD><TD>マウスホイール回転に割り当てる機能を選択します。</TD></TR>
+<TR><TD>Mouse Wheel Action (+Ctrl or Shift)</TD><TD>CtrlまたはShiftキーを押しながらマウスホイール回転に割り当てる機能を選択します。</TD></TR>
 <TR><TD>Limit Max Mouse Speed</TD><TD>マウス移動速度を4bitの範囲に制限します。マウスを速く動かすとカーソルが飛ぶ場合にONにしてみてください。</TD></TR>
 <TR><TD>x3.0</TD><TD>マウス速度を3倍にします。</TD></TR>
 <TR><TD>x2.0</TD><TD>マウス速度を2倍にします。</TD></TR>
