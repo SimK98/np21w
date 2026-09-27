@@ -13,6 +13,17 @@
 	<h1>更新履歴</h1>
 	<div style="margin:4px; padding 4px; border: 3px groove gray">
 		<p><pre>
+(2026/09/27 ver0.86 rev106β1)
+・NPDISPでDirect3D T&Lに対応（要ドライバ更新）
+　・ホストが頂点変換と照明を処理するので高速化できます
+　・エミュレータ側のNPDISP設定でT&Lを有効にしてください
+　・描画を省略して高速化するものも用意しました
+・新たにWHPX版を用意しました
+　・Windows Hypervisor Platformの仮想化支援CPUを使います
+　・HAXMが使えない最近の環境でも使えるはずです
+　・互換性はHAXM版並なのでほぼWinNT系しかまともに動きません
+　・WinNT4のハードウェア構成調査がやたら遅いですが待てば進みます
+
 (2026/09/27 ver0.86 rev105)
 ・FPU関連
 　・FSCALE等の命令実装ミス修正
