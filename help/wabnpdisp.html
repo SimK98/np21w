@@ -22,13 +22,14 @@
 
 <P>
   NPDISPはNeko Project 21/Wで使用できる専用のウィンドウアクセラレータです。
-  主にWindows3.1をターゲットとしており、OS標準ドライバに代わる高解像度表示ドライバとして使用できます。
+  主にWindows3.1, 95, 98をターゲットとしており、OS標準ドライバに代わる高解像度表示ドライバとして使用できます。
   描画のほとんどをホストOSに投げる仕組みになっており、それなりに高速な描画が期待できます。
 </P>
 
 <P>
   NPDISPはWindows 3.1での使用に最適化されています。
-  Windows 9xでも使用できますが、DirectDrawはほとんど使えないため推奨しません。
+  Windows 9xではDirectDrawおよびDirect3Dも使えます。
+  ただし、これらは完全なソフトウェアエミュレーションのためそれほど速くはありません。
 </P>
 
 <P>
@@ -38,6 +39,17 @@
 <DL>
 <DT><B>Enable</B></DT>
 <DD><P>チェックを入れるとNeko Project 21/W 専用ウィンドウアクセラレータが有効になります。この設定はリセット後に反映されます。</P></DD>
+</DL>
+
+<DL>
+<DT><B>Acceleration Level</B></DT>
+<DD><P>ゲストOSで使用可能なアクセラレーションの水準を選択します。</P>
+<ul>
+<li>None … アクセラレーションを提供しません。</li>
+<li>DirectDraw … DirectDrawによる2D描画機能を提供します。</li>
+<li>Direct3D … DirectDrawとDirect3D等の3D描画機能を提供します。</li>
+</ul>
+</DD>
 </DL>
 
 </BODY>
