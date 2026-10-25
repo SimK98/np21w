@@ -252,35 +252,40 @@
 		電池切れで起動の度に日付時刻がおかしくなるマシンでの使用を想定しています。
 	</div>
 	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/1X61Z40D3xFfxfWGf_-UkGaT0P_XwXv1_/view?usp=drive_link">INT 1BhでフロッピーにアクセスするときDMAバンクを跨ぐとエラーになるか確認するプログラム</a><br>
-		INT 1Bhでフロッピーにアクセスするときに、データ転送するメモリアドレスがDMAのバンク（64KB単位）を跨ぐとエラーになるかどうかを確認するだけの検証用プログラムです。
-		普通の人には用事がありません。開発者向けです。
-	</div>
-	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/1QXKaglsMxhZC0HjtsAmuzjLtcJ_Q3Pqd/view?usp=drive_link">PC-98 MS-DOS テキスト画面テストプログラム</a><br>
-		MS-DOSのテキスト画面のテストを行うプログラムです。PC-98依存コードもテストできます。
-		普通の人には用事がありません。開発者向けです。
-	</div>
-	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/1gEkSOhTKYuobN-97ZeenFmrPM193_lva/view?usp=drive_link">PC-98 MS-DOS 子プロセステストプログラム</a><br>
-		MS-DOSの子プロセスのテストを行うプログラムです。
-		普通の人には用事がありません。開発者向けです。
-	</div>
-	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/1LbcEZhiid6Ui-umlyn2knVQIkAdEA8_i/view?usp=drive_link">PC-98 LIOテストプログラム</a><br>
-		LIOのテストを行うプログラムです。
-		普通の人には用事がありません。開発者向けです。
-	</div>
-	<div class="downloadContents">
-		<a href="https://drive.google.com/file/d/1hVy4JfK-ich1JkmKDyrom9cFxSqxjdU5/view?usp=drive_link">PC-98 VRAM ベンチマークプログラム</a><br>
-		PC-98の通常RAMおよびグラフィックVRAMに対するアクセス速度を測定し、直接アクセス、GRCG、EGC、PEGC Packed/Planeの性能を比較するベンチマークです。
-		普通の人には用事がありません。開発者向けです。
-	</div>
-	<div class="downloadContents">
 		<a href="https://drive.google.com/file/d/14n0wmPdpxS_rKanc3W7W7tWDjqYykqrm/view?usp=drive_link">PC-98用 簡易プログラムランチャー</a><br>
 		PC-98で使用できる＆フリーで使える簡易的なプログラムランチャー（ChatGPT製）です。ソース付きです。
 		プログラムの権利主張をする気はありませんが、何らかの表示がないと困る場合のために修正BSDライセンスとしておきます。
 		軽く見た範囲では致命的なバグはないと思っていますが、ないとは限らないので自己責任で使用してください。
+	</div>
+
+	<h2 id="testtool">検証用ツール関連</h2>
+	<p>
+		PC-98実機・エミュレータの挙動を調査するためのプログラムです。
+		普通の人には用事がありません。開発者向けです。
+	</p>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1daO0W9cecp1MuvaiYFwKjmfJYOUWuWlL/view?usp=drive_link">GDC VSYNCとVSYNC割り込みタイミング調査プログラム</a><br>
+		GDCのVERTICAL SYNC（I/O 60h bit 5）のタイミングとVSYNC割り込み発生タイミングの前後関係を調べるプログラムです。
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1X61Z40D3xFfxfWGf_-UkGaT0P_XwXv1_/view?usp=drive_link">INT 1BhでフロッピーにアクセスするときDMAバンクを跨ぐとエラーになるか確認するプログラム</a><br>
+		INT 1Bhでフロッピーにアクセスするときに、データ転送するメモリアドレスがDMAのバンク（64KB単位）を跨ぐとエラーになるかどうかを確認するだけの検証用プログラムです。
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1QXKaglsMxhZC0HjtsAmuzjLtcJ_Q3Pqd/view?usp=drive_link">PC-98 MS-DOS テキスト画面テストプログラム</a><br>
+		MS-DOSのテキスト画面のテストを行うプログラムです。PC-98依存コードもテストできます。
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1gEkSOhTKYuobN-97ZeenFmrPM193_lva/view?usp=drive_link">PC-98 MS-DOS 子プロセステストプログラム</a><br>
+		MS-DOSの子プロセスのテストを行うプログラムです。
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1LbcEZhiid6Ui-umlyn2knVQIkAdEA8_i/view?usp=drive_link">PC-98 LIOテストプログラム</a><br>
+		LIOのテストを行うプログラムです。
+	</div>
+	<div class="downloadContents">
+		<a href="https://drive.google.com/file/d/1hVy4JfK-ich1JkmKDyrom9cFxSqxjdU5/view?usp=drive_link">PC-98 VRAM ベンチマークプログラム</a><br>
+		PC-98の通常RAMおよびグラフィックVRAMに対するアクセス速度を測定し、直接アクセス、GRCG、EGC、PEGC Packed/Planeの性能を比較するベンチマークです。
 	</div>
 
 	<h2 id="demonstration">デモンストレーションプログラム関連</h2>
