@@ -13,6 +13,12 @@
 	<h1>更新履歴</h1>
 	<div style="margin:4px; padding 4px; border: 3px groove gray">
 		<p><pre>
+(2026/10/28 ver0.86 rev107β1)
+・VSYNCフラグおよび割り込みタイミングを修正
+・MOV SP命令直後の割り込みを抑制するオプションを追加
+　・使う場合はINIにMOVSPIDLY=trueを書いて下さい
+　・スタック扱い誤りで暴走するプログラムの問題回避用です
+
 (2026/10/23 ver0.86 rev106)
 Neko Project 21/W ver0.86 rev106を公開しました。
 ・CS4231のDMAタイミング不具合修正
