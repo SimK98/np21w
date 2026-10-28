@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="SHORTCUT ICON" href="./favicon.ico">
+	<meta name="viewport" content="user-scalable=yes,initial-scale=1">
+	<title>PC-98における垂直同期信号タイミング調査 - PC-9800 Series Emulator Neko Project 21/W</title>
+	<link rel="stylesheet" type="text/css" href="../style.css?dummy=6">
+</head>
+<body>
+	<h1>PC-98における垂直同期信号タイミング調査</h1>
+	<p>
+		テキスト画面をフル活用するプログラムにおいて、実機とNeko Project 21/Wの結果が異なることが分かり、調査の結果として垂直同期信号の扱いの差があることが判明しました。
+	</p>
+	<p>
+		文献には垂直同期に関わる各区間（垂直フロントポーチVFP, 垂直バックポーチVBP, 垂直同期VSync, 垂直周期Vなど）の時間が明記されていますが、以下のことについて明記している文献は発見できませんでした。
+	</p>
+	<ul>
+		<li>GDCステータスのVSYNCのビットが立つ区間</li>
+		<li>VSync割り込みが発生するタイミング</li>
+	</ul>
+	<p>
+		そこで、これらが実際にどうであるかを検証するプログラムを作成し結果を募集したところ、多くの方にご協力をいただけたため、お礼の気持ちとしてここにその結果をまとめたいと思います。
+	</p>
+	
+	<h2>信号定義</h2>
+	<p>以上に大雑把ですが本資料では以下のように定義します。</p>
+	<img src="./vsync/fig1.svg">
+
+	<h2>検証方法</h2>
+	<p>
+		オシロスコープで信号線を覗いたとしても、フラグがいつ立って割り込みがいつ出ていてるかを見るのは手間ですし、実施ハードルも高いです。
+		そこで、ソフトウェア的にVSYNC区間を調査するプログラム（<a href="https://drive.google.com/file/d/1daO0W9cecp1MuvaiYFwKjmfJYOUWuWlL/view?usp=drive_link">VSIRRCHK.COM</a>）を作成し、配布して検証してもらうことにしました。
+	</p>
+	<p>
+		測定はシンプルで、CPUを割り込み禁止にするとVSYNC割り込み要求時にPICのIRRビットが立つことを利用します。
+		つまり、GDC VSYNCビットとPICのIRRビットをループで観測し続ければ、ループ1回分の精度でGDC VSYNCビットと割り込み発生のタイミング差を測定できます。
+		ただし、ループ回数なので実時間としていくつなのかは分かりません。
+	</p>
+	<p>
+		具体的には以下の手順で測定を行います。
+	</p>
+	<ol>
+		<li>GDC VSYNCビットが1→0になるのを待機し、その直後から測定を開始します。</li>
+		<li>
+			以下の状況が発生したときのループカウンタ値を記録します。
+			<ul>
+				<li>GDC VSYNCビットが変化した</li>
+				<li>PICのIRRビットが立った</li>
+			</ul>
+		</li>
+		<li>記録した各タイミングのループカウンタ値を表示します。</li>
+	</ol>
+	<p>
+		ここで測定されるのは、垂直周期Vのループカウント数、GDC VSYNCビットがON/OFFになったときのループカウント数、VSYNC割り込みが発生したときのループカウント数の3つです。
+		絶対的な時間は分かりませんが、垂直周期Vに対してGDC VSYNCビットがONの期間が占める割合を求めれば、文献値との比較によってどの範囲でビットが立っている可能性が高いかを特定できます。
+		また、GDC VSYNCビットのカウントとVSYNC割り込みのカウントは同じ基準なので、割り込み発生タイミングもある程度特定できます。
+	</p>
+
+	<h2>検証結果</h2>
+	<p>
+		以下の表は、報告を受けた各機種において、生のループカウント値(CPU性能依存)と、そこから換算したGDC VSYNC High区間を除く割合(Ratio)、および割込位置の判定(High=GDC VSYNC High遷移で割り込み, Low=GDC VSYNC Low遷移で割り込み)を記録したものです。
+	</p>
+	<p>
+		文献値は文献に記載されている実際の時間を用いて計算したものです。
+	</p>
+
+	<style>
+		.vsync-table th,
+		.vsync-table td {
+			min-width: 80px;
+		}
+	</style>
+	<div  style="margin:16px;" class="tablediv">
+	<table style="width:auto;" class="vsync-table" border=1>
+		<thead>
+		<tr>
+		<th></th><th>文献値(24k)</th><th>Xa10</th><th>Xa10(2) 31.5k</th><th>np21/w(旧)</th><th>np21/w(新)</th><th>BX無印</th><th>BX2</th><th>Cr13</th><th>Xc13 24k</th><th>VM21</th><th>UX21</th><th>RX2</th><th>586MV 24k</th><th>Ce2 24k</th><th>VX2 286</th><th>VX2 V30 8MHz</th><th>VX2 V30 10MHz</th><th>VM 8MHz</th><th>VM 10MHz</th><th>文献値(15k)</th><th>VX2 286 15k</th><th>VX2 V30 8MHz 15k</th><th>VX2 V30 10MHz 15k</th><th>Xa10(2) 31.5k</th><th>Xc13 31.5k</th><th>586MV 31.5k</th><th>Ce2 31k</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+		<th>VSync IRQ</th><td>?</td><td>8702</td><td>7725</td><td>2437</td><td>14055</td><td>3677</td><td>4963</td><td>8872</td><td>8825</td><td>525</td><td>1283</td><td>1528</td><td>7481</td><td>4964</td><td>1086</td><td>525</td><td>648</td><td>525</td><td>648</td><td>?</td><td>984</td><td>476</td><td>588</td><td>6284</td><td>7178</td><td>6054</td><td>4052</td>
+		</tr>
+		<tr>
+		<th>VSync High</th><td>17.4</td><td>8544</td><td>7725</td><td>2437</td><td>14055</td><td>3677</td><td>4963</td><td>8873</td><td>8826</td><td>525</td><td>1283</td><td>1528</td><td>7482</td><td>4964</td><td>1086</td><td>525</td><td>648</td><td>525</td><td>648</td><td>15.83</td><td>984</td><td>476</td><td>588</td><td>6284</td><td>7179</td><td>6054</td><td>4052</td>
+		</tr>
+		<tr>
+		<th>VSync Low</th><td>17.72</td><td>8702</td><td>7868</td><td>2678</td><td>14304</td><td>3739</td><td>5045</td><td>9040</td><td>8987</td><td>533</td><td>1305</td><td>1553</td><td>7620</td><td>5046</td><td>1103</td><td>533</td><td>659</td><td>533</td><td>659</td><td>16.33</td><td>1011</td><td>489</td><td>604</td><td>6312</td><td>7211</td><td>6081</td><td>4068</td>
+		</tr>
+		<tr>
+		<th>Ratio</th><td>0.982</td><td>0.982</td><td>0.982</td><td>0.910</td><td>0.983</td><td>0.983</td><td>0.984</td><td>0.982</td><td>0.982</td><td>0.985</td><td>0.983</td><td>0.984</td><td>0.982</td><td>0.984</td><td>0.985</td><td>0.985</td><td>0.983</td><td>0.985</td><td>0.983</td><td>0.969</td><td>0.973</td><td>0.973</td><td>0.974</td><td>0.996</td><td>0.996</td><td>0.996</td><td>0.996</td>
+		</tr>
+		<tr>
+		<th>割込位置</th><td>?</td><td>Low</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>?</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td>
+		</tr>
+		</tbody>
+	</table>
+	</div>
+
+	<img src="./vsync/vsync.png">
+	<div>
+		<a href="https://drive.google.com/file/d/1wuQCVrhZ0pAtipXqhufMHsyG_AzOSHZn/view?usp=drive_link">元データ</a>
+	</div>
+	
+	<h2>考察とまとめ</h2>
+	<p>
+		上記調査結果により、以下のことはほぼ確実だと思われます。
+	</p>
+	<ul>
+		<li>GDCステータスのVSYNCのビットが立つ区間は、VSyncの区間のみ（文献には他に該当する長さの区間がなく、24kと15kの結果が整合するため）</li>
+		<li>VSync割り込みが発生するタイミングは原則としてVSyncの区間の始まりの位置（例外は1件のみ）</li>
+	</ul>
+	<p>
+		他の機種での結果が得られましたら今後も追記していきます。
+	</p>
+	
+	<p>
+		<a href="../docs.html">資料集に戻る</a>
+	</p>
+	<p>
+		<a href="../index.html">トップに戻る</a>
+	</p>
+</body>
+</html>
