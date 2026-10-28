@@ -12,7 +12,7 @@
 <body>
 	<h1>PC-98における垂直同期信号タイミング調査</h1>
 	<p>
-		テキスト画面をフル活用するプログラムにおいて、実機とNeko Project 21/Wの結果が異なることが分かり、調査の結果として垂直同期信号の扱いの差があることが判明しました。
+		テキスト画面をフル活用するプログラムにおいて、実機とNeko Project 21/Wの結果が異なることが分かり、調査の結果として垂直同期信号の扱いに差があることが判明しました。
 	</p>
 	<p>
 		文献には垂直同期に関わる各区間（垂直フロントポーチVFP, 垂直バックポーチVBP, 垂直同期VSync, 垂直周期Vなど）の時間が明記されていますが、以下のことについて明記している文献は発見できませんでした。
@@ -26,7 +26,7 @@
 	</p>
 	
 	<h2>信号定義</h2>
-	<p>以上に大雑把ですが本資料では以下のように定義します。</p>
+	<p>非常に大雑把ですが、本資料では以下のように定義します。</p>
 	<img src="./vsync/fig1.svg">
 
 	<h2>検証方法</h2>
@@ -77,7 +77,7 @@
 	<table style="width:auto;" class="vsync-table" border=1>
 		<thead>
 		<tr>
-		<th></th><th>文献値(24k)</th><th>Xa10</th><th>Xa10(2) 31.5k</th><th>np21/w(旧)</th><th>np21/w(新)</th><th>BX無印</th><th>BX2</th><th>Cr13</th><th>Xc13 24k</th><th>VM21</th><th>UX21</th><th>RX2</th><th>586MV 24k</th><th>Ce2 24k</th><th>VX2 286</th><th>VX2 V30 8MHz</th><th>VX2 V30 10MHz</th><th>VM 8MHz</th><th>VM 10MHz</th><th>文献値(15k)</th><th>VX2 286 15k</th><th>VX2 V30 8MHz 15k</th><th>VX2 V30 10MHz 15k</th><th>Xa10(2) 31.5k</th><th>Xc13 31.5k</th><th>586MV 31.5k</th><th>Ce2 31k</th>
+		<th></th><th>文献値(24k)</th><th>Xa10</th><th>Xa10(2) 24k</th><th>np21/w(旧)</th><th>np21/w(新)</th><th>BX無印</th><th>BX2</th><th>Cr13</th><th>Xc13 24k</th><th>VM21</th><th>UX21</th><th>RX2</th><th>586MV 24k</th><th>Ce2 24k</th><th>VX2 286</th><th>VX2 V30 8MHz</th><th>VX2 V30 10MHz</th><th>VM 8MHz</th><th>VM 10MHz</th><th>文献値(15k)</th><th>VX2 286 15k</th><th>VX2 V30 8MHz 15k</th><th>VX2 V30 10MHz 15k</th><th>Xa10(2) 31.5k</th><th>Xc13 31.5k</th><th>586MV 31.5k</th><th>Ce2 31k</th>
 		</tr>
 		</thead>
 		<tbody>
