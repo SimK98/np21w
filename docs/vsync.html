@@ -330,6 +330,7 @@
 		上記調査結果により、以下のことはほぼ確実だと思われます。
 	</p>
 	<ul>
+		<li>GDCステータスのVSYNCのビットは、文献記載のVSync信号の論理反転（VSYNC HighならGDC VSYNCは0、VSYNC LowならGDC VSYNCは1）</li>
 		<li>GDCステータスのVSYNCのビットが立つ区間は、VSyncの区間のみ（文献には他に該当する長さの区間がなく、24kと15kの結果が整合するため）</li>
 		<li>VSync割り込みが発生するタイミングは原則としてVSyncの区間の始まりの位置（例外はXa10/C, Xe10）</li>
 	</ul>
@@ -341,7 +342,8 @@
 		Xa10/Cについては、24k, 31.5kで測り直しても一貫してLowでした。
 		Xe10/4,/C4も明らかにLowの結果になっています。
 		また、これらの機種よりも古くても新しくても割り込みタイミングはHighの位置になっています。
-		これらをまとめると図2のようになります。
+		これらをまとめると図2のようになります。<br>
+		※注：High/Lowの記載はGDC VSYNCビットの1/0を基準に書いています（VSync区間でHigh）。文献によればVSync信号は論理反転しているのでVSync区間でLowになります（図の通り）。
 	</p>
 	<figure style="margin:0;text-align:center;">
 		<img src="./vsync/fig2.svg">
