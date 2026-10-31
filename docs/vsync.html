@@ -24,10 +24,13 @@
 	<p>
 		そこで、これらが実際にどうであるかを検証するプログラムを作成し結果を募集したところ、多くの方にご協力をいただけたため、お礼の気持ちとしてここにその結果をまとめたいと思います。
 	</p>
-	
+
 	<h2>信号定義</h2>
 	<p>非常に大雑把ですが、本資料では以下のように定義します。</p>
-	<img src="./vsync/fig1.svg">
+	<figure style="margin:0;text-align:center;">
+		<img src="./vsync/fig1.svg">
+		<figcaption>図1 VSync関連信号定義</figcaption>
+	</figure>
 
 	<h2>検証方法</h2>
 	<p>
@@ -79,37 +82,247 @@
 		}
 	</style>
 	<div style="margin:16px;" class="tablediv">
-	<table style="width:auto;" class="vsync-table" border=1>
-		<thead>
-		<tr>
-		<th></th><th>文献値(24k)</th><th>np21/w</th><th>np21/w (新)</th><th>Xa10/C</th><th>Xa10/K 24k</th><th>Xe10/4</th><th>Xe10/C4</th><th>BX無印</th><th>BX2</th><th>Cr13</th><th>Xc13 24k</th><th>VM21</th><th>UX21</th><th>RX2</th><th>586MV 24k</th><th>Ce2 24k</th><th>VX2 286</th><th>VX2 V30 8MHz</th><th>VX2 V30 10MHz</th><th>VM 8MHz</th><th>VM 10MHz</th><th>V200 24k</th><th>Ra266 24k</th><th>Xa200 24k</th><th>文献値(15k)</th><th>VX2 286 15k</th><th>VX2 V30 8MHz 15k</th><th>VX2 V30 10MHz 15k</th><th>Xa10/K 31.5k</th><th>Xc13 31.5k</th><th>586MV 31.5k</th><th>Ce2 31.5k</th><th>V200 31.5k</th><th>Ra266 31.5k</th><th>Xa200 31.5k</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr>
-		<th>VSync IRQ</th><td>?</td><td>2437</td><td>14055</td><td>8702</td><td>7725</td><td>11225</td><td>8976</td><td>3677</td><td>4963</td><td>8872</td><td>8825</td><td>525</td><td>1283</td><td>1528</td><td>7481</td><td>4964</td><td>1086</td><td>525</td><td>648</td><td>525</td><td>648</td><td>11126</td><td>8624</td><td>10877</td><td>?</td><td>984</td><td>476</td><td>588</td><td>6284</td><td>7178</td><td>6054</td><td>4052</td><td>9050</td><td>7015</td><td>8847</td>
-		</tr>
-		<tr>
-		<th>VSync High</th><td>17.4</td><td>2437</td><td>14055</td><td>8544</td><td>7725</td><td>11030</td><td>8825</td><td>3677</td><td>4963</td><td>8873</td><td>8826</td><td>525</td><td>1283</td><td>1528</td><td>7482</td><td>4964</td><td>1086</td><td>525</td><td>648</td><td>525</td><td>648</td><td>11127</td><<td>8625</td><td>10877</td><td>15.83</td><td>984</td><td>476</td><td>588</td><td>6284</td><td>7179</td><td>6054</td><td>4052</td><td>9051</td><td>7016</td><td>8848</td>
-		</tr>
-		<tr>
-		<th>VSync Low</th><td>17.72</td><td>2678</td><td>14304</td><td>8702</td><td>7868</td><td>11224</td><td>8976</td><td>3739</td><td>5045</td><td>9040</td><td>8987</td><td>533</td><td>1305</td><td>1553</td><td>7620</td><td>5046</td><td>1103</td><td>533</td><td>659</td><td>533</td><td>659</td><td>11333</td><<td>8780</td><td>11079</td><td>16.33</td><td>1011</td><td>489</td><td>604</td><td>6312</td><td>7211</td><td>6081</td><td>4068</td><td>9092</td><td>7046</td><td>8887</td>
-		</tr>
-		<tr>
-		<th>Ratio</th><td>0.982</td><td>0.910</td><td>0.983</td><td>0.982</td><td>0.982</td><td>0.983</td><td>0.983</td><td>0.983</td><td>0.984</td><td>0.982</td><td>0.982</td><td>0.985</td><td>0.983</td><td>0.984</td><td>0.982</td><td>0.984</td><td>0.985</td><td>0.985</td><td>0.983</td><td>0.985</td><td>0.983</td><td>0.982</td><td>0.982</td><td>0.982</td><td>0.969</td><td>0.973</td><td>0.973</td><td>0.974</td><td>0.996</td><td>0.996</td><td>0.996</td><td>0.996</td><td>0.995</td><td>0.996</td><td>0.996</td>
-		</tr>
-		<tr>
-		<th>割込位置</th><td>?</td><td>High</td><td>High</td><td>Low</td><td>High</td><td>Low</td><td>Low</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>?</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td><td>High</td>
-		</tr>
-		</tbody>
-	</table>
+		<table style="width:auto;" class="vsync-table" border=1>
+			<thead>
+				<tr>
+					<th></th>
+					<th>文献値(24k)</th>
+					<th>np21/w</th>
+					<th>np21/w (新)</th>
+					<th>Xa10/C</th>
+					<th>Xa10/K 24k</th>
+					<th>Xe10/4</th>
+					<th>Xe10/C4</th>
+					<th>BX無印</th>
+					<th>BX2</th>
+					<th>Cr13</th>
+					<th>Xc13 24k</th>
+					<th>VM21</th>
+					<th>UX21</th>
+					<th>RX2</th>
+					<th>586MV 24k</th>
+					<th>Ce2 24k</th>
+					<th>VX2 286</th>
+					<th>VX2 V30 8MHz</th>
+					<th>VX2 V30 10MHz</th>
+					<th>VM 8MHz</th>
+					<th>VM 10MHz</th>
+					<th>V200 24k</th>
+					<th>Ra266 24k</th>
+					<th>Xa200 24k</th>
+					<th>文献値(15k)</th>
+					<th>VX2 286 15k</th>
+					<th>VX2 V30 8MHz 15k</th>
+					<th>VX2 V30 10MHz 15k</th>
+					<th>Xa10/K 31.5k</th>
+					<th>Xc13 31.5k</th>
+					<th>586MV 31.5k</th>
+					<th>Ce2 31.5k</th>
+					<th>V200 31.5k</th>
+					<th>Ra266 31.5k</th>
+					<th>Xa200 31.5k</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>VSync IRQ</th>
+					<td>?</td>
+					<td>2437</td>
+					<td>14055</td>
+					<td>8702</td>
+					<td>7725</td>
+					<td>11225</td>
+					<td>8976</td>
+					<td>3677</td>
+					<td>4963</td>
+					<td>8872</td>
+					<td>8825</td>
+					<td>525</td>
+					<td>1283</td>
+					<td>1528</td>
+					<td>7481</td>
+					<td>4964</td>
+					<td>1086</td>
+					<td>525</td>
+					<td>648</td>
+					<td>525</td>
+					<td>648</td>
+					<td>11126</td>
+					<td>8624</td>
+					<td>10877</td>
+					<td>?</td>
+					<td>984</td>
+					<td>476</td>
+					<td>588</td>
+					<td>6284</td>
+					<td>7178</td>
+					<td>6054</td>
+					<td>4052</td>
+					<td>9050</td>
+					<td>7015</td>
+					<td>8847</td>
+				</tr>
+				<tr>
+					<th>VSync High</th>
+					<td>17.4</td>
+					<td>2437</td>
+					<td>14055</td>
+					<td>8544</td>
+					<td>7725</td>
+					<td>11030</td>
+					<td>8825</td>
+					<td>3677</td>
+					<td>4963</td>
+					<td>8873</td>
+					<td>8826</td>
+					<td>525</td>
+					<td>1283</td>
+					<td>1528</td>
+					<td>7482</td>
+					<td>4964</td>
+					<td>1086</td>
+					<td>525</td>
+					<td>648</td>
+					<td>525</td>
+					<td>648</td>
+					<td>11127</td><
+					<td>8625</td>
+					<td>10877</td>
+					<td>15.83</td>
+					<td>984</td>
+					<td>476</td>
+					<td>588</td>
+					<td>6284</td>
+					<td>7179</td>
+					<td>6054</td>
+					<td>4052</td>
+					<td>9051</td>
+					<td>7016</td>
+					<td>8848</td>
+				</tr>
+				<tr>
+					<th>VSync Low</th>
+					<td>17.72</td>
+					<td>2678</td>
+					<td>14304</td>
+					<td>8702</td>
+					<td>7868</td>
+					<td>11224</td>
+					<td>8976</td>
+					<td>3739</td>
+					<td>5045</td>
+					<td>9040</td>
+					<td>8987</td>
+					<td>533</td>
+					<td>1305</td>
+					<td>1553</td>
+					<td>7620</td>
+					<td>5046</td>
+					<td>1103</td>
+					<td>533</td>
+					<td>659</td>
+					<td>533</td>
+					<td>659</td>
+					<td>11333</td><
+					<td>8780</td>
+					<td>11079</td>
+					<td>16.33</td>
+					<td>1011</td>
+					<td>489</td>
+					<td>604</td>
+					<td>6312</td>
+					<td>7211</td>
+					<td>6081</td>
+					<td>4068</td>
+					<td>9092</td>
+					<td>7046</td>
+					<td>8887</td>
+				</tr>
+				<tr>
+					<th>Ratio</th>
+					<td>0.982</td>
+					<td>0.910</td>
+					<td>0.983</td>
+					<td>0.982</td>
+					<td>0.982</td>
+					<td>0.983</td>
+					<td>0.983</td>
+					<td>0.983</td>
+					<td>0.984</td>
+					<td>0.982</td>
+					<td>0.982</td>
+					<td>0.985</td>
+					<td>0.983</td>
+					<td>0.984</td>
+					<td>0.982</td>
+					<td>0.984</td>
+					<td>0.985</td>
+					<td>0.985</td>
+					<td>0.983</td>
+					<td>0.985</td>
+					<td>0.983</td>
+					<td>0.982</td>
+					<td>0.982</td>
+					<td>0.982</td>
+					<td>0.969</td>
+					<td>0.973</td>
+					<td>0.973</td>
+					<td>0.974</td>
+					<td>0.996</td>
+					<td>0.996</td>
+					<td>0.996</td>
+					<td>0.996</td>
+					<td>0.995</td>
+					<td>0.996</td>
+					<td>0.996</td>
+				</tr>
+				<tr>
+					<th>割込位置</th>
+					<td>?</td>
+					<td>High</td>
+					<td>High</td>
+					<td>Low</td>
+					<td>High</td>
+					<td>Low</td>
+					<td>Low</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>?</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+					<td>High</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 
 	<img src="./vsync/vsync.png?d=2">
 	<div>
 		<a href="https://drive.google.com/file/d/1wuQCVrhZ0pAtipXqhufMHsyG_AzOSHZn/view?usp=drive_link">元データ</a>
 	</div>
-	
+
 	<h2>考察とまとめ</h2>
 	<p>
 		上記調査結果により、以下のことはほぼ確実だと思われます。
@@ -136,10 +349,14 @@
 		何故違っているのかについては恐らく関係者しか分からないでしょう。
 		互換性にほぼ影響がないと想定していた変更に影響があったので後で戻した、VSync信号の論理を勘違いしていて後で気付いて修正した、等があり得ると思います。
 	</p>
+	<figure style="margin:0;text-align:center;">
+		<img src="./vsync/fig2.svg">
+		<figcaption>図2 np2系および各機種のVSync割り込み位置</figcaption>
+	</figure>
 	<p>
 		他の機種での結果が得られましたら今後も追記していきます。
 	</p>
-	
+
 	<p>
 		<a href="../docs.html">資料集に戻る</a>
 	</p>
