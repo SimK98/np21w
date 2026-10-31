@@ -343,6 +343,10 @@
 		また、これらの機種よりも古くても新しくても割り込みタイミングはHighの位置になっています。
 		これらをまとめると図2のようになります。
 	</p>
+	<figure style="margin:0;text-align:center;">
+		<img src="./vsync/fig2.svg">
+		<figcaption>図2 np2系および各機種のVSync割り込み位置</figcaption>
+	</figure>
 	<p>
 		Xa10とXe10は結構構成が違っており、これらに共通するのは発売日がかなり近いという点だけに思えます。
 		つまり、この時期周辺で発売された機種だけVSync割り込みの位置が違っている可能性があります。
@@ -352,10 +356,6 @@
 		何故違っているのかについては恐らく関係者しか分からないでしょう。
 		互換性にほぼ影響がないと想定していた変更に影響があったので後で戻した、VSync信号の論理を勘違いしていて後で気付いて修正した、等があり得ると思います。
 	</p>
-	<figure style="margin:0;text-align:center;">
-		<img src="./vsync/fig2.svg">
-		<figcaption>図2 np2系および各機種のVSync割り込み位置</figcaption>
-	</figure>
 	<p>
 		他の機種での結果が得られましたら今後も追記していきます。
 	</p>
