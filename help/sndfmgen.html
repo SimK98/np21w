@@ -24,6 +24,22 @@ fmgenの著作権はcisc氏が所有しています。
 <DD><P>チェックするとfmgenを使用します。</P></DD>
 </DL>
 
+<DL>
+<DT><B>FM synthesis sampling rate</B></DT>
+<DD><P>FM合成時のサンプリングレートを設定します。</P>
+<TABLE CELLPADDING="2" CELLSPACING="0" BORDER="1">
+<TR><TH>設定値</TH><TH>説明</TH></TR>
+<TR><TD>55.5 kHz</TD><TD>標準のサンプリングレートを使用します（推奨）。より正確に音が再現されますが、負荷は増加します。</TD></TR>
+<TR><TD>Same as sound output rate</TD><TD><A HREF="cfgdlg.html">Configure</A>のSampling Rateを使用します。低負荷ですが、エイリアシングを積極的に使う音は違う音に化けてしまいます。</TD></TR>
+</TABLE>
+</DD>
+</DL>
+
+<DL>
+<DT><B>FIR filter quality</B></DT>
+<DD><P>サンプリングレート変換の品質を指示します。tap数が多いほど高品質ですが、負荷が大きくなります。</P></DD>
+</DL>
+
 </BODY>
 </HTML>
 
