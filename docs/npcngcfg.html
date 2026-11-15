@@ -157,6 +157,7 @@
 			<tr><td>10</td><td><a href="#irqdevice">デバイスID</a>(1byte)+IRQ (1byte)</td><td>設定されているIRQの文字列<br>ただし、<br>デバイス未使用=254<br>番号自体が無効=253<br></td><td>エミュレーションデバイスのIRQを変更する。255を指定した場合、一部デバイスではIRQを無効化可能。</td></tr>
 			<tr><td>11</td><td>有効=1, 無効=0 (1byte)</td><td>有効="1", 無効="0"</td><td>Neko Project 21/W専用グラフィックアダプタ NPDISPの有効・無効を切り替える。</td></tr>
 			<tr><td>12</td><td>有効=1, 無効=0 (1byte)</td><td>有効="1", 無効="0"</td><td>GA-1280Aの有効・無効を切り替える。I/Oポート競合がある場合はGA-1280Aが優先される。</td></tr>
+			<tr><td>13</td><td>フォント番号 (1byte)</td><td>現在のフォント番号</td><td>画面フォントをFONT&lt;フォント番号&gt;.BMPにある有効なグリフで置き換える。フォント番号=0で起動時の状態に戻す。</td></tr>
 		</tbody>
 	</table>
 	</div>
